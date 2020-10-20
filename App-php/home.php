@@ -14,7 +14,6 @@
 <script src="jquery-3.5.1.min.js"></script>
 
 <?php
-require_once 'vendor/autoload.php';
 use google\appengine\api\mail\Message;
 ?>
 
@@ -150,8 +149,8 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <ul class="w3-ul w3-light-grey">
 <form id="upload_form" enctype="multipart/form-data" method="post">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCV Visual</li>
-<li class="w3-padding-16"> <input type="file" name="file1" id="file1" onchange="uploadFile(); readFileAsString()"><br> </li>
-<li class="w3-padding-16">  <progress id="progressBar" value="0" max="100" style="width:200px;"></progress><p id="status"> Upload a compatible file before opening the dashboard.</p> </li>
+<li class="w3-padding-16"> <input type="file" name="file1" id="file1" onchange="uploadFile('file1','progressBar1','status1')"><br> </li>
+<li class="w3-padding-16">  <progress id="progressBar1" value="0" max="100" style="width:200px;"></progress><p id="status1"> Upload a compatible file before opening the dashboard.</p> </li>
 <li class="w3-padding-16">
 <br>
 <label for="FSCVColorplot"><input type="radio" id="FSCVColorplot" name="typeofplot" value="FSCVColorplot">FSCV Color Plot</label>
@@ -166,8 +165,6 @@ calibration and allow the use of electrodes of different sizes and characteristi
 </li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="VisualWindow(DataArray)"> Open Dashboard</a> </li>
 <li class="w3-padding-16"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
-<?php include("ProgressBar.php");?>
-<?php include("parseFile.php");?>
 </form>
 </ul>
 </div>
@@ -178,7 +175,7 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <ul class="w3-ul w3-light-grey">
 <form id="upload_form2" enctype="multipart/form-data" method="post">
 <li class="w3-indigo w3-xlarge w3-padding-32"> Kinetic Calibration</li>
-<li class="w3-padding-16"> <input type="file" name="file2" id="file2" onchange="uploadFile2(); readFileAsString2()"><br> </li>
+<li class="w3-padding-16"> <input type="file" name="file2" id="file2" onchange="uploadFile('file2','progressBar2','status2');"><br> </li>
 <li class="w3-padding-16">  <progress id="progressBar2" value="0" max="100" style="width:200px;"></progress><p id="status2"> Upload a compatible file before opening the dashboard.</p> </li>
 <li class="w3-padding-16"><p style="margin:1px;"><label for="n3">&#8226; Sampling Frequency (Hz): &nbsp;&nbsp; </label>
 <input type="number" step="1" name="n3" id="n3" style="width: 70px;" value=500000 /> Hz </p>
@@ -193,14 +190,13 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <p style="margin:1px;"><label for="n7">&#8226; End sample AUC: &nbsp;&nbsp; </label>
 <input type="number" step="1" name="n7" id="n7" style="width: 70px;" value="<?php echo htmlspecialchars($_POST['n4']);?>"/></p>
 </li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="ConvWindow(DataArrayCon)"> Open Dashboard</a></li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="ConvWindow(DataArray)"> Open Dashboard</a></li>
 <li class="w3-padding-16" id="deconvolution_message"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
-<?php include("ProgressBar2.php");?>
-<?php include("parseFile2.php");?>
 </form>
 </ul>
 </div>
-
+<?php include("ProgressBar.php");?>
+<?php include("parseFile.php");?>
 </div>
 
 <div class="w3-row-padding">
@@ -264,17 +260,8 @@ calibration and allow the use of electrodes of different sizes and characteristi
 </ul>
 </div>
 
-
-
-
-
-
-
-
-
 <footer class="w3-content w3-padding-64 w3-light-grey w3-text-black w3-center">
 <p> <a href="#top" class="w3-button w3-black"><i class="fa fa-arrow-up "></i>To the top</a></p>
-
 
 <p class="w3-large">
 <a href = "mailto:sergio.mena19@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
@@ -314,7 +301,6 @@ captionText.innerHTML = element.alt;
 <script>
 // Script to open Dashboards depending on plot selected
 var DataArray;
-var DataArrayCon;
 function VisualWindow(DataArray) {
 var plot_selected;
 var typeofplot = document.getElementsByName('typeofplot');
@@ -340,7 +326,7 @@ function ContactWindow(){
 var myVisualWindow = window.open(encodeURI('ContactForm.php'), "", "width=500,height=550",'resizesable=yes');
 }
 
-function ConvWindow(DataArrayCon) {
+function ConvWindow(DataArray) {
 var f=document.getElementById("n3").value;
 var valency=document.getElementById("n4").value;
 var surface=document.getElementById("n5").value;
@@ -352,7 +338,7 @@ var myVisualWindow2 = window.open(encodeURI('FSCVConvolution.php'), "");
 myVisualWindow2.freqy = parseFloat(f);
 myVisualWindow2.n = parseInt(valency);
 myVisualWindow2.surface = parseFloat(surface);
-myVisualWindow2.DataArray=DataArrayCon;
+myVisualWindow2.DataArray=DataArray;
 myVisualWindow2.startAUC=startAUC;
 myVisualWindow2.endAUC=endAUC;
 }  else {document.getElementById("deconvolution_message").innerHTML = "Only positive integers and decimals are allowed.";}

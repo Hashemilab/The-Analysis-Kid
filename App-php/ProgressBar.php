@@ -3,38 +3,37 @@ function _(el) {
   return document.getElementById(el);
 }
 
-function uploadFile() {
-  var file = _("file1").files[0];
+function uploadFile(fileID, progressBarID, statusID) {
+  var file = _(fileID).files[0];
   var formdata = new FormData();
-  formdata.append("file1", file);
+  formdata.append('file', file);
   var ajax = new XMLHttpRequest();
-  ajax.upload.addEventListener("progress", progressHandler, false);
-  ajax.addEventListener("load", completeHandler, false);
-  ajax.addEventListener("error", errorHandler, false);
-  ajax.addEventListener("abort", abortHandler, false);
-  ajax.open("POST", "save_csv.php"); 
+  ajax.upload.addEventListener("progress", progressHandler.bind(this, progressBarID, statusID), false);
+  ajax.addEventListener("load", completeHandler.bind(this, progressBarID, statusID), false);
+  ajax.addEventListener("error", errorHandler.bind(this, progressBarID, statusID), false);
+  ajax.addEventListener("abort", abortHandler.bind(this, progressBarID, statusID), false);
+  ajax.open("POST", "check_upload.php");
   ajax.send(formdata);
-
-  
 }
 
-function progressHandler(event) {
+function progressHandler(progressBarID, statusID) {
+  var event = this.event;
   var percent = (event.loaded / event.total) * 100;
   var mbloaded=(event.loaded/1000000).toFixed(2);
-  _("progressBar").value = Math.round(percent);
-  _("status").innerHTML = " "+Math.round(percent) + "% ("+mbloaded+" MB)"; 
+  _(progressBarID).value = Math.round(percent);
+  _(statusID).innerHTML = " "+Math.round(percent) + "% ("+mbloaded+" MB)";
 }
 
-function completeHandler(event) {
-  _("status").innerHTML = event.target.responseText;
-  _("progressBar").value = 0; //wil clear progress bar after successful uploa
+function completeHandler(progressBarID, statusID) {
+  _(statusID).innerHTML = event.target.responseText;
+  _(progressBarID).value = 0; //wil clear progress bar after successful uploa
 }
 
-function errorHandler(event) {
-  _("status").innerHTML = "Upload Failed";
+function errorHandler(progressBarID, statusID) {
+  _(statusID).innerHTML = "Upload Failed";
 }
 
-function abortHandler(event) {
-  _("status").innerHTML = "Upload Aborted";
+function abortHandler(progressBarID, statusID) {
+  _(statusID).innerHTML = "Upload Aborted";
 }
 </script>

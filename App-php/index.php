@@ -24,11 +24,8 @@ switch ($_SERVER['REQUEST_URI']) {
   case '/ContactForm.php':
   include 'ContactForm.php';
   break;
-  case '/save_csv.php':
-  include 'save_csv.php';
-  break;
-  case '/save_csv2.php':
-  include 'save_csv2.php';
+  case '/check_upload.php':
+  include 'check_upload.php';
   break;
   default:
   include 'home.php';
