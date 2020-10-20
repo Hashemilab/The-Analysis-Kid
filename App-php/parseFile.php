@@ -24,7 +24,6 @@ function readFileAsString() {
         if (file_ext == 'csv' || file_ext=='xlsx' || file_ext=='xls') {DataArray=fileReader(DataString)};
         // If the file is .txt for the colorplot
         if (file_ext == 'txt'){DataArray=read_txt(DataString)};
-        console.log(DataArray);
 
 
 
