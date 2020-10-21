@@ -3,15 +3,15 @@
 <title>FSCV Datalab</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="w3.css">
-<link rel="stylesheet" href="progressbar.css">
+<link rel="stylesheet" href="Styling/w3.css">
+<link rel="stylesheet" href="Styling/progressbar.css">
 <script src="https://kit.fontawesome.com/828d573e3a.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script type="text/javascript" src="shim.min.js"></script>
-<script lang="javascript" src="xlsx.full.min.js"></script>
-<script lang="javascript" src="jszip.js"></script>
-<script src="jquery-3.5.1.min.js"></script>
+<script type="text/javascript" src="JavaScriptPackages/shim.min.js"></script>
+<script lang="javascript" src="JavaScriptPackages/xlsx.full.min.js"></script>
+<script lang="javascript" src="JavaScriptPackages/jszip.js"></script>
+<script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 
 <?php
 use google\appengine\api\mail\Message;
@@ -34,7 +34,7 @@ top: 0px;
 width: 100%;
 height: 100%;
 z-index: 9999;
-background: url("loading.gif") center no-repeat #eff4f7;
+background: url("Images/loading.gif") center no-repeat #eff4f7;
 }
 .br2 {
 height:1px;
@@ -211,11 +211,10 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <li class="w3-padding-16" id="surface"> Introduce the electrode length and diameter of your experiment.</li>
 </ul>
 </div>
-<img src="vertip.svg" alt="CFM sketch of diameter and length" style="width:400px;height:400px;border:0;" onclick="onClick(this)">
+<img src="Images/vertip.svg" alt="CFM sketch of diameter and length" style="width:400px;height:400px;border:0;" onclick="onClick(this)">
 </div>
 
 </div>
-
 
 <div class="w3-container" id="references" style="margin-top:75px">
 <h1 class="w3-xxxlarge w3-text-indigo"><b>References.</b></h1>
@@ -354,7 +353,5 @@ document.getElementById("surface").innerHTML ="Surface of the electrode is " + s
 else {document.getElementById("surface").innerHTML = "Only positive integers and decimals are allowed.";}
 }
 </script>
-
-
 
 </html>

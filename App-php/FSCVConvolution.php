@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="jquery-3.5.1.min.js"></script>
+    <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
     <script src="dashboard/html2pdf.bundle.min.js"></script>
     <script src="dashboard/sweetalert.min.js"></script>
     <script src="https://kit.fontawesome.com/828d573e3a.js"></script>
@@ -52,7 +52,7 @@
       width: 100%;
       height: 100%;
       z-index: 9999;
-      background: url("loading.gif") center no-repeat #eff4f7;
+      background: url("Images/loading.gif") center no-repeat #eff4f7;
     }
 .footdash{ text-align: center;  color: #3f51b5;}
     .header {
@@ -223,7 +223,7 @@
       <p class="footdash">Dashboard created by The Hashemi Lab, Imperial College London.</p>
     </div>
     <script src="dashboard/axios.min.js"></script>
-    <script src="exportTabletoCSV.js"></script>
+    <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
 
 

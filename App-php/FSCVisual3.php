@@ -5,14 +5,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="jquery-3.5.1.min.js"></script>
+    <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
     <script>
       $(window).on('load', function () {
      $(".se-pre-con").fadeOut("slow");
       });
     </script>
     <script src="dashboard/html2pdf.bundle.min.js"></script>
-    <script src="tf.min.js"></script>
+    <script src="JavaScriptPackages/tf.min.js"></script>
     <script src="dashboard/sweetalert.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -51,7 +51,7 @@
       width: 100%;
       height: 100%;
       z-index: 9999;
-      background: url("loading.gif") center no-repeat #eff4f7;
+      background: url("Images/loading.gif") center no-repeat #eff4f7;
     }
 
     .header {
@@ -285,7 +285,7 @@ table.center {
 
 
         <script src="dashboard/axios.min.js"></script>
-        <script src="exportTabletoCSV.js"></script>
+        <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
 
     <script>
@@ -750,7 +750,7 @@ $.ajax(settings_API).done(function (response_API) {
   predictions=response_API.split(" ");
 });
 
-const model = await tf.loadLayersModel('model.json');
+const model = await tf.loadLayersModel('NNModel/model.json');
 var a = tf.tensor1d([Number(predictions[0])]);
 var b = tf.tensor1d([Number(predictions[1])]);
 

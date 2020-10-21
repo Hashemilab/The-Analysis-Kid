@@ -10,7 +10,7 @@
     	width: 100%;
     	height: 100%;
     	z-index: 9999;
-      background: url("loading.gif") center no-repeat #eff4f7;
+      background: url("Images/loading.gif") center no-repeat #eff4f7;
     }
     .header {
       padding: 5px;
@@ -96,7 +96,7 @@ table.center {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="jquery-3.5.1.min.js"></script>
+    <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
     <script src="dashboard/html2pdf.bundle.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script src="dashboard/modernizr.js"></script>
@@ -221,7 +221,7 @@ table.center {
         <script src="dashboard/apexcharts.js"></script>
         <script src="dashboard/axios.min.js"></script>
         <script src="dashboard/scripts.js"></script>
-        <script src="exportTabletoCSV.js"></script>
+        <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
     </body>
 

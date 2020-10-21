@@ -3,7 +3,7 @@
 <title>FSCV Calibration</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="popup.css">
+<link rel="stylesheet" href="Styling/popup.css">
 <script src="https://kit.fontawesome.com/828d573e3a.js"></script>
 
 
@@ -16,15 +16,15 @@
       <li>
        <p style="text-align: center; font-family:verdana"><b>Message submitted</b></p>
        <br>
-       <p style="text-align: center; font-family:verdana">Thank you for getting in contact </p> 
-       <p style="text-align: center; font-family:verdana">We will get back to you shortly </p> 
+       <p style="text-align: center; font-family:verdana">Thank you for getting in contact </p>
+       <p style="text-align: center; font-family:verdana">We will get back to you shortly </p>
       </li>
       <p>
          <li>
         <input type="submit" value="Back to Contact Form" class="btn" id="submit">
       </li>
       </p>
-    
+
     </ul>
     </form>
  <p style="text-align: center;">
@@ -61,5 +61,5 @@
     ]
   ];
   $response = $mj->post(Resources::$Email, ['body' => $body]);
-  
+
 ?>
