@@ -9,14 +9,14 @@ switch ($_SERVER['REQUEST_URI']) {
   case '/FSCVConvolution.php':
   include 'FSCVConvolution.php';
   break;
-  case '/FSCVisual00.php':
-  include 'FSCVisual00.php';
+  case '/FSCVisualColorPlot.php':
+  include 'FSCVisualColorPlot.php';
   break;
-  case '/FSCVisual02.php':
-  include 'FSCVisual02.php';
+  case '/FSCVisualTransient.php':
+  include 'FSCVisualTransient.php';
   break;
-  case '/FSCVisual3.php':
-  include 'FSCVisual3.php';
+  case '/FSCVisualiVPLot.php':
+  include 'FSCVisualiVPLot.php';
   break;
   case '/SubmitContactForm.php':
   include 'SubmitContactForm.php';

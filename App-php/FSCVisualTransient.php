@@ -97,9 +97,9 @@ table.center {
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
-    <script src="dashboard/html2pdf.bundle.min.js"></script>
+    <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script src="dashboard/modernizr.js"></script>
+    <script src="JavaScriptPackages/modernizr.js"></script>
 <script type="text/javascript" id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
@@ -116,19 +116,19 @@ table.center {
 
     <link
       rel="stylesheet"
-      href="dashboard/bootstrap.min.css"
+      href="Styling/bootstrap.min.css"
     />
 
     <link
       rel="stylesheet"
-      href="dashboard/font-awesome.min.css"
+      href="Styling/google-css.css"
     />
     <link
-      href="dashboard/google-css.css"
+      href="Styling/google-css.css"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="dashboard/styles.css" />
+    <link rel="stylesheet" href="Styling/styles.css" />
 
   </head>
 
@@ -218,9 +218,8 @@ table.center {
 
 
 
-        <script src="dashboard/apexcharts.js"></script>
-        <script src="dashboard/axios.min.js"></script>
-        <script src="dashboard/scripts.js"></script>
+        <script src="JavaScriptPackages/apexcharts.js"></script>
+        <script src="JavaScriptPackages/axios.min.js"></script>
         <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
     </body>

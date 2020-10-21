@@ -308,16 +308,16 @@ if(typeofplot[i].checked)
 plot_selected=typeofplot[i].value;
 }
 if(plot_selected=="FSCVColorplot"){
-var myVisualWindow = window.open(encodeURI('FSCVisual00.php'), "");
+var myVisualWindow = window.open(encodeURI('FSCVisualColorPlot.php'), "");
 myVisualWindow.DataArray=DataArray;
 }
 
 if(plot_selected=="SingleTransient"){
-var myVisualWindow = window.open(encodeURI('FSCVisual02.php'), "");
+var myVisualWindow = window.open(encodeURI('FSCVisualTransient.php'), "");
 myVisualWindow.DataArray=DataArray;
 }
 if(plot_selected=="CVPlot"){
-var myVisualWindow = window.open(encodeURI('FSCVisual3.php'), "");
+var myVisualWindow = window.open(encodeURI('FSCVisualiVPLot.php'), "");
 myVisualWindow.DataArray=DataArray;
 }
 }

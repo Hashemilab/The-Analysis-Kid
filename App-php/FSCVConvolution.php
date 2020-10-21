@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
-    <script src="dashboard/html2pdf.bundle.min.js"></script>
-    <script src="dashboard/sweetalert.min.js"></script>
+    <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
+    <script src="JavaScriptPackages/sweetalert.min.js"></script>
     <script src="https://kit.fontawesome.com/828d573e3a.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript" id="MathJax-script" async
@@ -20,23 +20,23 @@
 
     <link
       rel="stylesheet"
-      href="dashboard/bootstrap.min.css"
+      href="Styling/bootstrap.min.css"
     />
     <link
       rel="stylesheet"
-      href="dashboard/buttons.css"
+      href="Styling/buttons.css"
     />
 
     <link
       rel="stylesheet"
-      href="dashboard/font-awesome.min.css"
+      href="Styling/google-css.css"
     />
     <link
-      href="dashboard/google-css.css"
+      href="Styling/google-css.css"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="dashboard/styles.css" />
+    <link rel="stylesheet" href="Styling/styles.css" />
     <style>
     input[type='range'] {
       vertical-align: middle;
@@ -222,7 +222,7 @@
       </div>
       <p class="footdash">Dashboard created by The Hashemi Lab, Imperial College London.</p>
     </div>
-    <script src="dashboard/axios.min.js"></script>
+    <script src="JavaScriptPackages/axios.min.js"></script>
     <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
 

@@ -11,9 +11,9 @@
      $(".se-pre-con").fadeOut("slow");
       });
     </script>
-    <script src="dashboard/html2pdf.bundle.min.js"></script>
+    <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
     <script src="JavaScriptPackages/tf.min.js"></script>
-    <script src="dashboard/sweetalert.min.js"></script>
+    <script src="JavaScriptPackages/sweetalert.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script type="text/javascript" id="MathJax-script" async
@@ -26,22 +26,22 @@
 
     <link
       rel="stylesheet"
-      href="dashboard/bootstrap.min.css"
+      href="Styling/bootstrap.min.css"
     />
     <link
       rel="stylesheet"
-      href="dashboard/buttons.css"
+      href="Styling/buttons.css"
     />
     <link
       rel="stylesheet"
-      href="dashboard/font-awesome.min.css"
+      href="Styling/google-css.css"
     />
     <link
-      href="dashboard/google-css.css"
+      href="Styling/google-css.css"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="dashboard/styles.css" />
+    <link rel="stylesheet" href="Styling/styles.css" />
     <style>
     .se-pre-con {
 
@@ -284,7 +284,7 @@ table.center {
     </div>
 
 
-        <script src="dashboard/axios.min.js"></script>
+        <script src="JavaScriptPackages/axios.min.js"></script>
         <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 
 
