@@ -15,8 +15,8 @@ switch ($_SERVER['REQUEST_URI']) {
   case '/FSCVisualTransient.php':
   include 'FSCVisualTransient.php';
   break;
-  case '/FSCVisualiVPLot.php':
-  include 'FSCVisualiVPLot.php';
+  case '/FSCVisualiVPlot.php':
+  include 'FSCVisualiVPlot.php';
   break;
   case '/SubmitContactForm.php':
   include 'SubmitContactForm.php';

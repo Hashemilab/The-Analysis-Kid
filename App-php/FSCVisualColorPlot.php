@@ -10,6 +10,9 @@
     <script src="JavaScriptPackages/sweetalert.min.js"></script>
     <script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
     <script src="JavaScriptPackages/plotly-latest.min.js"></script>
+    <script src="JavaScriptPackages/axios.min.js"></script>
+    <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
+    <script src="JavaScriptPackages/opencv.js" type="text/javascript"></script>
     <script type="text/javascript" id="MathJax-script" async
       src="JavaScriptPackages/tex-chtml.js">
     </script>
@@ -341,9 +344,7 @@
       </div>
       <p class="footdash">Dashboard created by The Hashemi Lab, Imperial College London.</p>
     </div>
-    <script src="JavaScriptPackages/axios.min.js"></script>
-    <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
-    <script src="JavaScriptPackages/opencv.js" type="text/javascript"></script>
+
 
 
 

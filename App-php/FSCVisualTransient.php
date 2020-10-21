@@ -100,6 +100,8 @@ table.center {
     <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script src="JavaScriptPackages/modernizr.js"></script>
+    <script src="JavaScriptPackages/ArrayMethods.js"></script>
+    <script src="JavaScriptPackages/DashboardMethods.js"></script>
     <script src="JavaScriptPackages/apexcharts.js"></script>
     <script src="JavaScriptPackages/axios.min.js"></script>
     <script src="JavaScriptPackages/exportTabletoCSV.js"></script>
@@ -147,7 +149,7 @@ table.center {
               <a href="#" id="xx" style="color:white;">Export as CSV</a>
             </button>
 
-            <button class="btn btn-primary" id="fusionexport-btn" onClick="downloadPDF2()">
+            <button class="btn btn-primary" id="fusionexport-btn" onClick="downloadPDF()">
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               <span class="btn-text">Download as PDF</span>
             </button>
@@ -223,17 +225,6 @@ table.center {
 
 <script>
 
-
-
-    function arrayColumn(arr, n) {
-      return arr.map(x=> x[n]);
-    }
-    function max(num){
-    return Math.max.apply(null, num);
-    }
-    function min(num){
-    return Math.min.apply(null, num);
-    }
     var n_traces=DataArray[0].length-2;
     var data=[];
     var data2=[];
@@ -251,8 +242,6 @@ table.center {
     var point;
     var average_point;
     var sign;
-    const average = arr => arr.reduce( ( p, c ) => parseFloat(p) + parseFloat(c), 0 ) / arr.length;
-
     var tracen;
     var trace_peak;
     var col_average=[];
@@ -691,33 +680,8 @@ table.center {
       Array_of_Peaks.push(maxpoint);}
       Array_of_ypeaks.push(maxpoint[1]);
       Array_of_xpeaks.push(maxpoint[0]);
-
-
     });
     };
-
-    //std
-    function std(values){
-    var avg = average(values);
-    var n=values.length;
-    var squareDiffs = values.map(function(value){
-    var diff = parseFloat(value) - avg;
-    var sqrDiff = diff * diff;
-    return sqrDiff;
-    });
-    var sum = squareDiffs.reduce(function(a, b){
-          return a + b;
-      }, 0);
-    if (n==1){var avgSquareDiff=0}
-    else {  var avgSquareDiff = sum/(n-1);};
-    var stdDev = Math.sqrt(avgSquareDiff);
-    return stdDev;
-    };
-
-
-
-
-
 
     //Plot configuration
     var options = {
@@ -1163,26 +1127,6 @@ table.center {
         equation2+=String.raw`\quad K_{m2} = `+Km2.toFixed(2)+'±'+Km2_u.toFixed(2)+String.raw` \ `+yunit +String.raw`$$`;
 
         document.getElementById('equation2').innerHTML += equation2;
-
-
-
-
-
-
-
-    function downloadPDF2(){
-      var element = document.getElementById('wrapper');
-      var opt = {
-      margin:       0,
-      filename:     'myfile.pdf',
-      image:        { type: 'png', quality: 1},
-      pagebreak: { mode: 'avoid-all' },
-      html2canvas:  { scale: 1 , backgroundColor:'#eff4f7'},
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-    };
 
 
 

@@ -193,8 +193,7 @@ calibration and allow the use of electrodes of different sizes and characteristi
 </form>
 </ul>
 </div>
-<?php include("ProgressBar.php");?>
-<?php include("parseFile.php");?>
+
 </div>
 
 <div class="w3-row-padding">
@@ -212,6 +211,24 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <img src="Images/vertip.svg" alt="CFM sketch of diameter and length" style="width:400px;height:400px;border:0;" onclick="onClick(this)">
 </div>
 
+
+<div class="w3-row-padding" id="fscav">
+<div class="w3-half w3-margin-bottom w3-center">
+<ul class="w3-ul w3-light-grey">
+<form id="upload_form" enctype="multipart/form-data" method="post">
+<li class="w3-indigo w3-xlarge w3-padding-32">FSCAV Calibration</li>
+<li class="w3-padding-16"> <input type="file" name="file3" id="file3" onchange="uploadFile('file3','progressBar3','status3')"><br> </li>
+<li class="w3-padding-16">  <progress id="progressBar3" value="0" max="100" style="width:200px;"></progress><p id="status3"> Upload a compatible file before opening the dashboard.</p> </li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="VisualWindow(DataArray)"> Open Application</a> </li>
+<li class="w3-padding-16"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
+</form>
+</ul>
+</div>
+
+</div>
+
+<?php include("ProgressBar.php");?>
+<?php include("parseFile.php");?>
 </div>
 
 <div class="w3-container" id="references" style="margin-top:75px">
@@ -315,7 +332,7 @@ var myVisualWindow = window.open(encodeURI('FSCVisualTransient.php'), "");
 myVisualWindow.DataArray=DataArray;
 }
 if(plot_selected=="CVPlot"){
-var myVisualWindow = window.open(encodeURI('FSCVisualiVPLot.php'), "");
+var myVisualWindow = window.open(encodeURI('FSCVisualiVPlot.php'), "");
 myVisualWindow.DataArray=DataArray;
 }
 }
@@ -339,6 +356,10 @@ myVisualWindow2.DataArray=DataArray;
 myVisualWindow2.startAUC=startAUC;
 myVisualWindow2.endAUC=endAUC;
 }  else {document.getElementById("deconvolution_message").innerHTML = "Only positive integers and decimals are allowed.";}
+}
+function FSCAVWindow(DataArray){
+var myVisualWindow = window.open(encodeURI('FSCAVCalibration.php'), "");
+myVisualWindow.DataArray=DataArray;
 }
 function surf_calculation() {
 var h = parseFloat(document.getElementById("n1").value);
