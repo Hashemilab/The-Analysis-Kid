@@ -14,10 +14,10 @@
     <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
     <script src="JavaScriptPackages/tf.min.js"></script>
     <script src="JavaScriptPackages/sweetalert.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="JavaScriptPackages/plotly-latest.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  src="JavaScriptPackages/tex-chtml.js">
 </script>
 
     <title> i-V Dashboard</title>

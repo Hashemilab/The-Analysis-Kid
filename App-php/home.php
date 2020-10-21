@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="Styling/w3.css">
 <link rel="stylesheet" href="Styling/progressbar.css">
-<script src="https://kit.fontawesome.com/828d573e3a.js"></script>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
 <script type="text/javascript" src="JavaScriptPackages/shim.min.js"></script>
 <script lang="javascript" src="JavaScriptPackages/xlsx.full.min.js"></script>
 <script lang="javascript" src="JavaScriptPackages/jszip.js"></script>

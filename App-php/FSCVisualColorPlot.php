@@ -8,10 +8,10 @@
     <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
     <script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
     <script src="JavaScriptPackages/sweetalert.min.js"></script>
-    <script src="https://kit.fontawesome.com/828d573e3a.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
+    <script src="JavaScriptPackages/plotly-latest.min.js"></script>
     <script type="text/javascript" id="MathJax-script" async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+      src="JavaScriptPackages/tex-chtml.js">
     </script>
 
     <title>FSCV Color Plot Dashboard</title>

@@ -2,17 +2,15 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Documentation</title>
 <meta charset="UTF-8">
+<title>Documentation</title>
 <link rel="stylesheet" href="Styling/w3.css">
-<script src='https://cdn.plot.ly/plotly-latest.min.js'>
-<script src="https://kit.fontawesome.com/828d573e3a.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="https://kit.fontawesome.com/828d573e3a.js"></script>
+<script src='JavaScriptPackages/plotly-latest.min.js'></script>
+<script src="JavaScriptPackages/apexcharts.js"></script>
+<script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
 <script type="text/javascript" src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 <script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  src="JavaScriptPackages/tex-chtml.js">
 </script>
 <style>
 
