@@ -13,14 +13,13 @@
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/axios.min.js"></script>
-<script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script type="text/javascript" id="MathJax-script" async
 src="JavaScriptPackages/tex-chtml.js">
 </script>
 
 <title> i-V Dashboard</title>
-<link rel="shortcut icon" href="cv.png" />
+<link rel="shortcut icon" href="Images/cv.png" />
 <link
 rel="stylesheet"
 href="Styling/bootstrap.min.css"
@@ -950,7 +949,7 @@ Plotly.addTraces("Vgraph", {y: [Vcol[pindex]], x:[time_array[pindex]], name:'E',
 
 };
 </script>
-
+<script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 </div>
 
 </html>

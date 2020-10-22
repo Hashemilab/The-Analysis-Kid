@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="Styling/popup.css">
 <script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
-<link rel="shortcut icon" href="cv.png"/>
+<link rel="shortcut icon" href="Images/cv.png"/>
 <br>
 <br>
 <div id="contact">

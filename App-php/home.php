@@ -45,7 +45,7 @@ $(".se-pre-con").fadeOut("slow");
 </script>
 
 <head>
-<link rel="shortcut icon" href="cv.png" />
+<link rel="shortcut icon" href="Images/cv.png"/>
 </head>
 
 <body>

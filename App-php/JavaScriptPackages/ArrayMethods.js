@@ -34,6 +34,14 @@ min = arr[i];
 }}
 return minIndex;
 };
+//Max and min functions for large arrays where min() and max() do not work.
+function getMax(arr) {
+return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
+}
+function getMin(arr) {
+return arr.reduce((min, v) => min <= v ? min : v, Infinity);
+}
+
 // Short form to calculate average.
 const average=arr=>arr.reduce((p,c)=>parseFloat(p)+parseFloat(c),0)/arr.length;
 //Standard deviation of the array.
@@ -65,3 +73,15 @@ area += 0.5 * (arr[i] + arr[i-1]) * (1/frequency);
 };
 return area;
 };
+// Normalize value to 0-1 having a min and max value of the array.
+function normalize(val0, max0, min0) { return (val0 - min0) / (max0 - min0);};
+// Denormalize value having a min and max value of the array.
+function denormalize(val0, max0, min0) { return (val0*(max0-min0))+min0;};
+// Convert linear array to 2D array given the number of columns.
+function chunk(arr, size) {
+var chunkedArray = [];
+while ( arr.length > 0 ) {
+chunkedArray.push( arr.splice( 0, size ) );
+}
+return chunkedArray;
+}

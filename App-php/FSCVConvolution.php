@@ -13,13 +13,12 @@
 <script src="JavaScriptPackages/axios.min.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
-<script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 <script type="text/javascript" id="MathJax-script" async
 src="JavaScriptPackages/tex-chtml.js">
 </script>
 
 <title>Kinetic Calibration Dashboard</title>
-<link rel="shortcut icon" href="cv.png" />
+<link rel="shortcut icon" href="Images/cv.png" />
 
 
 <link
@@ -415,7 +414,7 @@ Plotly.purge('transientAUC');
 Plotly.newPlot('transientAUC', dataAUC, layoutAUC, configAUC);
 }
 </script>
-
+<script src="JavaScriptPackages/exportTabletoCSV.js"></script>
 </div>
 
 </body>

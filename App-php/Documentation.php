@@ -122,7 +122,7 @@ input[type=number] {
   .tg .tg-kt43{background-color:#fffc9e;font-weight:bold;text-align:center;vertical-align:top}
   .tg .tg-hafo{background-color:#fffc9e;text-align:center;vertical-align:top}
   </style>
-<link rel="shortcut icon" href="cv.png"/>
+<link rel="shortcut icon" href="Images/cv.png"/>
 
 </head>
 <body>
