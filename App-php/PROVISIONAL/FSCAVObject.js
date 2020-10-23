@@ -2,10 +2,12 @@
 function FSCAV_DATA(data, neurotransmitter, xunits, yunits, frequency) {
   this.data = data;
   this.neurotransmitter = neurotransmitter;
+  this.length = data.length;
   this.xunits = xunits;
   this.yunits = yunits;
   this.frequency = frequency;
-  this.greeting = function() {
-    alert('Hi! I\'m ' + this.name + '.');
+  this.Calibrate = function() {
   };
-}
+  this.max = function() {};
+  this.min = function() {};
+};
