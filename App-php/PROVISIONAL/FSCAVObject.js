@@ -6,8 +6,6 @@ function FSCAV_DATA(data, neurotransmitter, xunits, yunits, frequency) {
   this.xunits = xunits;
   this.yunits = yunits;
   this.frequency = frequency;
-  this.Calibrate = function() {
-  };
-  this.max = function() {};
-  this.min = function() {};
+
+
 };
