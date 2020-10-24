@@ -6,6 +6,7 @@
 </body>
 <script>
 function makeTrace(i) {
+var z;
     return {
         y: Array.apply(null, Array(10)).map(() => Math.random()),
         line: {
