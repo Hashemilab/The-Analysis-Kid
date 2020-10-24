@@ -5,8 +5,8 @@
 <div id="graph"></div>
 </body>
 <script>
+// Test of fetching is working
 function makeTrace(i) {
-var z;
     return {
         y: Array.apply(null, Array(10)).map(() => Math.random()),
         line: {
