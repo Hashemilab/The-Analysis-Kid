@@ -1,8 +1,9 @@
 
 <script>
-// Add listeners to read the file.
+// Add listeners to read the files.
 document.getElementById('file1').addEventListener('change', readFileAsString)
 document.getElementById('file2').addEventListener('change', readFileAsString)
+document.getElementById('file3').addEventListener('change', readFileAsString)
 function readFileAsString() {
 var files = this.files;
 var re = /(?:\.([^.]+))?$/;

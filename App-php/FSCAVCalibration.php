@@ -1,11 +1,49 @@
 <head>
 <script src="JavaScriptPackages/plotly-latest.min.js"></script>
+<script src="JavaScriptPackages/ArrayMethods.js"></script>
+<script src="JavaScriptPackages/DashboardMethods.js"></script>
+<script src = "OOP/FSCAVObject.js"></script>
 </head>
 <body>
 <div id="graph"></div>
 </body>
 <script>
-// Test of fetching is working
+// Create FSCAV Object.
+let Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function makeTrace(i) {
     return {
         y: Array.apply(null, Array(10)).map(() => Math.random()),

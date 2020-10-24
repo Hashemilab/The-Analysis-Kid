@@ -25,6 +25,11 @@ border: 0px solid black;
 border-radius: 6px;
 background-color: #F0F0F0;
 }
+input[type=text] {
+border: 0px solid black;
+border-radius: 6px;
+background-color: #F0F0F0;
+}
 .se-pre-con {
 position: fixed;
 left: 0px;
@@ -38,6 +43,7 @@ background: url("Images/loading.gif") center no-repeat #eff4f7;
 height:1px;
 }
 </style>
+
 <script>
 $(window).on('load', function () {
 $(".se-pre-con").fadeOut("slow");
@@ -188,7 +194,7 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <p style="margin:1px;"><label for="n7">&#8226; End sample AUC: &nbsp;&nbsp; </label>
 <input type="number" step="1" name="n7" id="n7" style="width: 70px;" value="<?php echo htmlspecialchars($_POST['n4']);?>"/></p>
 </li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="ConvWindow(DataArray)"> Open Dashboard</a></li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow(DataArray)"> Open Dashboard</a></li>
 <li class="w3-padding-16" id="deconvolution_message"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
 </form>
 </ul>
@@ -215,18 +221,33 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <div class="w3-row-padding" id="fscav">
 <div class="w3-half w3-margin-bottom w3-center">
 <ul class="w3-ul w3-light-grey">
-<form id="upload_form" enctype="multipart/form-data" method="post">
+<form id="upload_form3" enctype="multipart/form-data" method="post">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCAV Calibration</li>
 <li class="w3-padding-16"> <input type="file" name="file3" id="file3" onchange="uploadFile('file3','progressBar3','status3')"><br> </li>
-<li class="w3-padding-16">  <progress id="progressBar3" value="0" max="100" style="width:200px;"></progress><p id="status3"> Upload a compatible file before opening the dashboard.</p> </li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="VisualWindow(DataArray)"> Open Application</a> </li>
+<li class="w3-padding-16">  <progress id="progressBar3" value="0" max="100" style="width:200px;"></progress><p id="status3"> Upload a compatible file before opening the application.</p> </li>
+<li class="w3-padding-16"> <label for="FSCAV_neurotransmitter"><input type="radio" id="FSCAV_neurotransmitter" name="FSCAV_neurotransmitter" value="5-HT" checked> 5-HT</label> </li>
+<li class="w3-padding-16">
+<p style="margin:1px;"><label for="n8">&#8226; Sampling Frequency (Hz): &nbsp;&nbsp; </label>
+<input type="number" step="1" name="n8" id="n8" style="width: 70px;" value=500000 /> Hz </p>
+<p style="margin:1px;"><label for="n9">&#8226; Voltage Units : &nbsp;&nbsp; </label>
+<input type="text" name="n9" id="n9" style="width: 40px;" value="V" />
+<label for="n10">&#8226; Current Units : &nbsp;&nbsp; </label>
+<input type="text" name="n10" id="n10" style="width: 40px;" value="nA" /> </p>
+</li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow(DataArray)"> Open Application</a> </li>
 <li class="w3-padding-16"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
 </form>
 </ul>
 </div>
 
+<div class="w3-half w3-margin-bottom w3-center">
+<ul class="w3-ul w3-light-grey">
+<li class="w3-indigo w3-xlarge w3-padding-32">Links</li>
+<li class="w3-padding-16"> Link to Michaelis Menten fitting application developed by Solene Dietsch.</li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" href="https://hashemilabapp.herokuapp.com/"  target="_blank"> Open Application</a></li>
 </div>
 
+</div>
 <?php include("ProgressBar.php");?>
 <?php include("parseFile.php");?>
 </div>
@@ -284,8 +305,6 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <a href="https://teams.microsoft.com/"><img src="https://img.icons8.com/ios-filled/50/000000/microsoft-team-2019.png" width="25" height="25"/></a>
 
 </p>
-<p class="w3-small">Webpage developed by Sergio Mena</p>
-<p class="w3-small">MSc Biomedical Engineering Student</p>
 <p class="w3-small"><a href="https://www.hashemilab.com/">The Hashemi Lab</a></p>
 <p class="w3-small">Imperial College London</p>
 <p class="w3-small">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
@@ -357,9 +376,22 @@ myVisualWindow2.startAUC=startAUC;
 myVisualWindow2.endAUC=endAUC;
 }  else {document.getElementById("deconvolution_message").innerHTML = "Only positive integers and decimals are allowed.";}
 }
+//Callback for the FSCAV Application.
 function FSCAVWindow(DataArray){
-var myVisualWindow = window.open(encodeURI('FSCAVCalibration.php'), "");
-myVisualWindow.DataArray=DataArray;
+var list_of_neurotransmitters = document.getElementsByName('FSCAV_neurotransmitter');
+var frequency = document.getElementById("n8").value;
+var v_units = document.getElementById("n9").value;
+var c_units = document.getElementById("n10").value;
+for(i = 0; i < list_of_neurotransmitters.length; i++) {
+if(list_of_neurotransmitters[i].checked)
+neurotransmitter = list_of_neurotransmitters[i].value;
+};
+var myVisualWindow3 = window.open(encodeURI('FSCAVCalibration.php'), "");
+myVisualWindow3.DataArray = DataArray;
+myVisualWindow3.neurotransmitter = neurotransmitter;
+myVisualWindow3.frequency = frequency;
+myVisualWindow3.v_units = v_units;
+myVisualWindow3.c_units = c_units;
 }
 function surf_calculation() {
 var h = parseFloat(document.getElementById("n1").value);
