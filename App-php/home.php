@@ -194,7 +194,7 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <p style="margin:1px;"><label for="n7">&#8226; End sample AUC: &nbsp;&nbsp; </label>
 <input type="number" step="1" name="n7" id="n7" style="width: 70px;" value="<?php echo htmlspecialchars($_POST['n4']);?>"/></p>
 </li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow(DataArray)"> Open Dashboard</a></li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="ConvWindow(DataArray)"> Open Dashboard</a></li>
 <li class="w3-padding-16" id="deconvolution_message"> Documentation on file format, algorithms and type of plot can be found <a href ="Documentation.php" target="_blank">here</a>.</li>
 </form>
 </ul>

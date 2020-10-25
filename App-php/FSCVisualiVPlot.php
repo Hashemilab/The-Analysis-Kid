@@ -39,82 +39,14 @@ rel="stylesheet"
 
 <link rel="stylesheet" href="Styling/styles.css" />
 <style>
-.se-pre-con {
-position: fixed;
-left: 0px;
-top: 0px;
-width: 100%;
-height: 100%;
-z-index: 9999;
-background: url("Images/loading.gif") center no-repeat #eff4f7;
-}
-
-.header {
-padding: 5px;
-text-align: center;
-background: #3f51b5;
-color: white;
-font-size: 16px;
-}
-.footdash{ text-align: center;  color: #3f51b5;}
-.equation{
-font-size: 12px;
-}
-
 table{
 width:100%;
 height:80px;
 border:1.5px solid black;
 font-size: 12px;
 }
-th {
-background: #3f51b5;
-height: 40px;
-font-weight: bold;
-color: white;
-border: 1.5px solid black;
-text-align: center;
-}
-td {
-border: 1.5px solid black;
-color: black;
-text-align:center;
-}
-table.center {
-margin-left:auto;
-margin-right:auto;
-}
 </style>
-<style>
-.notepad {
-width: 80%;
-max-width: 600px;
-height: 180px;
-box-shadow: 10px 10px 40px rgba(black, .15);
-border-radius: 0 0 10px 10px;
-overflow: hidden;
-resize: none;
-}
 
-.paper {
-width: 100%;
-height: 180px;
-min-height: 60vh;
-padding: 20px 20px;
-font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
-line-height: 32px;
-outline: 0;
-font-size: 14px;
-color: black;
-resize: none;
-}
-
-.table-hover thead tr:hover th, .table-hover tbody tr:hover td {
-background-color: #eceef8;
-font-weight: bold;
-}
-
-</style>
 <script>
 $(window).on('load', function () {
 $(".se-pre-con").fadeOut("slow");

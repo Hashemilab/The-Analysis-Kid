@@ -12,8 +12,9 @@
 <head>
 <title>FSCAV Calibration</title>
 <link rel="shortcut icon" href="Images/cv.png"/>
-<link type="text/css" rel="stylesheet"href="Styling/styles.css"/>
-<link rel="stylesheet" href="Styling/dummy.css"/>
+<link type="text/css" rel="stylesheet" href="Styling/styles.css"/>
+<link rel="stylesheet" href="Styling/bootstrap.min.css"/>
+<link rel="stylesheet" href="Styling/buttons.css"/>
 </head>
 
 <script>
@@ -27,11 +28,38 @@ $(".se-pre-con").fadeOut("slow");
 <div class="header">
 <h1>FSCAV Calibration</h1>
 </div>
+<br>
+<div style = "text-align: center">
+<label id="slider_label" for="plot_slider">1</label>
+</div>
+<div style = "text-align: center">
+<button>
+<a id="previous_button" onclick="previous_pushed()" >← Prev.</a>
+</button>
+<input type="range" class="custom-range w-25" id="plot_slider" min="1" max="10" value="1" step = "1" onchange="slider_changed()">
+<button>
+<a id="next_button" onclick="next_pushed()">Next →</a>
+</button>
+</div>
+
 <div id="loading" class="se-pre-con"></div>
 <div id="graph"></div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </body>
-
+<script>
+//Buttons callbacks.
+function previous_pushed(){
+document.getElementById('plot_slider').stepDown();
+slider_changed();
+};
+function next_pushed(){
+document.getElementById('plot_slider').stepUp();
+slider_changed();
+};
+function slider_changed(){
+$("#slider_label").html($('#plot_slider').val());
+};
+</script>
 <script>
 // Create FSCAV Object.
 let Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);

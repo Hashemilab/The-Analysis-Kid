@@ -41,59 +41,7 @@ rel="stylesheet"
 />
 
 <link rel="stylesheet" href="Styling/styles.css" />
-<style>
-input[type='range'] {
-vertical-align: middle;
-}
-input[type='radio'] {
-vertical-align: -1px;
-}
-.se-pre-con {
 
-position: fixed;
-left: 0px;
-top: 0px;
-width: 100%;
-height: 100%;
-z-index: 9999;
-background: url("Images/loading.gif") center no-repeat #eff4f7;
-}
-.footdash{ text-align: center;  color: #3f51b5;}
-.header {
-padding: 5px;
-text-align: center;
-background: #3f51b5;
-color: white;
-font-size: 16px;
-}
-.paper {
-width: 100%;
-height: 180px;
-min-height: 60vh;
-padding: 20px 20px;
-font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
-line-height: 32px;
-outline: 0;
-font-size: 14px;
-color: black;
-
-resize: none;
-}
-.notepad {
-width: 80%;
-max-width: 600px;
-height: 180px;
-box-shadow: 10px 10px 40px rgba(black, .15);
-border-radius: 0 0 10px 10px;
-overflow: hidden;
-resize: none;
-
-}
-
-
-
-
-</style>
 <style>
 table{
 width:100%;
