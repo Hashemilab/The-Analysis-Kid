@@ -8,6 +8,7 @@
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
+<script src="JavaScriptPackages/sweetalert.min.js"></script>
 <script src = "OOP/FSCAVObject.js"></script>
 <head>
 <title>FSCAV Calibration</title>
@@ -29,8 +30,11 @@ $(".se-pre-con").fadeOut("slow");
 <h1>FSCAV Calibration</h1>
 </div>
 <br>
-<div style = "text-align: center">
-<label id="slider_label" for="plot_slider">1</label>
+<div id="loading" class="se-pre-con"></div>
+
+
+<div class = "center" style = "margin: auto; width:60%;">
+<div id="graph"class = "center"></div>
 </div>
 <div style = "text-align: center">
 <button>
@@ -41,11 +45,14 @@ $(".se-pre-con").fadeOut("slow");
 <a id="next_button" onclick="next_pushed()">Next →</a>
 </button>
 </div>
+<div style = "text-align: center">
+<label id="slider_label" for="plot_slider">1</label>
+</div>
 
-<div id="loading" class="se-pre-con"></div>
-<div id="graph"></div>
+<div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
-</body>
+</div>
+
 <script>
 //Buttons callbacks.
 function previous_pushed(){
@@ -57,97 +64,29 @@ document.getElementById('plot_slider').stepUp();
 slider_changed();
 };
 function slider_changed(){
-$("#slider_label").html($('#plot_slider').val());
+graph_index = $('#plot_slider').val();
+$("#slider_label").html(graph_index);
+Data.plot_current_time("graph", graph_index-1);
 };
 </script>
 <script>
 // Create FSCAV Object.
-let Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function makeTrace(i) {
-    return {
-        y: Array.apply(null, Array(10)).map(() => Math.random()),
-        line: {
-            shape: 'spline' ,
-            color: 'red'
-        },
-        visible: i === 0,
-        name: 'Data set ' + i,
-
-    };
+var Data;
+var graph_index = 0;
+try {
+Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
 }
-
-Plotly.plot('graph', [0, 1, 2, 3].map(makeTrace), {
-    updatemenus: [{
-        y: 0.8,
-        yanchor: 'top',
-        buttons: [{
-            method: 'restyle',
-            args: ['line.color', 'red'],
-            label: 'red'
-        }, {
-            method: 'restyle',
-            args: ['line.color', 'blue'],
-            label: 'blue'
-        }, {
-            method: 'restyle',
-            args: ['line.color', 'green'],
-            label: 'green'
-        }]
-    }, {
-        y: 1,
-        yanchor: 'top',
-        buttons: [{
-            method: 'restyle',
-            args: ['visible', [true, false, false, false]],
-            label: 'Data set 0'
-        }, {
-            method: 'restyle',
-            args: ['visible', [false, true, false, false]],
-            label: 'Data set 1'
-        }, {
-            method: 'restyle',
-            args: ['visible', [false, false, true, false]],
-            label: 'Data set 2'
-        }, {
-            method: 'restyle',
-            args: ['visible', [false, false, false, true]],
-            label: 'Data set 3'
-        }]
-    }],
-});
+catch {
+Swal.fire({
+icon: 'error',
+title: "Data Error",
+text: "The uploaded data was not succesfully processed. Please make sure your upload follows the description given in the documentation."
+}).then((result => window.close()));
+};
+// Determine number of signals.
+document.getElementById('plot_slider').max = Data.number_of_signals;
+// Plot first cyclic voltammogram.
+Data.plot_current_time("graph", graph_index);
 </script>
+</body>
 </html>

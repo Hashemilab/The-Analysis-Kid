@@ -26,7 +26,6 @@ function progressHandler(progressBarID, statusID) {
 
 function completeHandler(progressBarID, statusID) {
   _(statusID).innerHTML = event.target.responseText;
-  _(progressBarID).value = 0; //wil clear progress bar after successful uploa
 }
 
 function errorHandler(progressBarID, statusID) {

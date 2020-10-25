@@ -85,3 +85,18 @@ chunkedArray.push( arr.splice( 0, size ) );
 }
 return chunkedArray;
 }
+// Function that generates array (similar to numpy.linspace).
+function makeArr(startValue, stopValue, cardinality) {
+var arr = [];
+var step = (stopValue - startValue) / (cardinality - 1);
+for (var i = 0; i < cardinality; i++) {
+arr.push(startValue + (step * i));
+}
+return arr;
+}
+//Calculate transpose.
+function transpose(a) {
+return Object.keys(a[0]).map(function(c) {
+return a.map(function(r) { return r[c];});
+});
+}
