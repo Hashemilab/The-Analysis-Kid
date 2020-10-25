@@ -2,8 +2,30 @@
 body {
   background-color: #eff4f7;
   color: #777;
-  font-family: 'Titillium Web', Arial, Helvetica, sans-serif
+  font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
 }
+
+.content-area {
+  max-width: 1070px;
+  margin: 0 auto;
+}
+.se-pre-con {
+position: fixed;
+left: 0px;
+top: 0px;
+width: 100%;
+height: 100%;
+z-index: 9999;
+background: url("Images/loading.gif") center no-repeat #eff4f7;
+}
+.header {
+padding: 5px;
+text-align: center;
+background: #3f51b5;
+color: white;
+font-size: 16px;
+}
+.footdash{ text-align: center;  color: #3f51b5;}
 html {
    background: #eff4f7;
 }
@@ -12,11 +34,6 @@ h1, h2, h3, h4, h5, h6, strong {
   font-weight: 600;
 }
 
-
-.content-area {
-  max-width: 1070px;
-  margin: 0 auto;
-}
 
 #topnav {
   background: #37474f;
@@ -248,4 +265,5 @@ h1, h2, h3, h4, h5, h6, strong {
 #fusionexport-btn[disabled] .btn-text {
   display: none;
 }
+
 /* fusionexport btn CSS START */

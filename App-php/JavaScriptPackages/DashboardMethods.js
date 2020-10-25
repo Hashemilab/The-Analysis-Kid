@@ -1,4 +1,4 @@
-// Download the wrapper of the dashboard as pdf. 
+// Download the wrapper of the dashboard as pdf.
 function downloadPDF(){
 var element = document.getElementById('wrapper');
 var opt = {

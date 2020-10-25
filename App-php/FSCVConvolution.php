@@ -34,10 +34,6 @@ href="Styling/buttons.css"
 rel="stylesheet"
 href="Styling/google-css.css"
 />
-<link
-href="Styling/google-css.css"
-rel="stylesheet"
-/>
 
 <link rel="stylesheet" href="Styling/styles.css" />
 <style>

@@ -1,12 +1,37 @@
-<head>
+<!DOCTYPE html>
+<html lang="en">
+<title>FSCAV Calibration</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script src="JavaScriptPackages/plotly-latest.min.js"></script>
+<script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src = "OOP/FSCAVObject.js"></script>
+<head>
+<title>FSCAV Calibration</title>
+<link rel="shortcut icon" href="Images/cv.png"/>
+<link type="text/css" rel="stylesheet"href="Styling/styles.css"/>
+<link rel="stylesheet" href="Styling/dummy.css"/>
 </head>
+
+<script>
+// Fading out of loading icon in applications.
+$(window).on('load', function () {
+$(".se-pre-con").fadeOut("slow");
+});
+</script>
+
 <body>
+<div class="header">
+<h1>FSCAV Calibration</h1>
+</div>
+<div id="loading" class="se-pre-con"></div>
 <div id="graph"></div>
+<p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </body>
+
 <script>
 // Create FSCAV Object.
 let Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
@@ -97,3 +122,4 @@ Plotly.plot('graph', [0, 1, 2, 3].map(makeTrace), {
     }],
 });
 </script>
+</html>
