@@ -33,6 +33,7 @@ yaxis:{
 title: this.current.name+' ('+this.current.units+')'
 }
 };
+
 layout.title = {
 text: 'Cyclic Voltammogram of '+this.current.tags[index],
 font: {
@@ -62,6 +63,11 @@ scale: 1
 }};
 // Plot FSCAV data.
 Plotly.newPlot(div, graph_data, layout, config);
+};
+this.get_integration_points = function(){
+
+
+
 }
 };
 // Class for Voltage data within FSCAV.
