@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>FSCV Datalab</title>
+<title>Analysis Kid</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="Styling/w3.css">
@@ -80,7 +80,7 @@ $(".se-pre-con").fadeOut("slow");
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-indigo w3-xlarge w3-padding">
 <a href="javascript:void(0)" class="w3-button w3-indigo w3-margin-right" onclick="w3_open()">☰</a>
-<span>FSCV Datalab</span>
+<span>Analysis Kid</span>
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
@@ -91,10 +91,10 @@ $(".se-pre-con").fadeOut("slow");
 
 <!-- Header -->
 <div class="w3-container" style="margin-top:80px" id="about">
-<h1 href="#top" class="w3-jumbo"><b>FSCV Datalab</b></h1>
+<h1 href="#top" class="w3-jumbo"><b>Analysis Kid</b></h1>
 <h1 class="w3-xxxlarge w3-text-indigo"><b>About.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-<p  align=”justify”> FSCV Datalab is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
+<p  align=”justify”> Analysis Kid is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
 vitro and in vivo. This is achieved by providing a series of open-source and user-friendly dashboards with automatic algorithms that analise FSCV neurochemical data both qualitatively and quantitatively.
 The general description of the implemented dashboards at the time of writing can be found below. Extensive information of the algorithms and technical requirements for each of the dashboards can be found in the documentation <a href ="Documentation.php" target="_blank">here</a>.
 <p  align=”justify”>The web application is currently in development and any suggestions, bugs or errors will be welcomed. Error handling is also in development and the application might be irresponsive to specific errors.
@@ -124,7 +124,7 @@ that identify the faradaic reaction. A pre-trained light-weight neural network m
 The features of the CV, together with the class probabilities calculated by the neural network can be exported by the user as a csv file.
 </p>
 <h2 class="w3-large w3-text-indigo"><b>Kinetic Calibration</b></h2>
-The traditional flow-cell analysis calibration approach to convert current traces to concentration oversimplifies the nature of the faradaic reaction taking place at the electrode surface. The kinetic calibration section of FSCV datalab allows the deconvolution
+The traditional flow-cell analysis calibration approach to convert current traces to concentration oversimplifies the nature of the faradaic reaction taking place at the electrode surface. The kinetic calibration section of Analysis Kid allows the deconvolution
 of mass transport from the estimation of the surface concentration of the neurotransmitter over time to obtain a more accurate concentration profile. The user is required to input the range of samples in the cyclic voltammograms that correspond to the oxidation of the neurotransmitter,
 as well as experimental kinetic parameters described in the <a href="Documentation.php">documentation</a> of the dashboard.
 <h2 class="w3-large w3-text-indigo"><b>Electrode Calibration</b></h2>
@@ -284,7 +284,7 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <p style="text-align: center"> I would also like to thank the whole online programming community of StackOverflow who have offered an invaluable technical help building this website and answered many of my toughest coding questions during lockdown.</p>
 <p style="text-align: center"> At last but not least, all my gratitude to my family, friends and my partner who have emotionally helped me to complete this project.</p>
 <h2 class="w3-large w3-text-indigo"><b>Software Acknowledgements.</b></h2>
-<p> FSCV Datalab may utilize the following copyrighted software or programming libraries and therefore acknowledged: </p>
+<p> Analysis Kid may utilize the following copyrighted software or programming libraries and therefore acknowledged: </p>
 <ul>
 <li><a href="https://plotly.com/">Plotly software package</a> in Javascript for the plotting of signals and interactive algorithms</li>
 <li><a href="https://apexcharts.com/">Apexcharts software package</a> in Javascript for the plotting of signals and interactive algorithms</li>
