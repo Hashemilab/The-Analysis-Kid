@@ -32,6 +32,13 @@ $(".se-pre-con").fadeOut("slow");
 <br>
 <div id="loading" class="se-pre-con"></div>
 
+<div style = "text-align: left; margin-left: 30px;">
+<b> Graph Selection: </b>
+<label class="switch">
+<input type="checkbox" id="graph_selection" name="graph_selection" value="graph_selection">
+<span class="slider round"></span>
+</label>
+</div>
 
 <div class = "center" style = "margin: auto; width:60%;">
 <div id="graph"class = "center"></div>
@@ -48,6 +55,8 @@ $(".se-pre-con").fadeOut("slow");
 <div style = "text-align: center">
 <label id="slider_label" for="plot_slider">1</label>
 </div>
+
+
 
 <div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
@@ -72,7 +81,7 @@ Data.plot_current_time("graph", graph_index-1);
 <script>
 // Create FSCAV Object.
 var Data;
-var graph_index = 0;
+var graph_index = 1;
 try {
 Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
 }
@@ -86,7 +95,11 @@ text: "The uploaded data was not succesfully processed. Please make sure your up
 // Determine number of signals.
 document.getElementById('plot_slider').max = Data.number_of_signals;
 // Plot first cyclic voltammogram.
-Data.plot_current_time("graph", graph_index);
+Data.plot_current_time("graph", graph_index-1);
+// Assign callback to the plot.
+document.getElementById('graph').on('plotly_click', function(data){
+if(document.getElementById('graph_selection').checked) {}
+});
 </script>
 </body>
 </html>

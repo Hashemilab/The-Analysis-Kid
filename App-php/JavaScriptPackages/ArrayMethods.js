@@ -34,6 +34,24 @@ min = arr[i];
 }}
 return minIndex;
 };
+// Array of local minima considering 4 neighbours.
+function localminima(arr){
+mins = []; mins_index = [];
+for (var i = 2; i < arr.length - 2; ++i) {
+if (arr[i-1] > arr[i] && arr[i-2] > arr[i] && arr[i] < arr[i+1] && arr[i] < arr[i+2]) {
+mins.push(arr[i]); mins_index.push(i);
+}};
+return [mins_index, mins];
+}
+//Array of local maxima considering 4 neighbours.
+function localmaxima(arr){
+maxes = []; maxes_index = [];
+for (var i = 1; i < arr.length - 1; ++i) {
+if (arr[i-1] < arr[i] && arr[i-2] < arr[i] && arr[i] > arr[i+1] && arr[i] > arr[i+2]) {
+maxes.push(arr[i]); maxes_index.push(i);
+}};
+return [maxes_index, maxes];
+}
 //Max and min functions for large arrays where min() and max() do not work.
 function getMax(arr) {
 return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
