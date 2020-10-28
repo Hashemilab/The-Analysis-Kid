@@ -11,6 +11,17 @@ this.voltage = new FSCAV_VOLTAGE(data, v_units);
 this.current = new FSCAV_CURRENT(data, c_units, this.number_of_signals);
 //Create time features.
 this.time = new FSCAV_TIME(data, frequency);
+// Shoulder extremes and max point: first local maximum and first and second local minimums.
+this.max_index = uniform_array(this.number_of_signals, 0);
+this.min_index = uniform_array(this.number_of_signals, [0, 0]);
+this.max_value = uniform_array(this.number_of_signals, 0);
+this.auc = uniform_array(this.number_of_signals, 0);
+for (i = 0; i < this.number_of_signals; ++i){
+[this.max_index[i], this.max_value[i]] = localmaxima(this.current.array[i])[0];
+this.min_index[i] = localminima(this.current.array[i])[0].slice(0,2);
+this.auc[i] = trap_auc(this.current.array[i].slice(this.min_index[i][0], this.min_index[i][1]+1), frequency);
+};
+
 this.plot_current_time = function(div, index){
 // Define plotly objects for line and scatter points.
 let graph_data = [{
@@ -25,8 +36,8 @@ name: this.current.name
 }];
 
 let scatter_data_max = {
-y:[this.current.array[index][this.current.max_index[index]]],
-x:[this.time.array[this.current.max_index[index]]],
+y:[this.current.array[index][this.max_index[index]]],
+x:[this.time.array[this.max_index[index]]],
 name: 'Points',
 type: 'scatter',
 showlegend: false,
@@ -36,10 +47,10 @@ text:'Points'
 };
 
 let scatter_data_min = {
-y:[this.current.array[index][this.current.min_index[index][0]],
-this.current.array[index][this.current.min_index[index][1]]],
-x:[this.time.array[this.current.min_index[index][0]],
-this.time.array[this.current.min_index[index][1]]],
+y:[this.current.array[index][this.min_index[index][0]],
+this.current.array[index][this.min_index[index][1]]],
+x:[this.time.array[this.min_index[index][0]],
+this.time.array[this.min_index[index][1]]],
 name: 'Points',
 type: 'scatter',
 showlegend: false,
@@ -91,7 +102,28 @@ scale: 1
 Plotly.newPlot(div, graph_data, layout, config);
 Plotly.addTraces(div, scatter_data_max);
 Plotly.addTraces(div, scatter_data_min);
+// Assign callback when click to local function graph_click();
+document.getElementById(div).on('plotly_click', function(data){graph_clicked(data)});
 };
+//Change of minimum and maximum points by points clicked in the graph.
+this.change_points = function(index, pindex, type){
+if(type == "min1"){
+this.min_index[index][0] = pindex;
+} else if(type == "min2"){
+this.min_index[index][1] = pindex;
+} else {
+this.max_index[index] = pindex;
+}};
+// Recalculation of AUC and max values. 
+this.recalculate_auc_and_max = function(){
+for (i = 0; i < this.number_of_signals; ++i){
+this.max_value[i] = this.current.array[i][this.max_index[i]];
+this.auc[i] = trap_auc(this.current.array[i].slice(this.min_index[i][0], this.min_index[i][1]+1), frequency);
+};
+};
+this.get_concentration = function(){};
+this.plot_concentration = function(){};
+
 };
 
 // Class for Voltage data within FSCAV.
@@ -106,19 +138,6 @@ this.units =  c_units;
 this.name = 'Current';
 this.tags = data[0].slice(1);
 this.array = transpose(data.slice(1).map(x => x.slice(1)));
-// Shoulder extremes and max point: first local maximum and first and second local minimums.
-this.max_index = [];
-this.min_index = [];
-for (i = 0; i < number_of_signals ; ++i){
-try {
-this.max_index.push(localmaxima(this.array[i])[0][0]);
-this.min_index.push(localminima(this.array[i])[0].slice(0,2));
-}
-catch (e) {
-this.max_index.push(0);
-this.min_index.push([0,0]);
-};
-};
 };
 // Class for time data within FSCAV.
 function FSCAV_TIME(data, frequency) {

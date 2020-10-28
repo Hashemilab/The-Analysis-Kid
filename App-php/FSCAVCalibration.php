@@ -38,11 +38,31 @@ $(".se-pre-con").fadeOut("slow");
 <input type="checkbox" id="graph_selection" name="graph_selection" value="graph_selection">
 <span class="slider round"></span>
 </label>
+<span style="display:inline-block; width: 40px"></span>
+<button>
+<a id="recalculate_parameters_button" onclick="recalculate_button_pushed()" >Recalculate</a>
+</button>
+</div>
+<div style = "text-align: left; margin-left: 30px;">
+<button  class="graph_selection" style = "background-color:#3f51b5; color: white">
+<a id="min1" onclick="graph_selection_changed(this.id)">Min</a>
+</button>
+<button  class="graph_selection">
+<a id="max" onclick="graph_selection_changed(this.id)">Max</a>
+</button>
+<button class="graph_selection">
+<a id="min2" onclick="graph_selection_changed(this.id)" >Min</a>
+</button>
+</div>
+<div class = "center" style = " margin:auto; width:90%;">
+<div class = "center" style = "float:left; width:50%;">
+<div id="graph1" class = "center"></div>
+</div>
+<div class = "center" style = "float:right; width:50%;">
+<div id="graph2"class = "center"></div>
+</div>
 </div>
 
-<div class = "center" style = "margin: auto; width:60%;">
-<div id="graph"class = "center"></div>
-</div>
 <div style = "text-align: center">
 <button>
 <a id="previous_button" onclick="previous_pushed()" >← Prev.</a>
@@ -56,14 +76,20 @@ $(".se-pre-con").fadeOut("slow");
 <label id="slider_label" for="plot_slider">1</label>
 </div>
 
-
-
+<br>
 <div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </div>
 
 <script>
 //Buttons callbacks.
+//Change colors of graph selection buttons when clicking.
+$(document).on("click", '.graph_selection', function(){
+$('.graph_selection').css('background-color','');
+$('.graph_selection').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+});
 function previous_pushed(){
 document.getElementById('plot_slider').stepDown();
 slider_changed();
@@ -75,13 +101,29 @@ slider_changed();
 function slider_changed(){
 graph_index = $('#plot_slider').val();
 $("#slider_label").html(graph_index);
-Data.plot_current_time("graph", graph_index-1);
+Data.plot_current_time("graph1", graph_index - 1);
+};
+function graph_selection_changed(id){
+graph_selected_point = id;
+};
+function graph_clicked(evtObj){
+if(document.getElementById('graph_selection').checked) {
+if(evtObj.points.length != 0){
+// Get index of clicked point.
+let pindex = evtObj.points[0].pointIndex;
+// Assign clicked point.
+Data.change_points(graph_index-1, pindex, graph_selected_point);
+Data.plot_current_time("graph1", graph_index-1);
+}}};
+function recalculate_button_pushed(){
+Data.recalculate_auc_and_max();
 };
 </script>
 <script>
-// Create FSCAV Object.
+// Create FSCAV Object, plot the first graph and link callbacks. .
 var Data;
 var graph_index = 1;
+var graph_selected_point = "min1";
 try {
 Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
 }
@@ -95,11 +137,9 @@ text: "The uploaded data was not succesfully processed. Please make sure your up
 // Determine number of signals.
 document.getElementById('plot_slider').max = Data.number_of_signals;
 // Plot first cyclic voltammogram.
-Data.plot_current_time("graph", graph_index-1);
-// Assign callback to the plot.
-document.getElementById('graph').on('plotly_click', function(data){
-if(document.getElementById('graph_selection').checked) {}
-});
+Data.plot_current_time("graph1", graph_index-1);
+// Plot initial concentration-sample trace.
+Data.plot_current_time("graph2", graph_index-1);
 </script>
 </body>
 </html>

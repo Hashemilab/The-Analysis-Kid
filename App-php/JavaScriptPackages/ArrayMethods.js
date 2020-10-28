@@ -99,7 +99,7 @@ function denormalize(val0, max0, min0) { return (val0*(max0-min0))+min0;};
 function chunk(arr, size) {
 var chunkedArray = [];
 while ( arr.length > 0 ) {
-chunkedArray.push( arr.splice( 0, size ) );
+chunkedArray.push(arr.splice( 0, size ));
 }
 return chunkedArray;
 }
@@ -110,6 +110,11 @@ var step = (stopValue - startValue) / (cardinality - 1);
 for (var i = 0; i < cardinality; i++) {
 arr.push(startValue + (step * i));
 }
+return arr;
+}
+// Function that generates an array of zeros.
+function uniform_array(len, value) {
+let arr = new Array(len); for (let i=0; i<len; ++i) arr[i] = value;
 return arr;
 }
 //Calculate transpose.
