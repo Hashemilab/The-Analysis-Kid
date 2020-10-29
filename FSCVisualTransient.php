@@ -434,7 +434,7 @@ var Km2_u;
 
 
 function API_gradient(){
-var API_dir2="https://py-dot-neurodatalab.nw.r.appspot.com/gradient?signal="+signal_average+"&col1="+signal_time+"&sign="+sign+"&peak="+String(x_points[0]);
+var API_dir2="https://analysis-kid-python.herokuapp.com/gradient?signal="+signal_average+"&col1="+signal_time+"&sign="+sign+"&peak="+String(x_points[0]);
 var settings_API2 = {
 async: false,
 crossDomain: true,
@@ -558,7 +558,7 @@ period=String(parseFloat(col1[5])-parseFloat(col1[4]));
 if (Math.floor(total_sum*100)<Math.floor(0.0*100)){if (min_signal>max_signal){sign="negative"}}
 else {sign="positive"};
 
-API_dir="https://py-dot-neurodatalab.nw.r.appspot.com/peaks?"+"sign="+sign+"&signal="+signal+"&period="+period+"&ytype="+ytype;
+API_dir="https://analysis-kid-python.herokuapp.com/peaks?"+"sign="+sign+"&signal="+signal+"&period="+period+"&ytype="+ytype;
 settings_API = {
 async: false,
 crossDomain: true,
