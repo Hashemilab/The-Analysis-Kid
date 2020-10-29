@@ -246,8 +246,17 @@ calibration and allow the use of electrodes of different sizes and characteristi
 <li class="w3-padding-16"> Link to Michaelis Menten fitting application developed by Solene Dietsch.</li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" href="https://hashemilabapp.herokuapp.com/"  target="_blank"> Open Application</a></li>
 </div>
-
 </div>
+
+<div class="w3-row-padding" id="fscv_v2">
+<div class="w3-half w3-margin-bottom w3-center">
+<ul class="w3-ul w3-light-grey">
+<li class="w3-indigo w3-xlarge w3-padding-32">FSCV Visual v2</li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVWindow()"> Open Dashboard</a> </li>
+</ul>
+</div>
+</div>
+
 <?php include("ProgressBar.php");?>
 <?php include("parseFile.php");?>
 </div>
@@ -393,6 +402,11 @@ myVisualWindow3.frequency = frequency;
 myVisualWindow3.v_units = v_units;
 myVisualWindow3.c_units = c_units;
 }
+
+function FSCVWindow(){
+window.open(encodeURI('FSCVCalibration.php'), "");
+};
+
 function surf_calculation() {
 var h = parseFloat(document.getElementById("n1").value);
 var d = parseFloat(document.getElementById("n2").value);

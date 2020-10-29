@@ -26,13 +26,16 @@ function progressHandler(progressBarID, statusID) {
 
 function completeHandler(progressBarID, statusID) {
   _(statusID).innerHTML = event.target.responseText;
+  _(progressBarID).value = 0;
 }
 
 function errorHandler(progressBarID, statusID) {
   _(statusID).innerHTML = "Upload Failed";
+  _(progressBarID).value = 0;
 }
 
 function abortHandler(progressBarID, statusID) {
   _(statusID).innerHTML = "Upload Aborted";
+  _(progressBarID).value = 0;
 }
 </script>

@@ -9,7 +9,7 @@
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/sweetalert.min.js"></script>
-<script src = "OOP/FSCAVObject.js"></script>
+<script src = "OOP/FSCAVClass.js"></script>
 <head>
 <title>FSCAV Calibration</title>
 <link rel="shortcut icon" href="Images/cv.png"/>
@@ -44,14 +44,14 @@ $(".se-pre-con").fadeOut("slow");
 </button>
 </div>
 <div style = "text-align: left; margin-left: 30px;">
-<button  class="graph_selection" style = "background-color:#3f51b5; color: white">
-<a id="min1" onclick="graph_selection_changed(this.id)">Min</a>
+<button  id="min1" class="graph_selection" style = "background-color:#3f51b5; color: white">
+<a>Min</a>
 </button>
-<button  class="graph_selection">
-<a id="max" onclick="graph_selection_changed(this.id)">Max</a>
+<button id="max" class="graph_selection">
+<a>Max</a>
 </button>
-<button class="graph_selection">
-<a id="min2" onclick="graph_selection_changed(this.id)" >Min</a>
+<button  id="min2" class="graph_selection">
+<a id="min2">Min</a>
 </button>
 </div>
 <div class = "center" style = " margin:auto; width:90%;">
@@ -89,6 +89,7 @@ $('.graph_selection').css('background-color','');
 $('.graph_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
+graph_selection_changed(this.id);
 });
 function previous_pushed(){
 document.getElementById('plot_slider').stepDown();
@@ -125,7 +126,7 @@ var Data;
 var graph_index = 1;
 var graph_selected_point = "min1";
 try {
-Data = new FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
+Data = new HL_FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
 }
 catch {
 Swal.fire({

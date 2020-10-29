@@ -1,16 +1,16 @@
 // Class for uploaded FSCAV data.
-function FSCAV_DATA(data, neurotransmitter, v_units, c_units, frequency) {
+function HL_FSCAV_DATA(data, neurotransmitter, v_units, c_units, frequency) {
 this.frequency = frequency;
 this.rawdata = data;
 this.neurotransmitter = neurotransmitter;
 this.number_of_signals = data[0].length-1;
 this.number_of_points = data.length-1;
 // Create voltage features.
-this.voltage = new FSCAV_VOLTAGE(data, v_units);
+this.voltage = new HL_FSCAV_VOLTAGE(data, v_units);
 // Create current features.
-this.current = new FSCAV_CURRENT(data, c_units, this.number_of_signals);
+this.current = new HL_FSCAV_CURRENT(data, c_units, this.number_of_signals);
 //Create time features.
-this.time = new FSCAV_TIME(data, frequency);
+this.time = new HL_FSCAV_TIME(data, frequency);
 // Shoulder extremes and max point: first local maximum and first and second local minimums.
 this.max_index = uniform_array(this.number_of_signals, 0);
 this.min_index = uniform_array(this.number_of_signals, [0, 0]);
@@ -114,7 +114,7 @@ this.min_index[index][1] = pindex;
 } else {
 this.max_index[index] = pindex;
 }};
-// Recalculation of AUC and max values. 
+// Recalculation of AUC and max values.
 this.recalculate_auc_and_max = function(){
 for (i = 0; i < this.number_of_signals; ++i){
 this.max_value[i] = this.current.array[i][this.max_index[i]];
@@ -127,20 +127,20 @@ this.plot_concentration = function(){};
 };
 
 // Class for Voltage data within FSCAV.
-function FSCAV_VOLTAGE(data, v_units) {
+function HL_FSCAV_VOLTAGE(data, v_units) {
 this.units =  v_units;
 this.name = data[0][0];
 this.array = arrayColumn(data, 0).slice(1);
 }
 // Class for Current data within FSCAV.
-function FSCAV_CURRENT(data, c_units, number_of_signals) {
+function HL_FSCAV_CURRENT(data, c_units, number_of_signals) {
 this.units =  c_units;
 this.name = 'Current';
 this.tags = data[0].slice(1);
 this.array = transpose(data.slice(1).map(x => x.slice(1)));
 };
 // Class for time data within FSCAV.
-function FSCAV_TIME(data, frequency) {
+function HL_FSCAV_TIME(data, frequency) {
 this.units = 's';
 this.name = 'Time';
 this.array = makeArr(0,(data.length-1)/frequency, data.length-1);
