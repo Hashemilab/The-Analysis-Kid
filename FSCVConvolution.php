@@ -261,7 +261,7 @@ var Ts=String(1/freqx);
 var name_trace=String(document.getElementById("name_trace").value);
 var Diff = parseFloat(document.getElementById("diffusion_coefficient").value);
 var b = parseFloat(document.getElementById("absorption_strength").value);
-var API_dir="https://py-dot-neurodatalab.nw.r.appspot.com/deconvolution?"+"Ts="+Ts+"&D="+Diff+"&b="+b+"&signal="+signal;
+var API_dir="https://analysis-kid-python.herokuapp.com/deconvolution?"+"Ts="+Ts+"&D="+Diff+"&b="+b+"&signal="+signal;
 var settings_API = {
 async: false,
 crossDomain: true,
