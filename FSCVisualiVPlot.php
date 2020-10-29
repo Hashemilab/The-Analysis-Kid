@@ -403,7 +403,7 @@ text: "No cyclic voltammogram form the plot has been selected. Please try again 
 });
 return;
 };
-API_dir3="https://analysis-kid-python.herokuapp.com/cv";
+API_dir3="https://py-dot-neurodatalab.nw.r.appspot.com/cv";
 data_API=JSON.stringify({'frequency':frequency, 'current':current,'voltage':voltage});
 settings_API = {
 async: false,
@@ -609,7 +609,7 @@ var Epa=String(document.getElementById("ep1").innerHTML);
 var Area_under_curve=String(document.getElementById("AUC").innerHTML);
 var Epc=String(document.getElementById("ep2").innerHTML);
 
-var API_dir4="https://analysis-kid-python.herokuapp.com/cvClass";
+var API_dir4="https://py-dot-neurodatalab.nw.r.appspot.com/cvClass";
 data_API=JSON.stringify({'Ipa':Ipa, 'Epa':Epa,'AUC':Area_under_curve, 'Epc': Epc});
 settings_API = {
 async: false,
