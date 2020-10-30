@@ -103,7 +103,7 @@ Plotly.newPlot(div, graph_data, layout, config);
 Plotly.addTraces(div, scatter_data_max);
 Plotly.addTraces(div, scatter_data_min);
 // Assign callback when click to local function graph_click();
-document.getElementById(div).on('plotly_click', function(data){graph_clicked(data)});
+_(div).on('plotly_click', function(data){graph_clicked(data)});
 };
 //Change of minimum and maximum points by points clicked in the graph.
 this.change_points = function(index, pindex, type){

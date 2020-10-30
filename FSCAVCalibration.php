@@ -92,11 +92,11 @@ $(this).css('color','white');
 graph_selection_changed(this.id);
 });
 function previous_pushed(){
-document.getElementById('plot_slider').stepDown();
+_('plot_slider').stepDown();
 slider_changed();
 };
 function next_pushed(){
-document.getElementById('plot_slider').stepUp();
+_('plot_slider').stepUp();
 slider_changed();
 };
 function slider_changed(){
@@ -108,7 +108,7 @@ function graph_selection_changed(id){
 graph_selected_point = id;
 };
 function graph_clicked(evtObj){
-if(document.getElementById('graph_selection').checked) {
+if(_('graph_selection').checked) {
 if(evtObj.points.length != 0){
 // Get index of clicked point.
 let pindex = evtObj.points[0].pointIndex;
@@ -136,7 +136,7 @@ text: "The uploaded data was not succesfully processed. Please make sure your up
 }).then((result => window.close()));
 };
 // Determine number of signals.
-document.getElementById('plot_slider').max = Data.number_of_signals;
+_('plot_slider').max = Data.number_of_signals;
 // Plot first cyclic voltammogram.
 Data.plot_current_time("graph1", graph_index-1);
 // Plot initial concentration-sample trace.

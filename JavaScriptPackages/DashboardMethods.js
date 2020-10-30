@@ -11,3 +11,7 @@ jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
 };
 html2pdf().set(opt).from(element).save();
 };
+// Short way to get element by id. 
+function _(el) {
+return document.getElementById(el);
+}
