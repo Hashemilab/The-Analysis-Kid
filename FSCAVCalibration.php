@@ -15,7 +15,6 @@
 <link rel="shortcut icon" href="Images/cv.png"/>
 <link type="text/css" rel="stylesheet" href="Styling/styles.css"/>
 <link rel="stylesheet" href="Styling/bootstrap.min.css"/>
-<link rel="stylesheet" href="Styling/buttons.css"/>
 </head>
 
 <script>
@@ -59,7 +58,7 @@ $(".se-pre-con").fadeOut("slow");
 <div id="graph1" class = "center"></div>
 </div>
 <div class = "center" style = "float:right; width:50%;">
-<div id="graph2"class = "center"></div>
+<div id="graph2" class = "center"></div>
 </div>
 </div>
 

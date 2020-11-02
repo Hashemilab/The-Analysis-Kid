@@ -517,7 +517,7 @@ plot_type=plot_type_in;
 if (plot_type_in=="contour" || plot_type_in=="heatmap" ){
 data = [{
 z: DataArrayz,
-x:DataArrayx[0],
+x: DataArrayx[0],
 type:plot_type,
 colorscale:color_of_plot,
 colorbar: {len:0.5, xpad:30, title:current_title}

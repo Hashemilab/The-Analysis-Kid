@@ -21,7 +21,6 @@ src="JavaScriptPackages/tex-chtml.js">
 <link rel="shortcut icon" href="Images/cv.png" />
 
 <link rel="stylesheet" href="Styling/bootstrap.min.css"/>
-<link rel="stylesheet" href="Styling/buttons.css"/>
 
 <link rel="stylesheet" href="Styling/google-css.css"/>
 

@@ -122,4 +122,10 @@ function transpose(a) {
 return Object.keys(a[0]).map(function(c) {
 return a.map(function(r) { return r[c];});
 });
-}
+};
+// Parse string n-dim array to float.
+function parse_array_to_float(arr) {
+var callee = arguments.callee;
+return arr instanceof Array ? arr.map(function(elem2) { return callee(elem2); })
+: parseFloat(arr);
+};

@@ -1,7 +1,7 @@
 // Class to check and save data loaded into applications.
 function HL_LOAD_DATA(status_id){
 this.status_id= status_id;
-this.DataArray = [];
+this.data_array = [];
 this.number_of_files = 0;
 this.names_of_files = [];
 // Assign the handle self to save the variables inside the callback.
@@ -22,9 +22,9 @@ this.parse_file = function(arrbuf, file){
 var re = /(?:\.([^.]+))?$/;
 var file_ext = re.exec(file.name)[1];
 if (file_ext == 'csv' || file_ext=='xlsx' || file_ext=='xls') {
-self.DataArray.push(self.excel_reader(arrbuf));
+self.data_array.push(self.excel_reader(arrbuf));
 } else if (file_ext == 'txt'){
-self.DataArray.push(self.txt_reader(arrbuf));
+self.data_array.push(self.txt_reader(arrbuf));
 } else {return};
 self.names_of_files.push(file.name);
 ++self.number_of_files;
@@ -46,11 +46,12 @@ return result[0];
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
 var text = self.array_buffer_to_string(arrbuf);
-return text.split('\n').map(function(element){return element.split('\t')});
+return parse_array_to_float(text.split('\n').map(function(element){return element.split('\t')}));
+
 };
 // Method to reset the loaded data every time we read new files.
 this.reset_loaded_data = function(){
-self.DataArray = [];
+self.data_array = [];
 self.number_of_files = 0;
 self.names_of_files = [];
 };
