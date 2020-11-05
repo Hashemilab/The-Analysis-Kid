@@ -1134,7 +1134,7 @@ return;
 //Retrieve the array
 var Gaussian_Array=Array.from((src.data32F).map(x => denormalize(x,max_linear_array,min_linear_array)));
 // Split the linear array
-DataArrayz= chunk(Gaussian_Array,row_length);
+DataArrayz= split_array(Gaussian_Array,row_length);
 // Replot the Colorplot after smoothing
 type_of_plot(plot_type);
 src.delete(); mat.delete();
@@ -1217,7 +1217,7 @@ q1.copyTo(tmp);
 q2.copyTo(q1);
 tmp.copyTo(q2);
 
-magnitude_spectrum= Array.from(mag.data32F);
+magnitude_spectrum=  Array.from(mag.data32F);
 magnitude_spectrum=magnitude_spectrum.map( x => 20*Math.log10(x)); //Convert to dBs
 magnitude_array=[];
 while(magnitude_spectrum.length) magnitude_array.push(magnitude_spectrum.splice(0,columns));
@@ -1413,16 +1413,14 @@ tmp.copyTo(q3);
 q1.copyTo(tmp);
 q2.copyTo(q1);
 tmp.copyTo(q2);
-console.log(partial_fft);
+
 // PLotting to check
 cv.dft(partial_fft, returned_image, (cv.DFT_INVERSE, cv.DFT_REAL_OUTPUT, cv.DFT_SCALE));
 planes2=new cv.MatVector();
 cv.split(returned_image, planes2);
 let returned_image2 = planes2.get(0);
 var new_data=Array.from(returned_image2.data32F).reverse();
-console.log(new_data);
-var new_DataArrayz = chunk(new_data,spectrum_cols);
-console.log(new_DataArrayz);
+var new_DataArrayz = split_array(new_data,spectrum_cols);
 DataArrayz=new_DataArrayz;
 type_of_plot(plot_type);
 };

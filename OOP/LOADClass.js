@@ -45,10 +45,8 @@ return result[0];
 };
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
-var text = self.array_buffer_to_string(arrbuf);
-return parse_array_to_float(text.split('\n').map(function(element){return element.split('\t')}));
-
-};
+var text = self.array_buffer_to_string(arrbuf).split('\n');
+return parse_array_to_float(text.filter(function(element){return element.length>0}).map(function(element){return element.split('\t')}))};
 // Method to reset the loaded data every time we read new files.
 this.reset_loaded_data = function(){
 self.data_array = [];
