@@ -28,6 +28,8 @@ self.data_array.push(self.txt_reader(arrbuf));
 } else {return};
 self.names_of_files.push(file.name);
 ++self.number_of_files;
+//Check data added has even number of values.
+self.check_data_is_even();
 return self.number_of_files;
 };
 
@@ -71,4 +73,12 @@ result += String.fromCharCode.apply(null, bufView.subarray(i,i+addition));
 }
 return result;
 };
+
+this.check_data_is_even = function(){
+// If data is odd, pad the last values to make it even.
+var array = self.data_array[self.data_array.length-1];
+if(array[0].length % 2 !== 0){array.map(x => x.push(x[x.length - 1]))};
+if(array.length % 2 !== 0){array.push(array[array.length - 1])};
+
+}
 };

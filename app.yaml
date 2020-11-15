@@ -8,10 +8,10 @@ handlers:
     static_files: stylesheets/\1
     require_matching_file: false
     upload: stylesheets/.*
-  - url: /(.+\.(gif|png|jpg|svg|css|csv|js|txt|pdf|json|bin))$
+  - url: /(.+\.(gif|png|jpg|svg|css|csv|js|txt|pdf|json|bin|mem))$
     static_files: \1
     require_matching_file: false
-    upload: .+\.(gif|png|jpg|svg|css|csv|py|js|txt|pdf|json|bin)$
+    upload: .+\.(gif|png|jpg|svg|css|csv|py|js|txt|pdf|json|bin|mem)$
   - url: .*
     script: auto
 automatic_scaling:

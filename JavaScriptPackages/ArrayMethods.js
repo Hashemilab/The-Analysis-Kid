@@ -6,33 +6,24 @@ return Math.max.apply(null, num);
 function min(num){
 return Math.min.apply(null, num);
 };
-// Index of the max value in array.
-function indexOfMax(arr) {
-if (arr.length === 0) {
-return -1;
+//Max and min functions for large arrays where min() and max() do not work.
+function getMax(arr) {
+return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
 }
-var max = arr[0];
-var maxIndex = 0;
-for (var i = 1; i < arr.length; i++) {
-if (arr[i] > max) {
-maxIndex = i;
-max = arr[i];
-}}
-return maxIndex;
+function getMin(arr) {
+return arr.reduce((min, v) => min <= v ? min : v, Infinity);
+}
+// Index of the max value in array.
+function index_of_max(arr) {
+var max = arr[0], index = 0;
+for (var i = 1; i < arr.length; i++) {if (arr[i] > max) {index = i; max = arr[i]}};
+return [max, index];
 };
 // Index of the min value in array.
-function indexOfMin(arr) {
-if (arr.length === 0) {
-return -1;
-}
-var min = arr[0];
-var minIndex = 0;
-for (var i = 1; i < arr.length; i++) {
-if (arr[i] < min) {
-minIndex = i;
-min = arr[i];
-}}
-return minIndex;
+function index_of_min(arr) {
+var min = arr[0], index = 0;
+for (var i = 1; i < arr.length; i++) {if (arr[i] < min) {index = i; min = arr[i]}}
+return [min, index];
 };
 // Array of local minima considering 4 neighbours.
 function localminima(arr){
@@ -52,16 +43,17 @@ maxes.push(arr[i]); maxes_index.push(i);
 }};
 return [maxes_index, maxes];
 }
-//Max and min functions for large arrays where min() and max() do not work.
-function getMax(arr) {
-return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
-}
-function getMin(arr) {
-return arr.reduce((min, v) => min <= v ? min : v, Infinity);
-}
+
+// Calculates the absolute of array.
+function absolute_array(arr){
+tmp=[];
+for (var i=0;i<arr.length;++i){tmp[i] = Math.abs(arr[i])};
+return tmp;
+};
+
 
 // Short form to calculate average.
-const average=arr=>arr.reduce((p,c)=>parseFloat(p)+parseFloat(c),0)/arr.length;
+function average(arr){for(i=0, sum=0;i<arr.length;++i){sum+=arr[i]}; return sum/arr.length};
 //Standard deviation of the array.
 function std(arr){
 var avg = average(arr);
@@ -91,6 +83,38 @@ area += 0.5 * (arr[i] + arr[i-1]) * (1/frequency);
 };
 return area;
 };
+// Linear curve fit using linear least squares.
+function linear_fit(arr_x, arr_y){
+var sum_xx = 0, sum_y = 0, sum_yy=0, sum_x = 0, sum_xy = 0, n = arr_x.length;
+for(var i=0;i<n;i++){
+var x = arr_x[i];
+var y = arr_y[i];
+sum_xx += x*x, sum_y += y, sum_yy += y*y, sum_x += x, sum_xy += x*y;
+}
+var a = ((sum_y*sum_xx)-(sum_x*sum_xy))/((n*sum_xx)-sum_x*sum_x);
+var b = ((n*sum_xy)-(sum_x*sum_y))/((n*sum_xx)-sum_x*sum_x);
+var r2 = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+return [a,b, r2];
+};
+// Errors of regression: standard error of estimate, slope and intercept.
+function estimation_errors(pred_y, real_y, x){
+var mean_x = average(x), sum_dx=0, sum_xx=0, sq_residuals = 0, se_regression, se_slope, se_intercept, n=x.length;
+for (var i=0; i<n; ++i){
+sum_xx = x[i]*x[i]; sum_dx += (x[i]-mean_x)*(x[i]-mean_x);
+sq_residuals+=(pred_y[i]-real_y[i])*(pred_y[i]-real_y[i]);
+};
+var se_regression = Math.sqrt(sq_residuals/(n-2));
+var se_slope = se_regression/(Math.sqrt(sum_dx));
+var se_intercept = se_regression*Math.sqrt(sum_xx/(n*sum_dx));
+return [se_regression, se_slope, se_intercept];
+};
+function log_of_array(arr){
+tmp=[];
+for(i=0;i<arr.length;++i){tmp[i] = Math.log(arr[i])};
+return tmp;
+}
+
+
 // Normalize value to 0-1 having a min and max value of the array.
 function normalize(val0, max0, min0) { return (val0 - min0) / (max0 - min0);};
 // Denormalize value having a min and max value of the array.
@@ -103,10 +127,46 @@ tmp.push(array.slice(i, i + part));
 }
 return tmp;
 }
-
+// Linearise an n-dimension array.
 function linearise(array){
-return [].concat.apply([], array);
+return array.flat(Infinity);
 }
+//Linarise a n-dimension array (faster).
+const flatten = function(arr, result = []) {
+for (let i = 0, length = arr.length; i < length; i++) {
+const value = arr[i];
+if (Array.isArray(value)) {flatten(value, result)} else {result.push(value)}};
+return result;
+};
+
+// Reverse an array.
+function reverse_array(input) {
+var ret = new Array;
+for(var i = input.length-1; i >= 0; i--) {ret.push(input[i])};
+return ret;
+};
+// Hadamard product of 2D arrays.
+function had_product_2d(arr1, arr2){
+return uniform_array(arr1.length, uniform_array(arr1[0].length), 0).map((x,i) => x.map((y,j) => arr1[i][j]*arr2[i][j]));
+}
+function had_product_1d(arr1, arr2){
+var tmp=[];
+for(var i=0; i<arr1.length;++i){tmp[i]=arr1[i]*arr2[i];}
+return tmp;
+};
+// Scalar product of one-dimensional array.
+function scalar_product(arr, scalar){
+tmp=[];
+for(var i=0;i<arr.length;++i){tmp[i] = arr[i]*scalar};
+return tmp;
+}
+
+// Copy a 2D array.
+function deep_copy_2d_array(arr){
+var tmp = [];
+for (var i = 0; i < arr.length; i++){tmp[i] = arr[i].slice()};
+return tmp;
+};
 // Function that generates array (similar to numpy.linspace).
 function makeArr(startValue, stopValue, cardinality) {
 var arr = [];
@@ -161,6 +221,32 @@ result[i][j] += array[ii][jj] * kernel[m][n];
 return result;
 };
 
+// Function that gets the values from even indexes.
+function get_even_indexes(arr){
+return arr.filter(function(element, index, array){return (index % 2 === 0);
+});
+};
+// Function that gets the values from odd indexes.
+function get_odd_indexes(arr){
+return arr.filter(function(element, index, array){return (index % 2 !== 0);
+});
+}
+// Function that gets the values from even indexes. Faster than the other two.
+function get_even_and_odd_indexes(arr){
+var tmp_even=[], tmp_odd=[];
+for (var i=0, j=0, k=0; i<arr.length; ++i){
+if(i % 2 === 0){tmp_even[j] = arr[i];++j}
+else{tmp_odd[k] = arr[i]; ++k}};
+return [tmp_even, tmp_odd];
+};
+
+//zip two 1D arrays.
+function zip(arr1, arr2){
+var tmp=[];
+for (var i=0;i<arr1.length;++i){tmp.push(arr1[i], arr2[i])};
+return tmp;
+};
+
 // Fast gaussian convolution. IMPORTANT: convolution is applied IN PLACE.
 // http://blog.ivank.net/fastest-gaussian-blur.html
 function conv_2d_gaussian(scl, tcl, w, h, r){
@@ -203,4 +289,56 @@ var m = Math.round(mIdeal);
 // var sigmaActual = Math.sqrt( (m*wl*wl + (n-m)*wu*wu - n)/12 );
 var sizes = [];  for(var i=0; i<n; i++) sizes.push(i<m?wl:wu);
 return sizes;
+};
+
+
+// 2D FFT FUNCTIONS from KISSFFT
+/** Compute the FFT of a real-valued mxn matrix. */
+function rfft2d(data, m, n) {
+/* Allocate input and output arrays on the heap. */
+var heapData = allocFromArray(data);
+var heapSpectrum = alloc(2*m*n*4);
+_rfft2d(heapData.byteOffset, heapSpectrum.byteOffset, m, n);
+/* Get spectrum from the heap, copy it to local array. */
+var spectrum = new Float32Array(m*n*2);
+spectrum.set(new Float32Array(Module.HEAPU8.buffer,
+heapSpectrum.byteOffset, m*n*2));
+/* Free heap objects. */
+free(heapData);
+free(heapSpectrum);
+return spectrum;
+};
+/** Compute the inverse FFT of a real-valued mxn matrix. */
+function irfft2d(spectrum, m, n) {
+Module.TOTAL_MEMORY = 536870912;
+var heapSpectrum = allocFromArray(spectrum);
+var heapData = alloc(m*n*4);
+_irfft2d(heapSpectrum.byteOffset, heapData.byteOffset, m, n);
+var data = new Float32Array(m*n);
+data.set(new Float32Array(Module.HEAPU8.buffer,
+heapData.byteOffset, m*n));
+for (i=0;i<m*n;i++) {
+data[i] /= m*n;
+}
+free(heapSpectrum);
+free(heapData);
+return data;
+}
+/** Create a heap array from the array ar. */
+function allocFromArray(ar) {
+/* Allocate */
+var nbytes = ar.length * ar.BYTES_PER_ELEMENT;
+var heapArray = alloc(nbytes);
+/* Copy */
+heapArray.set(new Uint8Array(ar.buffer));
+return heapArray;
+}
+/** Allocate a heap array to be passed to a compiled function. */
+function alloc(nbytes) {
+var ptr = Module._malloc(nbytes);
+return new Uint8Array(Module.HEAPU8.buffer, ptr, nbytes);
+}
+/** Free a heap array. */
+function free(heapArray) {
+Module._free(heapArray.byteOffset);
 };
