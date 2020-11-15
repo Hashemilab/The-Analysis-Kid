@@ -261,10 +261,42 @@ var t_half = Math.log(2)/Math.abs(reg_params[1]);
 var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(reg_params[1], 2), 2)*Math.pow(errors[1], 2));
 };
 
-get_nonlinear_expoonential_fit(){
-  
+get_nonlinear_exponential_fit(){
+
+const Sdata = tf.tensor1d([13.8,13.8,20.2,12.1,14.1,29.4,13.7,16.6,18.9,15.5]);
+const Fdata = tf.tensor1d([46.7,130.7,78.1,72.2,40.1,78.6,57.4,170.7,80.2,45.2]);
+const Rdata = tf.tensor1d([1.5,4.5,2.5,3.0,3.5,3.0,2.5,3.0,3.0,2.5])
+
+const a0 = tf.scalar(Math.random()).variable();
+const a1 = tf.scalar(Math.random()).variable();
+const a2 = tf.scalar(Math.random()).variable();
+
+const fun = (r,s) => a2.mul(r).add(a1.mul(s)).add(a0)
+const cost = (pred, label) => pred.sub(label).square().mean();
+
+const learningRate = 0.001;
+const optimizer = tf.train.sgd(learningRate);
+
+// Train the model.
+for (let i = 0; i < 800; i++) {
+    console.log("training")
+    optimizer.minimize(() => cost(fun(Rdata,Sdata), Fdata));
 }
-};
+
+console.log(`a: ${a0.dataSync()}, b: ${a1.dataSync()}, c: ${a2.dataSync()}`);
+
+const preds = fun(Rdata,Sdata).dataSync();
+preds.forEach((pred, i) => {
+   console.log(`x: ${i}, pred: ${pred}`);
+});
+
+
+
+
+}
+
+
+
 
 
 function HL_FSCV_ARRAY(data, units, name){
