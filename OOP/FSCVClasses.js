@@ -308,7 +308,10 @@ this.regression_line_concentration.array[index] = scalar_product(this.regression
 get_area_under_curve(index, frequency){
 // AUC calculated from t=0s to minimum.
 this.area_under_curve.array[index] = simpson_auc(this.concentration.array[index].slice(0, this.min_index.array[index]), frequency);
-}
+};
+
+
+
 
 }
 
