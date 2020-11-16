@@ -155,21 +155,29 @@ this.absolute_concentration = new HL_FSCV_ARRAY([], units, 'Absolute concentrati
 this.max_index = new HL_FSCV_ARRAY([], units, 'Max index values');
 this.min_index = new HL_FSCV_ARRAY([], units, 'Min index values');
 this.origin_file_array = [];
+this.names = [];
+this.regression_parameters = new HL_FSCV_ARRAY([], units, 'Regression parameters (a,b,r2,se_regression, se_slope, se_intercept)');
+this.regression_line_concentration = new HL_FSCV_ARRAY([], units, 'Concentration');
+this.regression_line_time = new HL_FSCV_ARRAY([], 's', 'Time');
+this.area_under_curve = new HL_FSCV_ARRAY([], units+'·s', 'Area under the curve');
 this.color_array = [];
 this.type = 'c-t Curve';
 this.counter = 0;
 this.graph_index = 0;
 }
 
-calibrate_trace(div, index, fscv_transient, frequency, coefficient, units){
+calibrate_trace(div, index, fscv_transient, frequency, coefficient, units, name){
 this.graph_index = this.counter++;
 var array = fscv_transient.current.array[index-1];
 this.concentration.array.push(scalar_product(array, coefficient));
 this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length-1));
 this.origin_file_array.push(fscv_transient.origin_file_array[index-1]);
+this.names.push(name);
 this.color_array.push(this.palettes.plotly_colours[index-1]);
 this.concentration.units = units;
 this.get_max_and_min_values(this.counter-1);
+this.get_linearised_exponential_fit(this.counter-1);
+this.get_area_under_curve(this.counter-1, frequency);
 this.plot_graph(div);
 };
 
@@ -177,7 +185,18 @@ plot_graph(div){
 var layout = this.plot_settings.plot_layout;
 layout.xaxis.title = this.time.name +" ("+this.time.units+")";
 layout.yaxis.title = this.concentration.name +" ("+this.concentration.units+")";
-layout.title.text = "<b>"+this.type+' ('+String(this.graph_index+1)+") </b>";
+layout.title.text = "<b>"+this.names[this.graph_index]+' ('+String(this.graph_index+1)+")</b>";
+layout.annotations = [{
+xref: 'paper',
+yref: 'paper',
+x: 0.98,
+xanchor: 'right',
+y: 0.9,
+yanchor: 'bottom',
+text: '<b>R<sup>2</sup> : '+this.regression_parameters.array[this.graph_index][6].toFixed(2)+'<br> t <sub>1/2</sub> : '
++ this.regression_parameters.array[this.graph_index][4].toFixed(2)+' '+this.time.units+'</b>',
+showarrow: false
+}];
 
 var trace = {
 y: this.concentration.array[this.graph_index],
@@ -207,8 +226,16 @@ marker: {color: 'black'},
 text:'Min'
 };
 
+var exp_decay = {
+y:this.regression_line_concentration.array[this.graph_index],
+x: this.regression_line_time.array[this.graph_index],
+showlegend: false,
+line: {color: 'black', width:0.5, dash: 'dot'},
+text:'Fit'
+}
+
 Plotly.newPlot(div, [trace], layout);
-Plotly.addTraces(div, [max_point, min_point]);
+Plotly.addTraces(div, [max_point, min_point, exp_decay]);
 _(div).on('plotly_click', function(data){concentration_graph_clicked(data)});
 };
 
@@ -220,7 +247,12 @@ this.time.array.pop();
 this.absolute_concentration.array.pop();
 this.max_index.array.pop();
 this.min_index.array.pop();
+this.regression_parameters.array.pop();
+this.regression_line_concentration.array.pop();
+this.regression_line_time.array.pop();
+this.area_under_curve.array.pop();
 this.origin_file_array.pop();
+this.names.pop();
 this.color_array.pop();
 --this.counter;
 }
@@ -245,53 +277,38 @@ this.max_index.array.push(max[1]);
 this.min_index.array.push(max[1] + min[1]);
 };
 
-change_max_and_min_values(div, pindex, type){
+change_max_and_min_values(div, pindex, type, frequency){
 if (type == 'max'){this.max_index.array[this.graph_index] = pindex}
 else{this.min_index.array[this.graph_index] = pindex};
+this.get_linearised_exponential_fit(this.graph_index);
+this.get_area_under_curve(this.graph_index, frequency);
 this.plot_graph(div);
 };
 
-get_linearised_exponential_fit(){
-var y = log_of_array(this.absolute_concentration.array[0].slice(this.max_index.array[0], this.min_index.array[0]));
-var x = this.time.array[0].slice(this.max_index.array[0], this.min_index.array[0]);
-var reg_params = linear_fit(x,y);
-var y_predicted = x.map(t=> reg_params[0] + reg_params[1]*t);
+
+get_linearised_exponential_fit(index){
+//Notice errors are respect to the linear parameters, and not exponential.
+var y = log_of_array(this.absolute_concentration.array[index].slice(this.max_index.array[index], this.min_index.array[index]));
+var x = this.time.array[0].slice(this.max_index.array[index], this.min_index.array[index]);
+var reg = linear_fit(x,y), y_predicted = x.map(t => reg[0] + reg[1]*t);
+var y_predicted = x.map(t => reg[0] + reg[1]*t);
 var errors = estimation_errors(y_predicted, y, x);
-var t_half = Math.log(2)/Math.abs(reg_params[1]);
-var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(reg_params[1], 2), 2)*Math.pow(errors[1], 2));
+var t_half = Math.log(2)/Math.abs(reg[1]);
+//Propagation of error.
+var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(reg[1], 2), 2)*Math.pow(errors[1], 2));
+// slope, se of slope, intercept, se of intercept, t 1/2, se of t 1/2, r^2 and SEE.
+this.regression_line_time.array[index] = x;
+this.regression_line_concentration.array[index] = exp_of_array(y_predicted);
+this.regression_parameters.array[index] = [reg[1], errors[1], reg[0], errors[2], t_half, se_t_half,  reg[2], errors[0]];
+// Invert sign of slope and intercept if the signal is an inhibition for plotting purposes.
+if(this.concentration.array[index][this.max_index.array[index]] < 0){
+this.regression_line_concentration.array[index] = scalar_product(this.regression_line_concentration.array[index],-1)
 };
-
-get_nonlinear_exponential_fit(){
-
-const Sdata = tf.tensor1d([13.8,13.8,20.2,12.1,14.1,29.4,13.7,16.6,18.9,15.5]);
-const Fdata = tf.tensor1d([46.7,130.7,78.1,72.2,40.1,78.6,57.4,170.7,80.2,45.2]);
-const Rdata = tf.tensor1d([1.5,4.5,2.5,3.0,3.5,3.0,2.5,3.0,3.0,2.5])
-
-const a0 = tf.scalar(Math.random()).variable();
-const a1 = tf.scalar(Math.random()).variable();
-const a2 = tf.scalar(Math.random()).variable();
-
-const fun = (r,s) => a2.mul(r).add(a1.mul(s)).add(a0)
-const cost = (pred, label) => pred.sub(label).square().mean();
-
-const learningRate = 0.001;
-const optimizer = tf.train.sgd(learningRate);
-
-// Train the model.
-for (let i = 0; i < 800; i++) {
-    console.log("training")
-    optimizer.minimize(() => cost(fun(Rdata,Sdata), Fdata));
+};
+get_area_under_curve(index, frequency){
+// AUC calculated from t=0s to minimum.
+this.area_under_curve.array[index] = simpson_auc(this.concentration.array[index].slice(0, this.min_index.array[index]), frequency);
 }
-
-console.log(`a: ${a0.dataSync()}, b: ${a1.dataSync()}, c: ${a2.dataSync()}`);
-
-const preds = fun(Rdata,Sdata).dataSync();
-preds.forEach((pred, i) => {
-   console.log(`x: ${i}, pred: ${pred}`);
-});
-
-
-
 
 }
 

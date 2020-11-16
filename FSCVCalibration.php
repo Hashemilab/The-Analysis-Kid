@@ -10,6 +10,7 @@
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/kissFFT.js"></script>
+<script src="JavaScriptPackages/tf.min.js"></script>
 <script src="JavaScriptPackages/xlsx.full.min.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
 <script src = "OOP/LOADClass.js"></script>
@@ -172,7 +173,7 @@ $(".se-pre-con").fadeOut("slow");
 <button onclick="calibrate_button_pushed()" id="calibrate_button" style="float: right;">Calibrate</button>
 <label for="concentration_units" style="width:35%"> Units:</label>
 <input type="text" step="1" id="concentration_units" style="width:25%" value="nM"/>
-<button onclick="fit_button_pushed()" id="calibrate_button" style="float: right;">Fit</button>
+<button onclick="nonlinear_fit_button_pushed()" id="calibrate_button" style="float: right;" disabled>Nonlinear opt.</button>
 <label for="calibration_name" style="width:35%"> Name:</label>
 <input type="text" step="1" id="calibration_name" style="width:25%" value="5-HT"/>
 <select id="select_signal_button" style="float: right;">
@@ -363,7 +364,7 @@ loaded_data.data_array[file_index-1] = fscv_data.current.array;
 }
 function calibrate_button_pushed(){
 fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, _('cycling_frequency').value,
-_('calibration_coefficient').value, _('concentration_units').value);
+_('calibration_coefficient').value, _('concentration_units').value, _('calibration_name').value);
 }
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
@@ -384,11 +385,11 @@ let pindex = evtObj.points[0].pointNumber;
 let type;
 if (getComputedStyle(_("max_button"))['background-color'] == 'rgb(63, 81, 181)'){type = 'max'}
 else {type = 'min'};
-fscv_concentration.change_max_and_min_values("ct_graph", pindex, type);
+fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, _('cycling_frequency').value);
 }};
 
-function fit_button_pushed(){
-fscv_concentration.get_exponential_fit();
+function nonlinear_fit_button_pushed(){
+
 }
 </script>
 

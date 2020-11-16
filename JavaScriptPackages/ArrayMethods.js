@@ -83,6 +83,17 @@ area += 0.5 * (arr[i] + arr[i-1]) * (1/frequency);
 };
 return area;
 };
+// Calculate area under the curve of array with Simpson's rule.
+function simpson_auc(arr, frequency){
+var n = arr.length, h = 1/frequency, sum1=0, sum2=0;
+for (var i=1;i<arr.length-1;++i){if(i%2==0){sum1 += arr[i]} else{sum2+=arr[i]}}
+return  h/3*(arr[0]+2*sum1+4*sum2+arr[arr.length-1]);
+}
+
+
+
+
+
 // Linear curve fit using linear least squares.
 function linear_fit(arr_x, arr_y){
 var sum_xx = 0, sum_y = 0, sum_yy=0, sum_x = 0, sum_xy = 0, n = arr_x.length;
@@ -108,9 +119,16 @@ var se_slope = se_regression/(Math.sqrt(sum_dx));
 var se_intercept = se_regression*Math.sqrt(sum_xx/(n*sum_dx));
 return [se_regression, se_slope, se_intercept];
 };
+// ln(x) of each value in array.
 function log_of_array(arr){
 tmp=[];
 for(i=0;i<arr.length;++i){tmp[i] = Math.log(arr[i])};
+return tmp;
+}
+// exp(x) of each value in array.
+function exp_of_array(arr){
+tmp=[];
+for(i=0;i<arr.length;++i){tmp[i] = Math.exp(arr[i])};
 return tmp;
 }
 
@@ -145,6 +163,7 @@ var ret = new Array;
 for(var i = input.length-1; i >= 0; i--) {ret.push(input[i])};
 return ret;
 };
+
 // Hadamard product of 2D arrays.
 function had_product_2d(arr1, arr2){
 return uniform_array(arr1.length, uniform_array(arr1[0].length), 0).map((x,i) => x.map((y,j) => arr1[i][j]*arr2[i][j]));
