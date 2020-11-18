@@ -90,10 +90,6 @@ for (var i=1;i<arr.length-1;++i){if(i%2==0){sum1 += arr[i]} else{sum2+=arr[i]}}
 return  h/3*(arr[0]+2*sum1+4*sum2+arr[arr.length-1]);
 }
 
-
-
-
-
 // Linear curve fit using linear least squares.
 function linear_fit(arr_x, arr_y){
 var sum_xx = 0, sum_y = 0, sum_yy=0, sum_x = 0, sum_xy = 0, n = arr_x.length;
@@ -108,7 +104,7 @@ var r2 = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*s
 return [a,b, r2];
 };
 // Errors of regression: standard error of estimate, slope and intercept.
-function estimation_errors(pred_y, real_y, x){
+function linear_estimation_errors(pred_y, real_y, x){
 var mean_x = average(x), sum_dx=0, sum_xx=0, sq_residuals = 0, se_regression, se_slope, se_intercept, n=x.length;
 for (var i=0; i<n; ++i){
 sum_xx = x[i]*x[i]; sum_dx += (x[i]-mean_x)*(x[i]-mean_x);
@@ -119,6 +115,18 @@ var se_slope = se_regression/(Math.sqrt(sum_dx));
 var se_intercept = se_regression*Math.sqrt(sum_xx/(n*sum_dx));
 return [se_regression, se_slope, se_intercept];
 };
+// Standard error of an extimate with predicted values.
+function estimation_errors(pred_y, real_y){
+var sq_residuals = 0, sq_total = 0, n = pred_y.length, see, r2, mean_y = average(real_y);
+for (var i=0; i<n; ++i){
+sq_residuals+=(pred_y[i]-real_y[i])*(pred_y[i]-real_y[i]);
+sq_total += (real_y[i]-mean_y)*(real_y[i]-mean_y);
+};
+see = Math.sqrt(sq_residuals/(n-2));
+r2 = 1 - sq_residuals/sq_total;
+return [see, r2];
+};
+
 // ln(x) of each value in array.
 function log_of_array(arr){
 tmp=[];

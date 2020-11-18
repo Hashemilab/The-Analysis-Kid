@@ -79,6 +79,16 @@ this.check_data_is_even = function(){
 var array = self.data_array[self.data_array.length-1];
 if(array[0].length % 2 !== 0){array.map(x => x.push(x[x.length - 1]))};
 if(array.length % 2 !== 0){array.push(array[array.length - 1])};
+}
 
+this.export_data = function(){
+var ws_name, ws, wb = XLSX.utils.book_new();
+for(var i=0;i<this.number_of_files;++i){
+ws_name = this.names_of_files[i];
+ws = XLSX.utils.aoa_to_sheet(this.data_array[i]);
+XLSX.utils.book_append_sheet(wb, ws, ws_name);
+}
+var filename = "Filtered_color_plots_hashemilab.xlsx";
+XLSX.writeFile(wb, filename);
 }
 };

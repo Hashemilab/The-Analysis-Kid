@@ -135,7 +135,10 @@ $(".se-pre-con").fadeOut("slow");
 <div id="middle_panel" style = " margin:auto; width:90%;">
 <div class="row">
 <div class="col">
-
+<button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;">Filtered data</button>
+<button id="calibration_download_button" class="download_type_button">Calibration</button>
+<br>
+<button style="margin-top:5px;" onclick="export_as_xlsx_pushed()">Export as XLSX</button>
 </div>
 <div class="col">
 <div class="row">
@@ -173,7 +176,7 @@ $(".se-pre-con").fadeOut("slow");
 <button onclick="calibrate_button_pushed()" id="calibrate_button" style="float: right;">Calibrate</button>
 <label for="concentration_units" style="width:35%"> Units:</label>
 <input type="text" step="1" id="concentration_units" style="width:25%" value="nM"/>
-<button onclick="nonlinear_fit_button_pushed()" id="calibrate_button" style="float: right;" disabled>Nonlinear opt.</button>
+<button onclick="nonlinear_fit_button_pushed()" id="calibrate_button" style="float: right;">Nonlinear opt.</button>
 <label for="calibration_name" style="width:35%"> Name:</label>
 <input type="text" step="1" id="calibration_name" style="width:25%" value="5-HT"/>
 <select id="select_signal_button" style="float: right;">
@@ -288,6 +291,13 @@ $('#CONVDiv').show()
 $('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").innerHTML = this.value});
 $('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").innerHTML = this.value});
 
+$(document).on("click", '.download_type_button', function(){
+$('.download_type_button').css('background-color','');
+$('.download_type_button').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+});
+
 function previous_pushed(){
 _('file_slider').stepDown();
 slider_changed();
@@ -389,7 +399,13 @@ fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, _('cyclin
 }};
 
 function nonlinear_fit_button_pushed(){
+fscv_concentration.get_nonlinear_exponential_fit();
+fscv_concentration.plot_graph("ct_graph");
+}
 
+function export_as_xlsx_pushed(){
+if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}
+else{loaded_data.export_data()};
 }
 </script>
 

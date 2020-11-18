@@ -149,9 +149,9 @@ class HL_FSCV_CONCENTRATION {
 constructor(units){
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.palettes = new HL_FSCV_COLORPALETTE();
-this.concentration = new HL_FSCV_ARRAY([], units, 'Concentration');
+this.concentration = new HL_FSCV_ARRAY([], [], 'Concentration');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
-this.absolute_concentration = new HL_FSCV_ARRAY([], units, 'Absolute concentration');
+this.absolute_concentration = new HL_FSCV_ARRAY([], [], 'Absolute concentration');
 this.max_index = new HL_FSCV_ARRAY([], units, 'Max index values');
 this.min_index = new HL_FSCV_ARRAY([], units, 'Min index values');
 this.origin_file_array = [];
@@ -174,7 +174,7 @@ this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length-1));
 this.origin_file_array.push(fscv_transient.origin_file_array[index-1]);
 this.names.push(name);
 this.color_array.push(this.palettes.plotly_colours[index-1]);
-this.concentration.units = units;
+this.concentration.units.push(units);
 this.get_max_and_min_values(this.counter-1);
 this.get_linearised_exponential_fit(this.counter-1);
 this.get_area_under_curve(this.counter-1, frequency);
@@ -184,7 +184,7 @@ this.plot_graph(div);
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
 layout.xaxis.title = this.time.name +" ("+this.time.units+")";
-layout.yaxis.title = this.concentration.name +" ("+this.concentration.units+")";
+layout.yaxis.title = this.concentration.name +" ("+this.concentration.units[this.graph_index]+")";
 layout.title.text = "<b>"+this.names[this.graph_index]+' ('+String(this.graph_index+1)+")</b>";
 layout.annotations = [{
 xref: 'paper',
@@ -193,8 +193,9 @@ x: 0.98,
 xanchor: 'right',
 y: 0.9,
 yanchor: 'bottom',
-text: '<b>R<sup>2</sup> : '+this.regression_parameters.array[this.graph_index][6].toFixed(2)+'<br> t <sub>1/2</sub> : '
-+ this.regression_parameters.array[this.graph_index][4].toFixed(2)+' '+this.time.units+'</b>',
+text: '<b>R<sup>2</sup> : '+this.regression_parameters.array[this.graph_index][6].toFixed(2)+
+'<br> SEE : '+this.regression_parameters.array[this.graph_index][7].toFixed(2)+' '+this.concentration.units[this.graph_index]+
+'<br> t <sub>1/2</sub> : '+ this.regression_parameters.array[this.graph_index][4].toFixed(2)+' '+this.time.units+'</b>',
 showarrow: false
 }];
 
@@ -287,32 +288,93 @@ this.plot_graph(div);
 
 
 get_linearised_exponential_fit(index){
+var y_exp = this.absolute_concentration.array[index].slice(this.max_index.array[index], this.min_index.array[index]);
 //Notice errors are respect to the linear parameters, and not exponential.
-var y = log_of_array(this.absolute_concentration.array[index].slice(this.max_index.array[index], this.min_index.array[index]));
+var y_linear = log_of_array(y_exp);
 var x = this.time.array[0].slice(this.max_index.array[index], this.min_index.array[index]);
-var reg = linear_fit(x,y), y_predicted = x.map(t => reg[0] + reg[1]*t);
-var y_predicted = x.map(t => reg[0] + reg[1]*t);
-var errors = estimation_errors(y_predicted, y, x);
-var t_half = Math.log(2)/Math.abs(reg[1]);
-//Propagation of error.
-var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(reg[1], 2), 2)*Math.pow(errors[1], 2));
-// slope, se of slope, intercept, se of intercept, t 1/2, se of t 1/2, r^2 and SEE.
+var linear_reg = linear_fit(x,y_linear), y_predicted_linear = x.map(t => linear_reg[0] + linear_reg[1]*t);
+var linear_errors = linear_estimation_errors(y_predicted_linear, y_linear, x);
+var t_half = Math.log(2)/Math.abs(linear_reg[1]);
+//Propagation of error of t1/2 = ln(2)/K.
+var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(linear_reg[1], 2), 2)*Math.pow(linear_errors[1], 2));
 this.regression_line_time.array[index] = x;
-this.regression_line_concentration.array[index] = exp_of_array(y_predicted);
-this.regression_parameters.array[index] = [reg[1], errors[1], reg[0], errors[2], t_half, se_t_half,  reg[2], errors[0]];
-// Invert sign of slope and intercept if the signal is an inhibition for plotting purposes.
+// Store the exponential trace.
+this.regression_line_concentration.array[index] = exp_of_array(y_predicted_linear);
+var exp_errors = estimation_errors(this.regression_line_concentration.array[index], y_exp);
+// Store exponential parameters and exponential errors (propagation of uncertainty and recalculation):
+//K, se(K), C0, se(C0), t 1/2, se (t 1/2), r^2 and SEE.
+this.regression_parameters.array[index] = [linear_reg[1], linear_errors[1], Math.exp(linear_reg[0]),
+Math.exp(linear_reg[0])*linear_errors[2], t_half, se_t_half, exp_errors[1], exp_errors[0]];
+// Invert sign of trace if the signal is an inhibition for plotting purposes.
 if(this.concentration.array[index][this.max_index.array[index]] < 0){
-this.regression_line_concentration.array[index] = scalar_product(this.regression_line_concentration.array[index],-1)
+this.regression_line_concentration.array[index] = scalar_product(this.regression_line_concentration.array[index], -1);
 };
 };
+
+get_nonlinear_exponential_fit(){
+// PROVISIONAL
+var y_array = this.absolute_concentration.array[this.graph_index].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
+var x_array = this.time.array[0].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
+var x = tf.tensor1d(x_array);
+var y = tf.tensor1d(y_array);
+var c0_val =this.regression_parameters.array[this.graph_index][2];
+var k_val =this.regression_parameters.array[this.graph_index][0]
+const c0 = tf.scalar(c0_val).variable();
+const k = tf.scalar(k_val).variable();
+// y = c0*e^(k*x)
+const fun = (x) => x.mul(k).exp().mul(c0);
+const cost = (pred, label) => pred.sub(label).square().mean();
+const learning_rate = 0.1;
+const optimizer = tf.train.adagrad(learning_rate);
+// Train the model.
+for (let i = 0; i < 500; i++) {
+optimizer.minimize(() => cost(fun(x), y));
+}
+// Change regression parameters. PROVISIONAL.
+k_val = k.dataSync(), c0_val = c0.dataSync();
+console.log(k_val);
+var y_pred = x_array.map(x => c0_val*Math.exp(k_val*x));
+var exp_errors = estimation_errors(y_pred, y_array);
+var t_half = Math.log(2)/Math.abs(k_val);
+//Propagation of error of t1/2 = ln(2)/K.
+this.regression_parameters.array[this.graph_index][0] = k_val;
+this.regression_parameters.array[this.graph_index][2] = c0_val;
+this.regression_parameters.array[this.graph_index][6] = exp_errors[1];
+this.regression_parameters.array[this.graph_index][7] = exp_errors[0];
+this.regression_parameters.array[this.graph_index][4] = t_half;
+k.dispose(), c0.dispose(), x.dispose(), y.dispose();
+};
+
 get_area_under_curve(index, frequency){
 // AUC calculated from t=0s to minimum.
 this.area_under_curve.array[index] = simpson_auc(this.concentration.array[index].slice(0, this.min_index.array[index]), frequency);
 };
 
-
-
-
+export_calibration(){
+// Export of concentration traces.
+var ws_name = "Concentration - Time";
+var aoa =  transpose(zip(this.time.array, this.concentration.array));
+var file_names = zip(uniform_array(this.origin_file_array.length, ''),this.origin_file_array);
+var names = zip(uniform_array(this.names.length, 'Time ('+this.time.units+')'), this.names.map((x,i)=>x+' ('+this.concentration.units[i]+')'));
+aoa.unshift(names);
+aoa.unshift(file_names);
+var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(aoa);
+XLSX.utils.book_append_sheet(wb, ws, ws_name);
+// Export of parameters.
+ws_name = "Parametric Analysis";
+var head = ['Name', 'File', 'Max Concentration', 'Max Time', 'Min Concentration', 'Min Time', 'AUC (start to Min)', 'K', 'SE(K)', 'C0', 'SE(C0)', 't 1/2', 'SE (t 1/2)', 'r^2', 'SEE'];
+var max_concentration = this.max_index.array.map((x,i) => this.concentration.array[i][x]);
+var max_time = this.max_index.array.map((x,i) => this.time.array[i][x]);
+var min_concentration = this.min_index.array.map((x,i) => this.concentration.array[i][x]);
+var min_time = this.min_index.array.map((x,i) => this.time.array[i][x]);
+var reg_params = transpose(this.regression_parameters.array);
+var tmp = []; tmp.push(this.names); tmp.push(this.origin_file_array); tmp.push(max_concentration); tmp.push(max_time); tmp.push(min_concentration); tmp.push(min_time);
+tmp.push(this.area_under_curve.array); tmp.push(...reg_params);
+aoa=transpose(tmp); aoa.unshift(head);
+ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name);
+var filename = "Calibration_hashemilab.xlsx";
+XLSX.writeFile(wb, filename);
+};
 }
 
 
