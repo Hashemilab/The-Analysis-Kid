@@ -127,6 +127,25 @@ r2 = 1 - sq_residuals/sq_total;
 return [see, r2];
 };
 
+//Hessian matrix to estimate error of nonlinear exponential regression, y=c0*e^kx.
+// Adapted from : https://www.cpp.edu/~pbsiegel/javascript/curvefitchi.html
+function hess_exp_errors(c0, k, x, y){
+var sum1=0,sum2=0,sum3=0,sum4=0,sum5=0, expon1,
+he11, he12, he22, dett, dof, k_err, c0_error;
+for (i=0;i<x.length;i++){
+expon1=Math.exp(k*x[i]);
+sum1+=expon1*expon1;
+sum2+=y[i]*x[i]*x[i]*expon1;
+sum3+=x[i]*x[i]*expon1*expon1;
+sum4+=y[i]*x[i]*expon1;
+sum5+=x[i]*expon1*expon1;
+}
+he11=4*c0*c0*sum3-2*c0*sum2; he22=2*sum1;
+he12=4*c0*sum5-2*sum4; dett=he11*he22-he12*he12;
+c0_err=Math.sqrt(he11/dett); k_err=Math.sqrt(he22/dett);
+return [c0_err, k_err];
+};
+
 // ln(x) of each value in array.
 function log_of_array(arr){
 tmp=[];

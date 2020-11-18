@@ -123,6 +123,8 @@ $(".se-pre-con").fadeOut("slow");
 <a>Graph selection</a>
 <input type="checkbox" hidden id="graph_selection_checkbox">
 </button>
+&nbsp;
+<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled>Kinetic Calibration</button>
 </div>
 </div>
 </div>
@@ -231,7 +233,13 @@ $(".se-pre-con").fadeOut("slow");
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </div>
 </div>
-
+<div id="kinetic_calibration_modal_window" class="modal">
+<div class="modal-content">
+<p>Some text in the Modal..</p>
+<button style="width:5%;" >Calibrate</button>
+<button style="width:5%;" >Cancel</button>
+</div>
+</div>
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -401,6 +409,10 @@ fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, _('cyclin
 function nonlinear_fit_button_pushed(){
 fscv_concentration.get_nonlinear_exponential_fit();
 fscv_concentration.plot_graph("ct_graph");
+}
+
+function kinetic_calibration_button_pushed(){
+_('kinetic_calibration_modal_window').style.display = "block";
 }
 
 function export_as_xlsx_pushed(){

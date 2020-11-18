@@ -288,61 +288,53 @@ this.plot_graph(div);
 
 
 get_linearised_exponential_fit(index){
-var y_exp = this.absolute_concentration.array[index].slice(this.max_index.array[index], this.min_index.array[index]);
-//Notice errors are respect to the linear parameters, and not exponential.
-var y_linear = log_of_array(y_exp);
+var y = this.absolute_concentration.array[index].slice(this.max_index.array[index], this.min_index.array[index]);
 var x = this.time.array[0].slice(this.max_index.array[index], this.min_index.array[index]);
-var linear_reg = linear_fit(x,y_linear), y_predicted_linear = x.map(t => linear_reg[0] + linear_reg[1]*t);
-var linear_errors = linear_estimation_errors(y_predicted_linear, y_linear, x);
-var t_half = Math.log(2)/Math.abs(linear_reg[1]);
-//Propagation of error of t1/2 = ln(2)/K.
-var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(linear_reg[1], 2), 2)*Math.pow(linear_errors[1], 2));
-this.regression_line_time.array[index] = x;
-// Store the exponential trace.
-this.regression_line_concentration.array[index] = exp_of_array(y_predicted_linear);
-var exp_errors = estimation_errors(this.regression_line_concentration.array[index], y_exp);
-// Store exponential parameters and exponential errors (propagation of uncertainty and recalculation):
-//K, se(K), C0, se(C0), t 1/2, se (t 1/2), r^2 and SEE.
-this.regression_parameters.array[index] = [linear_reg[1], linear_errors[1], Math.exp(linear_reg[0]),
-Math.exp(linear_reg[0])*linear_errors[2], t_half, se_t_half, exp_errors[1], exp_errors[0]];
-// Invert sign of trace if the signal is an inhibition for plotting purposes.
-if(this.concentration.array[index][this.max_index.array[index]] < 0){
-this.regression_line_concentration.array[index] = scalar_product(this.regression_line_concentration.array[index], -1);
-};
+var linear_reg = linear_fit(x,log_of_array(y)), c0 = Math.exp(linear_reg[0]), k = linear_reg[1];
+this.change_fitted_parameters(index, c0, k, x, y);
 };
 
 get_nonlinear_exponential_fit(){
-// PROVISIONAL
-var y_array = this.absolute_concentration.array[this.graph_index].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
-var x_array = this.time.array[0].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
-var x = tf.tensor1d(x_array);
-var y = tf.tensor1d(y_array);
-var c0_val =this.regression_parameters.array[this.graph_index][2];
-var k_val =this.regression_parameters.array[this.graph_index][0]
-const c0 = tf.scalar(c0_val).variable();
-const k = tf.scalar(k_val).variable();
+var y = this.absolute_concentration.array[this.graph_index].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
+var x = this.time.array[0].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
+var y_tensor = tf.tensor1d(y);
+var x_tensor = tf.tensor1d(x);
+var c0 = this.regression_parameters.array[this.graph_index][2];
+var k = this.regression_parameters.array[this.graph_index][0];
+const c0_tensor = tf.scalar(c0).variable();
+const k_tensor = tf.scalar(k).variable();
 // y = c0*e^(k*x)
-const fun = (x) => x.mul(k).exp().mul(c0);
+const fun = (t) => t.mul(k_tensor).exp().mul(c0_tensor);
 const cost = (pred, label) => pred.sub(label).square().mean();
 const learning_rate = 0.1;
 const optimizer = tf.train.adagrad(learning_rate);
 // Train the model.
 for (let i = 0; i < 500; i++) {
-optimizer.minimize(() => cost(fun(x), y));
-}
+optimizer.minimize(() => cost(fun(x_tensor), y_tensor));
+};
 // Change regression parameters. PROVISIONAL.
-k_val = k.dataSync(), c0_val = c0.dataSync();
-console.log(k_val);
-var y_pred = x_array.map(x => c0_val*Math.exp(k_val*x));
-var exp_errors = estimation_errors(y_pred, y_array);
-var t_half = Math.log(2)/Math.abs(k_val);
+k = k_tensor.dataSync()[0], c0 = c0_tensor.dataSync()[0];
+this.change_fitted_parameters(this.graph_index, c0, k, x, y);
+k_tensor.dispose(), c0_tensor.dispose(), x_tensor.dispose(), y_tensor.dispose();
+};
+
+change_fitted_parameters(index, c0, k, x, y){
+var y_pred = x.map(x => c0*Math.exp(k*x));
+var par_err = hess_exp_errors(c0, k, x, y);
+var fit_err = estimation_errors(y_pred, y);
+var t_half = Math.log(2)/Math.abs(k);
 //Propagation of error of t1/2 = ln(2)/K.
-this.regression_parameters.array[this.graph_index][0] = k_val;
-this.regression_parameters.array[this.graph_index][2] = c0_val;
-this.regression_parameters.array[this.graph_index][6] = exp_errors[1];
-this.regression_parameters.array[this.graph_index][7] = exp_errors[0];
-this.regression_parameters.array[this.graph_index][4] = t_half;
-k.dispose(), c0.dispose(), x.dispose(), y.dispose();
+var se_t_half = Math.sqrt(Math.pow(Math.log(2)/Math.pow(k, 2), 2)*Math.pow(par_err[1], 2));
+this.regression_line_time.array[index] = x;
+// Store the exponential trace.
+this.regression_line_concentration.array[index] = y_pred;
+// Store exponential parameters and exponential errors (propagation of uncertainty and recalculation):
+//K, se(K), C0, se(C0), t 1/2, se (t 1/2), r^2 and SEE.
+this.regression_parameters.array[index] = [k, par_err[1], c0, par_err[0], t_half, se_t_half, fit_err[1], fit_err[0]];
+// Invert sign of trace if the signal is an inhibition for plotting purposes.
+if(this.concentration.array[index][this.max_index.array[index]] < 0){
+this.regression_line_concentration.array[index] = scalar_product(this.regression_line_concentration.array[index], -1);
+};
 };
 
 get_area_under_curve(index, frequency){
