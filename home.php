@@ -202,20 +202,6 @@ calibration and allow the use of electrodes of different sizes and characteristi
 
 </div>
 
-<div class="w3-row-padding">
-<div class="w3-half w3-margin-bottom w3-center">
-<ul class="w3-ul w3-light-grey">
-<li class="w3-dark-grey w3-xlarge w3-padding-32">Electrode Calibration</li>
-<li class="w3-padding-16"><p><label for="n1">&#8226; Electrode length (h): &nbsp;&nbsp;&nbsp;&nbsp; </label>
-<input type="number" step="0.01" name="n1" id="n1" style="width: 70px;" value="<?php echo htmlspecialchars($_POST['n1']);?>"/> µm</li>
-<li class="w3-padding-16"><label for="n2">&#8226; Carbon fibre diametre (d): &nbsp;&nbsp;&nbsp;&nbsp; </label>
-<input type="number" step="0.01" name="n2" id="n2" style="width: 70px;" value="<?php echo htmlspecialchars($_POST['n2']);?>" /> µm</li>
-<li class="w3-padding-16"><button class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="surf_calculation()"> Calculate</button></li>
-<li class="w3-padding-16" id="surface"> Introduce the electrode length and diameter of your experiment.</li>
-</ul>
-</div>
-<img src="Images/vertip.svg" alt="CFM sketch of diameter and length" style="width:400px;height:400px;border:0;" onclick="onClick(this)">
-</div>
 
 
 <div class="w3-row-padding" id="fscav">
@@ -407,16 +393,6 @@ function FSCVWindow(){
 window.open(encodeURI('FSCVCalibration.php'), "");
 };
 
-function surf_calculation() {
-var h = parseFloat(document.getElementById("n1").value);
-var d = parseFloat(document.getElementById("n2").value);
-if (h>0 && d>0) {
-var surface= Math.PI*Math.pow(d/2, 2)+2*Math.PI*(d/2)*h;
-var surface = surface.toFixed(2);
-document.getElementById("surface").innerHTML ="Surface of the electrode is " + surface.bold()+ ' <b>µm<sup>2</sup></b>';
-}
-else {document.getElementById("surface").innerHTML = "Only positive integers and decimals are allowed.";}
-}
 </script>
 
 </html>

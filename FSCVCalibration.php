@@ -69,7 +69,7 @@ $(".se-pre-con").fadeOut("slow");
 </button>
 <input type="range" class="custom-range w-25" id="file_slider" min="1" max="1" value="1" step = "1" onchange="slider_changed()">
 <button>
-<a id="next_button" onclick="next_pushed()">Next ></a>
+<a id="next_button" onclick="next_pushed()">Next></a>
 </button>
 </div>
 <div style = "text-align: center; margin-top:10px">
@@ -124,7 +124,7 @@ $(".se-pre-con").fadeOut("slow");
 <input type="checkbox" hidden id="graph_selection_checkbox">
 </button>
 &nbsp;
-<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled>Kinetic Calibration</button>
+<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()">Kinetic calibration</button>
 </div>
 </div>
 </div>
@@ -139,8 +139,8 @@ $(".se-pre-con").fadeOut("slow");
 <div class="col">
 <button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;">Filtered data</button>
 <button id="calibration_download_button" class="download_type_button">Calibration</button>
-<br>
 <button style="margin-top:5px;" onclick="export_as_xlsx_pushed()">Export as XLSX</button>
+
 </div>
 <div class="col">
 <div class="row">
@@ -233,13 +233,52 @@ $(".se-pre-con").fadeOut("slow");
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </div>
 </div>
+
 <div id="kinetic_calibration_modal_window" class="modal">
 <div class="modal-content">
-<p>Some text in the Modal..</p>
-<button style="width:5%;" >Calibrate</button>
-<button style="width:5%;" >Cancel</button>
+<div class="row">
+<div class = "col">
+<label for="valency_of_reaction" style="width:59%">Valency (e<sup>-</sup>):</label>
+<input style="width:30%" type="number" step="1" min=1 max=10 id="valency_of_reaction" value=2 />
+<label for="electrode_length" style="width:59%">Electrode length (μm):</label>
+<input style="width:30%" type="number" step="1" min=1 id="electrode_length" onchange="calculate_surface()" value=150 />
+<label for="electrode_width" style="width:59%">Electrode width (μm):</label>
+<input style="width:30%" type="number" step="1" min=1 id="electrode_width" onchange="calculate_surface()" value=7 />
+<label for="electrode_surface" style="width:59%">Electrode surface (μm<sup>2</sup>):</label>
+<span style="width:30%" id="electrode_surface">3337.16</span>
+
+</div>
+<div class = "col">
+<label for="absorption_strength" style="width:59%">Absorption (cm):</label>
+<input style="width:30%" type="number" step="1" min=0 id="absorption_strength" value=0.0055 />
+<label for="diffusion_coefficient" style="width:59%">Diffusion coef. (cm<sup>2</sup>/s):</label>
+<input style="width:30%" type="number" step="1" min=0 id="diffusion_coefficient" value=0.000002 />
+<label for="kinetic_calibration_name" style="width:59%">Name:</label>
+<input style="width:30%" type="text" id="kinetic_calibration_name" value="5-HT"/>
+
 </div>
 </div>
+<div class="row">
+<div class="col">
+<label for="kinetic_start_integration" style="width:59%">Start (sample): </label>
+<input style="width:30%" type="number" id="kinetic_start_integration" value=0 />
+</div>
+<div class="col">
+<label for="kinetic_end_integration" style="width:59%">End (sample): </label>
+<input style="width:30%" type="number" id="kinetic_end_integration" value=3000 />
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="kinetic_calibration_pushed()">Calibrate</button>
+<button style="width:20%;" onclick="kinetic_show_limits_pushed()">Show limits</button>
+<button style="width:15%;" onclick="kinetic_calibration_close_pushed()">Close</button>
+</p>
+
+
+</div>
+</div>
+
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -383,7 +422,7 @@ loaded_data.data_array[file_index-1] = fscv_data.current.array;
 function calibrate_button_pushed(){
 fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, _('cycling_frequency').value,
 _('calibration_coefficient').value, _('concentration_units').value, _('calibration_name').value);
-}
+};
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
 };
@@ -414,6 +453,31 @@ fscv_concentration.plot_graph("ct_graph");
 function kinetic_calibration_button_pushed(){
 _('kinetic_calibration_modal_window').style.display = "block";
 }
+
+
+function kinetic_calibration_close_pushed(){
+_('kinetic_calibration_modal_window').style.display = "none";
+}
+
+function kinetic_show_limits_pushed(){
+if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
+fscv_data.show_kinetic_limits("main_graph", _("kinetic_start_integration").value, _("kinetic_end_integration").value)
+};
+
+function kinetic_calibration_pushed(){
+fscv_concentration.kinetic_calibrate_trace("ct_graph", fscv_data, parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value), _('kinetic_start_integration').value,
+_('kinetic_end_integration').value, _('concentration_units').value, _('kinetic_calibration_name').value, _('diffusion_coefficient').value,
+_('absorption_strength').value, parseFloat(_('electrode_surface').innerHTML), _('valency_of_reaction').value);
+}
+
+function calculate_surface(){
+var h = parseFloat(_("electrode_length").value);
+var d = parseFloat(_("electrode_width").value);
+if (h>0 && d>0) {
+var surface= Math.PI*Math.pow(d/2, 2)+2*Math.PI*(d/2)*h;
+surface = surface.toFixed(2);
+_('electrode_surface').innerHTML = surface;
+}};
 
 function export_as_xlsx_pushed(){
 if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}

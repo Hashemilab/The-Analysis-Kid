@@ -16,7 +16,7 @@ this.palettes = new HL_FSCV_COLORPALETTE();
 if (color_palette == 'Custom'){color_palette = this.palettes.custom};
 this.color_palette = color_palette;
 this.plot_settings = new HL_PLOT_SETTINGS();
-
+this.plot_layout = this.plot_settings.plot_layout;
 
 // Methods of the data.
 this.graph_color_plot = function(div){
@@ -24,16 +24,15 @@ this.graph_color_plot = function(div){
 var graph_data = [{
 z:this.current.array,
 x:this.cycling_time.array,
-y:this.time.array,
 type:this.plot_type,
 colorscale:this.color_palette,
 colorbar: {len:0.5, xpad:30, title:this.current.name+'('+this.current.units+')'}
 }];
 
-var layout = this.plot_settings.plot_layout;
-layout.title.text = "<b>"+this.name_of_file+"</b>";
+this.plot_layout = this.plot_settings.plot_layout;
+this.plot_layout.title.text = "<b>"+this.name_of_file+"</b>";
 if (this.plot_type == 'surface'){
-layout.scene = {
+this.plot_layout.scene = {
 xaxis:{
 title: this.cycling_time.name+' ('+this.cycling_time.units+')',
 gridcolor: 'rgb(255, 255, 255)',
@@ -43,7 +42,7 @@ showgrid:true,
 backgroundcolor:'rgb(230, 230,230)',
 },
 yaxis: {
-title: this.time.name+' ('+this.time.units+')',
+title: 'Samples',
 gridcolor: 'rgb(255, 255, 255)',
 zerolinecolor: 'rgb(255, 255, 255)',
 showbackground: true,
@@ -62,15 +61,15 @@ aspectratio: {x: 1, y: 1, z: 0.7},
 aspectmode: 'manual'
 };
 } else {
-layout.xaxis = {
+this.plot_layout.xaxis = {
 title:this.cycling_time.name+' ('+this.cycling_time.units+')'
 };
-layout.yaxis = {
-title:this.time.name+' ('+this.time.units+')'
+this.plot_layout.yaxis = {
+title:'Samples'
 };
 };
 
-Plotly.newPlot(div, graph_data, layout, this.plot_settings.plot_configuration);
+Plotly.newPlot(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
 _(div).on('plotly_click', function(data){main_graph_clicked(data)});
 };
 
@@ -93,6 +92,28 @@ this.graph_color_plot(div);
 this.initialise_graph = function(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
+
+this.show_kinetic_limits = function(div, start_point, end_point){
+this.plot_layout.shapes = [
+{
+type: 'rect',
+x0: this.cycling_time.array[0],
+y0: start_point,
+x1: this.cycling_time.array[this.cycling_time.array.length-1],
+y1: end_point,
+line: {
+color: 'red',
+width: 2
+},
+fillcolor: 'rgba(0, 0, 0, 0)'
+}
+];
+Plotly.relayout(div, this.plot_layout);
+// Empty the shapes for future plots.
+this.plot_layout.shapes = [];
+};
+
+
 };
 
 // Class for it Transient and iV plots.
@@ -109,7 +130,7 @@ this.plot_settings = new HL_PLOT_SETTINGS();
 //Methods.
 this.add_trace = function(array, frequency, div, origin_file){
 this.current.array.push(array);
-this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length-1));
+this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length));
 this.legend_array.push("("+String(this.counter+1)+")");
 this.origin_file_array.push(origin_file);
 this.plot_trace(type, div);
@@ -168,12 +189,48 @@ this.graph_index = 0;
 
 calibrate_trace(div, index, fscv_transient, frequency, coefficient, units, name){
 this.graph_index = this.counter++;
-var array = fscv_transient.current.array[index-1];
-this.concentration.array.push(scalar_product(array, coefficient));
-this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length-1));
-this.origin_file_array.push(fscv_transient.origin_file_array[index-1]);
+var array = scalar_product(fscv_transient.current.array[index-1], coefficient);
+this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.plotly_colours[index-1], name, units);
+};
+
+// EXPERIMENTAL METHODS FOR KINETIC CALIBRATION.
+kinetic_calibrate_trace(div, fscv_data, frequency, cycling_frequency, integration_start, integration_end, units, name,
+diffusion_coefficient, absorption_strength, electrode_surface, valency){
+this.graph_index = this.counter++;
+var cvs = transpose(fscv_data.current.array), area, concentration_surface_array = [], electrode_response_array = [];
+var F_constant = 26.801*(10**(9))*3600; //nA·s/mol
+//Experimental model obtained for DA : dx.doi.org/10.1021/cn500020s|ACS  Chem.  Neurosci.2015, 6, 1509−1516
+var tau = 601.2*(1/(diffusion_coefficient*10**(6)))*absorption_strength-0.065;
+var a0 = absorption_strength*((1/cycling_frequency)/tau);
+for (var i = 0; i<cvs.length;++i){
+area = simpson_auc(cvs[i].slice(integration_start, integration_end), frequency); //With units nA*s = nNF if input is nA.
+concentration_surface_array[i] = (area/(valency*F_constant*electrode_surface))*10**10; // Units mol/dm^2.
+electrode_response_array[i] = a0*Math.exp(-(fscv_data.cycling_time.array[i])/tau);
+};
+//Implementation of deconvolution.
+const cs_fft_array = tf.tensor1d(concentration_surface_array).rfft().dataSync();
+const er_fft_array = tf.tensor1d(electrode_response_array).rfft().dataSync();
+var cs_fft_real_array = get_even_indexes(cs_fft_array), cs_fft_im_array = get_odd_indexes(cs_fft_array),
+er_fft_real_array = get_even_indexes(er_fft_array), er_fft_im_array = get_odd_indexes(er_fft_array),
+con_fft_real_array=[], con_fft_im_array=[];
+for (i=0;i<cs_fft_real_array.length;++i){
+let cs_fft_complex = new Complex(cs_fft_real_array[i], cs_fft_im_array[i]);
+let er_fft_complex = new Complex (er_fft_real_array[i], er_fft_im_array[i]);
+let con_fft_complex = complex_num_divide(cs_fft_complex, er_fft_complex);
+con_fft_real_array[i] = con_fft_complex.real;
+con_fft_im_array[i] = con_fft_complex.imaginary;
+};
+var con_array = tf.complex(tf.tensor1d(con_fft_real_array), tf.tensor1d(con_fft_im_array)).irfft().dataSync(); //in mol/dm^3 => M.
+con_array = scalar_product(con_array, 10**9); //in nM.
+this.add_concentration_to_array(div, con_array, cycling_frequency, fscv_data.name_of_file, '#1f77b4', name, 'nM');
+};
+
+add_concentration_to_array(div, array, frequency, origin_file, color, name, units){
+this.concentration.array.push(array);
+this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length));
+this.origin_file_array.push(origin_file);
 this.names.push(name);
-this.color_array.push(this.palettes.plotly_colours[index-1]);
+this.color_array.push(color);
 this.concentration.units.push(units);
 this.get_max_and_min_values(this.counter-1);
 this.get_linearised_exponential_fit(this.counter-1);
@@ -367,11 +424,10 @@ ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name)
 var filename = "Calibration_hashemilab.xlsx";
 XLSX.writeFile(wb, filename);
 };
-}
 
 
 
-
+};
 
 function HL_FSCV_ARRAY(data, units, name){
 this.units = units;
@@ -382,7 +438,7 @@ this.array = data;
 function HL_FSCV_TIME(frequency, length, units, name){
 this.units = units;
 this.name = name;
-this.array = makeArr(0,(length-1)/frequency, length-1);
+this.array = makeArr(0,(length-1)/frequency, length);
 };
 
 function HL_FSCV_COLORPALETTE(){
@@ -419,6 +475,6 @@ x: 0.05,
 y: 1.2,
 xanchor: 'left',
 yanchor: 'bottom',
-},
+}
 };
 };

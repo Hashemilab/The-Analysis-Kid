@@ -388,3 +388,37 @@ return new Uint8Array(Module.HEAPU8.buffer, ptr, nbytes);
 function free(heapArray) {
 Module._free(heapArray.byteOffset);
 };
+
+// Functions for complex numbers.
+
+function Complex(real, imaginary) {
+this.real = 0;
+this.imaginary = 0;
+this.real = (typeof real === 'undefined') ? this.real : parseFloat(real);
+this.imaginary = (typeof imaginary === 'undefined') ? this.imaginary : parseFloat(imaginary);
+}
+Complex.transform = function(num) {
+var complex;
+complex = (num instanceof Complex) ? num : complex;
+complex = (typeof num === 'number') ? new Complex(num, 0) : num;
+return complex;
+};
+
+function complex_num_multiply(first, second) {
+var num1, num2;
+num1 = Complex.transform(first);
+num2 = Complex.transform(second);
+var real = (num1.real * num2.real)-(num1.imaginary * num2.imaginary);
+var imaginary = (num1.real * num2.imaginary)+(num1.imaginary * num2.real);
+return new Complex(real, imaginary);
+}
+
+function complex_num_divide(first, second) {
+var num1, num2;
+num1 = Complex.transform(first);
+num2 = Complex.transform(second);
+var denom = num2.imaginary * num2.imaginary + num2.real * num2.real;
+var real = (num1.real * num2.real + num1.imaginary * num2.imaginary) /denom;
+var imaginary = (num2.real * num1.imaginary - num1.real * num2.imaginary) /denom;
+return new Complex(real, imaginary);
+}
