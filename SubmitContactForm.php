@@ -6,7 +6,9 @@
 <link rel="stylesheet" href="Styling/popup.css">
 <script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
 
-
+<head>
+<link rel="shortcut icon" href="Images/cv.png"/>
+</head>
 <br>
 <br>
 <div id="contact">
@@ -56,7 +58,7 @@ $body = [
 'Subject' => "NeuroCloud Message from ".htmlspecialchars($_POST['ContactEmail']),
 'TextPart' => "",
 'HTMLPart' => "Message: ".htmlspecialchars($_POST['ContactMessage']),
-'CustomID' => htmlspecialchars($_Post['ContactEmail'])
+'CustomID' => htmlspecialchars($_POST['ContactEmail'])
 ]
 ]
 ];
