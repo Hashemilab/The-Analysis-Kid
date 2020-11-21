@@ -8,8 +8,6 @@
 <script type="text/javascript" src="JavaScriptPackages/shim.min.js"></script>
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 
-
-
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
 body {font-size:16px;}
@@ -86,7 +84,8 @@ $(".se-pre-con").fadeOut("slow");
 
 <!-- Header -->
 <div class="w3-container" style="margin-top:80px" id="about">
-<h1 href="#top" class="w3-jumbo"><b>Analysis Kid</b></h1>
+<h1 href="#top" class="w3-jumbo"><b>Analysis Kid</b> <img style ="float:right" src="/Images/HL_Icon.png" alt="Hashemi Lab Icon" width="375" height="125"></h1>
+
 <h1 class="w3-xxxlarge w3-text-indigo"><b>About.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 <p  align=”justify”> Analysis Kid is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
@@ -129,8 +128,11 @@ Do not hesitate to contact through the contact form, email or any other social p
 </ul>
 </div>
 </div>
+</div>
 
-
+<div class="w3-container" id="documentation" style="margin-top:75px">
+<h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
+<hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 </div>
 
 <div class="w3-container" id="references" style="margin-top:75px">
@@ -183,7 +185,6 @@ Do not hesitate to contact through the contact form, email or any other social p
 <a href = "mailto:sergio.mena19@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
 <a href="https://twitter.com/sermeor"><i class="fab fa-twitter"></i></a>
 <a href="https://www.linkedin.com/in/sergio-mena-ortega-a418ab120/"><i class="fab fa-linkedin-in"></i></a>
-<a href="https://teams.microsoft.com/"><img src="https://img.icons8.com/ios-filled/50/000000/microsoft-team-2019.png" width="25" height="25"/></a>
 
 </p>
 <p class="w3-small"><a href="https://www.hashemilab.com/">The Hashemi Lab</a></p>
