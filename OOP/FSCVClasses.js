@@ -171,6 +171,7 @@ constructor(units){
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.palettes = new HL_FSCV_COLORPALETTE();
 this.concentration = new HL_FSCV_ARRAY([], [], 'Concentration');
+this.average_concentration = new HL_FSCV_ARRAY([], [], 'Concentration');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
 this.absolute_concentration = new HL_FSCV_ARRAY([], [], 'Absolute concentration');
 this.max_index = new HL_FSCV_ARRAY([], units, 'Max index values');
@@ -325,7 +326,6 @@ initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
 
-
 get_max_and_min_values(index){
 var abs_array = absolute_array(this.concentration.array[index]);
 var max = index_of_max(abs_array);
@@ -342,6 +342,12 @@ this.get_linearised_exponential_fit(this.graph_index);
 this.get_area_under_curve(this.graph_index, frequency);
 this.plot_graph(div);
 };
+
+calculate_average_trace(){
+// Assumption that all concentrations are the same as the first added one and that length of arrays are the same.
+this.average_concentration.units = this.concentration.units[0];
+this.average_concentration.array = transpose(this.concentration.array).map(x => average(x));
+}
 
 
 get_linearised_exponential_fit(index){
@@ -424,10 +430,13 @@ ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name)
 var filename = "Calibration_hashemilab.xlsx";
 XLSX.writeFile(wb, filename);
 };
-
-
-
 };
+
+
+
+
+
+
 
 function HL_FSCV_ARRAY(data, units, name){
 this.units = units;

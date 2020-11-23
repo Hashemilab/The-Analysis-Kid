@@ -215,7 +215,7 @@ captionText.innerHTML = element.alt;
 // Script to open Dashboards depending on plot selected
 // Contact pop up window.
 function ContactWindow(){
-var myVisualWindow = window.open(encodeURI('ContactForm.php'), "", "width=500,height=550",'resizesable=yes');
+window.open(encodeURI('ContactForm.php'), "", "width=500,height=550",'resizesable=yes');
 }
 
 //Callback for the FSCAV Application.

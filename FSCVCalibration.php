@@ -140,8 +140,9 @@ $(".se-pre-con").fadeOut("slow");
 <button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;">Filtered data</button>
 <button id="calibration_download_button" class="download_type_button">Calibration</button>
 <button style="margin-top:5px;" onclick="export_as_xlsx_pushed()">Export as XLSX</button>
-
+<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()">Open Kinetic Analysis</button>
 </div>
+
 <div class="col">
 <div class="row">
 <button class="filter_selection" id="convolution_button" style="background-color:#3f51b5; color:white;">Conv.</button>
@@ -192,9 +193,15 @@ $(".se-pre-con").fadeOut("slow");
 <div class = "center" style = " margin:auto; width:90%;height:500px">
 <div class = "center" style = "float:left; width:50%;">
 <div id="transient_graph" class = "center"></div>
+<div id="iv_graph" class = "center"></div>
 </div>
 <div class = "center" style = "float:right; width:50%;">
 <div id="ct_graph" class = "center"></div>
+</div>
+
+<div style="position:absolute;left:25%;margin-top:2.5%">
+<button class="current_trace_selection" id="i-t_button" style="font-size:12px;background-color:#3f51b5; color:white;">1</button>
+<button class="current_trace_selection" id="i-v_button" style="font-size:12px">2</button>
 </div>
 
 <div style="position:absolute;left:35%;margin-top:2.5%">
@@ -218,15 +225,6 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 </div>
 
-
-<div class = "center" style = " margin:auto; width:90%;height:500px">
-<div class = "center" style = "float:left; width:50%;">
-<div id="iv_graph" class = "center"></div>
-</div>
-<div class = "center" style = "float:right; width:50%;">
-</div>
-</div>
-
 <br>
 
 <div>
@@ -245,7 +243,7 @@ $(".se-pre-con").fadeOut("slow");
 <label for="electrode_width" style="width:59%">Electrode width (μm):</label>
 <input style="width:30%" type="number" step="1" min=1 id="electrode_width" onchange="calculate_surface()" value=7 />
 <label for="electrode_surface" style="width:59%">Electrode surface (μm<sup>2</sup>):</label>
-<span style="width:30%" id="electrode_surface">3337.16</span>
+<input style="width:30%" type="number" min=1 step=1 value=3337.16 id="electrode_surface">
 
 </div>
 <div class = "col">
@@ -326,17 +324,18 @@ $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
 });
 
-$('#FFTselect').click(function() {
-$('#CONVDiv').hide()
-$('#FFTDiv').show()
-});
-$('#CONselect').click(function() {
-$('#FFTDiv').hide()
-$('#CONVDiv').show()
+$(document).on("click", '.current_trace_selection', function(){
+$('.current_trace_selection').css('background-color','');
+$('.current_trace_selection').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+if (this.id == "i-t_button"){$('#transient_graph').show(); $('#iv_graph').hide()}
+else{$('#transient_graph').hide(); $('#iv_graph').show()};
 });
 
-$('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").innerHTML = this.value});
-$('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").innerHTML = this.value});
+
+$('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").value = this.value});
+$('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").value = this.value});
 
 $(document).on("click", '.download_type_button', function(){
 $('.download_type_button').css('background-color','');
@@ -373,6 +372,7 @@ slider_changed();
 
 function invert_pushed(){
 fscv_data.invert_current_values("main_graph");
+apply_changes_pushed();
 };
 
 function reset_pushed(){
@@ -467,8 +467,14 @@ fscv_data.show_kinetic_limits("main_graph", _("kinetic_start_integration").value
 function kinetic_calibration_pushed(){
 fscv_concentration.kinetic_calibrate_trace("ct_graph", fscv_data, parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value), _('kinetic_start_integration').value,
 _('kinetic_end_integration').value, _('concentration_units').value, _('kinetic_calibration_name').value, _('diffusion_coefficient').value,
-_('absorption_strength').value, parseFloat(_('electrode_surface').innerHTML), _('valency_of_reaction').value);
+_('absorption_strength').value, _('electrode_surface').value, _('valency_of_reaction').value);
 }
+
+function open_kinetic_analysis_pushed(){
+fscv_concentration.calculate_average_trace();
+var mm_window = window.open(encodeURI('FSCVMichaelisMenten.php'), "");
+mm_window.fscv_concentration = fscv_concentration;
+};
 
 function calculate_surface(){
 var h = parseFloat(_("electrode_length").value);
@@ -476,7 +482,7 @@ var d = parseFloat(_("electrode_width").value);
 if (h>0 && d>0) {
 var surface= Math.PI*Math.pow(d/2, 2)+2*Math.PI*(d/2)*h;
 surface = surface.toFixed(2);
-_('electrode_surface').innerHTML = surface;
+_('electrode_surface').value = surface;
 }};
 
 function export_as_xlsx_pushed(){
@@ -505,6 +511,8 @@ fscv_data.initialise_graph("main_graph");
 fscv_transient.initialise_graph("transient_graph");
 fscv_iv.initialise_graph("iv_graph");
 fscv_concentration.initialise_graph("ct_graph");
+// Hide iv_graph
+_('iv_graph').style.display="none";
 </script>
 
 </body>
