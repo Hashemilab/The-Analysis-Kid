@@ -131,7 +131,7 @@ function remove_break_autoreceptors_button_pushed(){
 if(mm_concentration.autoreceptors_slider.start.length>1){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
 };
 function values_changed(){
-mm_concentration.input_values_changed("release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('alpha').value, _('vmax_1').value,
+mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('alpha').value, _('vmax_1').value,
 _('km_1').value, _('beta').value, _('vmax_2').value, _('km_2').value ], "release_rate_list", "autoreceptors_list");
 };
 function include_pushed(){};

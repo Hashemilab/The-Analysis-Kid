@@ -2,6 +2,7 @@ class HL_MICHAELIS_MENTEN{
 constructor(){
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.average_concentration = new HL_FSCV_ARRAY([],[], 'Concentration');
+this.modelled_concentration = new HL_FSCV_ARRAY([],[], 'Concentration');
 this.release_rate = new HL_FSCV_ARRAY([],[], 'Release rate');
 this.autoreceptors_rate = new HL_FSCV_ARRAY([],[], 'Autoreceptors rate');
 this.time = new HL_FSCV_ARRAY([],'s', 'Time');
@@ -34,8 +35,7 @@ this.autoreceptors_slider_values = [0];
 add_data_to_application(div, fscv_concentration, release_graph_div, release_div, autoreceptors_div, release_type, autoreceptors_type, parameters, release_list_div, autoreceptors_list_div){
 this.assign_concentration_trace(fscv_concentration);
 this.initialise_sliders(release_div, release_type, autoreceptors_div, autoreceptors_type);
-this.input_values_changed(release_graph_div, release_div, autoreceptors_div, release_type, autoreceptors_type, parameters, release_list_div, autoreceptors_list_div);
-this.graph_concentration(div);
+this.input_values_changed(div, release_graph_div, release_div, autoreceptors_div, release_type, autoreceptors_type, parameters, release_list_div, autoreceptors_list_div);
 };
 
 assign_concentration_trace(fscv_concentration){
@@ -82,7 +82,7 @@ remove_input_field(list_div){
 _(list_div).removeChild(_(list_div).lastChild);
 };
 
-input_values_changed(div, release_div, autoreceptors_div, release_type, autoreceptors_type, parameters, release_list_div, autoreceptors_list_div){
+input_values_changed(concentration_graph_div, release_graph_div, release_div, autoreceptors_div, release_type, autoreceptors_type, parameters, release_list_div, autoreceptors_list_div){
 this.assign_slider_values(release_div, release_type);
 this.assign_slider_values(autoreceptors_div, autoreceptors_type);
 this.parameters = parameters;
@@ -91,7 +91,9 @@ this.release_rate.array = this.generate_input_arrays(release_type, this.average_
 this.release_rate.units = this.average_concentration.units+'/s';
 this.autoreceptors_rate.array = this.generate_input_arrays(autoreceptors_type, this.average_concentration.array.length);
 this.autoreceptors_rate.units = '%';
-this.graph_input_arrays(div);
+this.modelled_concentration.array = this.generate_modelled_concentration();
+this.graph_input_arrays(release_graph_div);
+this.graph_concentration(concentration_graph_div);
 };
 
 assign_slider_values(div, type){
@@ -115,6 +117,16 @@ arr.push(tmp);
 return flatten(arr);
 };
 
+generate_modelled_concentration(){
+var model_concentration = [0];
+for(var i=0;i<this.release_rate.array.length-1;++i){
+model_concentration[i+1] = model_concentration[i] + (1/this.frequency)*(this.release_rate.array[i]*(1-this.autoreceptors_rate.array[i])
+- this.parameters[0]*(this.parameters[1]*model_concentration[i])/(this.parameters[2]+model_concentration[i])
+- this.parameters[3]*(this.parameters[4]*model_concentration[i])/(this.parameters[5]+model_concentration[i]));
+}
+return model_concentration;
+};
+
 
 
 
@@ -123,12 +135,20 @@ var layout = this.plot_settings.plot_layout;
 layout.xaxis.title = this.time.name +" ("+this.time.units+")";
 layout.yaxis.title = this.average_concentration.name +" ("+this.average_concentration.units+")";
 layout.title.text = "<b> c-t Curve </b>";
-var trace = {
+var experimental_trace = {
 y: this.average_concentration.array,
 x: this.time.array,
 showlegend: false,
+name:'Experimental',
 };
-Plotly.newPlot(div, [trace], layout, this.plot_settings.plot_configuration);
+
+var modelled_trace = {
+y: this.modelled_concentration.array,
+x: this.time.array,
+showlegend: false,
+name:'Model',
+};
+Plotly.newPlot(div, [experimental_trace, modelled_trace], layout, this.plot_settings.plot_configuration);
 };
 
 graph_input_arrays(div){
