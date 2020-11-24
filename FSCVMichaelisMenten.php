@@ -111,8 +111,17 @@ $(".se-pre-con").fadeOut("slow");
 <div id="optimisation_modal_window" class="modal">
 <div class="modal-content">
 <div class="row">
-
-
+<div class="col">
+<p> Parameters to optimise: </p>
+<label for="vmax1_check" style="width:59%">V<sub>max1</sub> : </label> <input type="checkbox" id="vmax1_check"  style="width:39%"/>
+<label for="km1_check" style="width:59%">K<sub>m1</sub> : </label> <input type="checkbox" id="km1_check"  style="width:39%"/>
+<label for="vmax2_check" style="width:59%">V<sub>max2</sub> : </label> <input type="checkbox" id="vmax2_check"  style="width:39%"/>
+<label for="km2_check" style="width:59%">K<sub>m2</sub> : </label> <input type="checkbox" id="km2_check"  style="width:39%"/>
+</div>
+<div class="col">
+<label for="epochs" style="width:59%">Epochs: </label> <input type="number" min=1 max=5000 value=500 id="epochs" style="width:39%" />
+<label for="learning_rate" style="width:59%">Learning rate: </label>  <input type="number" min=0 max=1 value=0.001 id="learning_rate" style="width:39%" />
+</div>
 </div>
 <br>
 <p style="text-align:center">

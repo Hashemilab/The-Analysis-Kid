@@ -121,20 +121,13 @@ return flatten(arr);
 generate_modelled_concentration(Rt, At, alpha, vmax1, km1, beta, vmax2, km2){
 var s = [0, 0];
 for(var i=1;i<Rt.length-1;++i){
-s[i+1] = s[i-1] + (2/this.frequency)*(Rt[i]*(1-At[i]) - alpha*(vmax1*s[i])/km1+s[i]) - beta*(vmax2*s[i])/(km2+s[i]));
+s[i+1] = s[i-1] + (2/this.frequency)*(Rt[i]*(1-At[i]) - alpha*(vmax1*s[i])/(km1+s[i]) - beta*(vmax2*s[i])/(km2+s[i]));
 }
-return y;
+return s;
 };
 
-optimisation_of_parameters(){
 
 
-
-function diff_fun(Rt, At, alpha, vmax1, km1, beta, vmax2, km2){
-
-}
-
-}
 
 
 
