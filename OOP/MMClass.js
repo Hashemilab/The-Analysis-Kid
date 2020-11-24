@@ -91,7 +91,8 @@ this.release_rate.array = this.generate_input_arrays(release_type, this.average_
 this.release_rate.units = this.average_concentration.units+'/s';
 this.autoreceptors_rate.array = this.generate_input_arrays(autoreceptors_type, this.average_concentration.array.length);
 this.autoreceptors_rate.units = '%';
-this.modelled_concentration.array = this.generate_modelled_concentration();
+this.modelled_concentration.array = this.generate_modelled_concentration(this.release_rate.array, this.autoreceptors_rate.array, this.parameters[0],
+this.parameters[1], this.parameters[2], this.parameters[3], this.parameters[4], this.parameters[5]);
 this.graph_input_arrays(release_graph_div);
 this.graph_concentration(concentration_graph_div);
 };
@@ -117,16 +118,23 @@ arr.push(tmp);
 return flatten(arr);
 };
 
-generate_modelled_concentration(){
-var model_concentration = [0];
-for(var i=0;i<this.release_rate.array.length-1;++i){
-model_concentration[i+1] = model_concentration[i] + (1/this.frequency)*(this.release_rate.array[i]*(1-this.autoreceptors_rate.array[i])
-- this.parameters[0]*(this.parameters[1]*model_concentration[i])/(this.parameters[2]+model_concentration[i])
-- this.parameters[3]*(this.parameters[4]*model_concentration[i])/(this.parameters[5]+model_concentration[i]));
+generate_modelled_concentration(Rt, At, alpha, vmax1, km1, beta, vmax2, km2){
+var s = [0, 0];
+for(var i=1;i<Rt.length-1;++i){
+s[i+1] = s[i-1] + (2/this.frequency)*(Rt[i]*(1-At[i]) - alpha*(vmax1*s[i])/km1+s[i]) - beta*(vmax2*s[i])/(km2+s[i]));
 }
-return model_concentration;
+return y;
 };
 
+optimisation_of_parameters(){
+
+
+
+function diff_fun(Rt, At, alpha, vmax1, km1, beta, vmax2, km2){
+
+}
+
+}
 
 
 
@@ -202,6 +210,7 @@ Plotly.newPlot(div, [release_rate_trace, autoreceptors_rate], layout, this.plot_
 initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
+
 
 
 }

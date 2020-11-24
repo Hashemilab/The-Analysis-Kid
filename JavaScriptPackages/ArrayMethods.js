@@ -55,22 +55,11 @@ return tmp;
 // Short form to calculate average.
 function average(arr){for(i=0, sum=0;i<arr.length;++i){sum+=arr[i]}; return sum/arr.length};
 //Standard deviation of the array.
-function std(arr){
-var avg = average(arr);
-var n = arr.length;
-var squareDiffs = arr.map(function(value){
-var diff = parseFloat(value) - avg;
-var sqrDiff = diff * diff;
-return sqrDiff;
-});
-var sum = squareDiffs.reduce(function(a, b){
-return a + b;
-}, 0);
-if (n == 1){var avgSquareDiff = 0}
-else {var avgSquareDiff = sum/(n-1);};
-var stdDev = Math.sqrt(avgSquareDiff);
-return stdDev;
-};
+function std(array){
+const n = array.length;
+const mean = array.reduce((a, b) => a + b) / n;
+return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+}
 // Extract column from 2D array.
 function arrayColumn(arr, n) {
 return arr.map(x=> x[n]);

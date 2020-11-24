@@ -171,7 +171,8 @@ constructor(units){
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.palettes = new HL_FSCV_COLORPALETTE();
 this.concentration = new HL_FSCV_ARRAY([], [], 'Concentration');
-this.average_concentration = new HL_FSCV_ARRAY([], [], 'Concentration');
+this.average_concentration = new HL_FSCV_ARRAY([], [], 'Average concentration');
+this.std_concentration = new HL_FSCV_ARRAY([], [], 'STD concentration');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
 this.absolute_concentration = new HL_FSCV_ARRAY([], [], 'Absolute concentration');
 this.max_index = new HL_FSCV_ARRAY([], units, 'Max index values');
@@ -345,9 +346,13 @@ this.plot_graph(div);
 
 calculate_average_trace(){
 // Assumption that all concentrations are the same as the first added one and that length of arrays are the same.
+var transposed_concentration_array = transpose(this.concentration.array);
 this.average_concentration.units = this.concentration.units[0];
-this.average_concentration.array = transpose(this.concentration.array).map(x => average(x));
-}
+this.average_concentration.array = transposed_concentration_array.map(x => average(x));
+// Std of traces.
+this.std_concentration.units = this.average_concentration.units;
+this.std_concentration.array = transposed_concentration_array.map(x => std(x));
+};
 
 
 get_linearised_exponential_fit(index){
@@ -360,12 +365,9 @@ this.change_fitted_parameters(index, c0, k, x, y);
 get_nonlinear_exponential_fit(){
 var y = this.absolute_concentration.array[this.graph_index].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
 var x = this.time.array[0].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
-var y_tensor = tf.tensor1d(y);
-var x_tensor = tf.tensor1d(x);
-var c0 = this.regression_parameters.array[this.graph_index][2];
+var y_tensor = tf.tensor1d(y), x_tensor = tf.tensor1d(x), c0 = this.regression_parameters.array[this.graph_index][2];
 var k = this.regression_parameters.array[this.graph_index][0];
-const c0_tensor = tf.scalar(c0).variable();
-const k_tensor = tf.scalar(k).variable();
+const c0_tensor = tf.scalar(c0).variable(), k_tensor = tf.scalar(k).variable();
 // y = c0*e^(k*x)
 const fun = (t) => t.mul(k_tensor).exp().mul(c0_tensor);
 const cost = (pred, label) => pred.sub(label).square().mean();
@@ -406,14 +408,21 @@ this.area_under_curve.array[index] = simpson_auc(this.concentration.array[index]
 };
 
 export_calibration(){
+// Export of average and STD.
+this.calculate_average_trace();
+var ws_name = "Average and STD";
+var aoa = transpose([this.time.array[0], this.average_concentration.array, this.std_concentration.array]);
+aoa.unshift([this.time.name, this.average_concentration.name, this.std_concentration.name]);
+var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(aoa);
+XLSX.utils.book_append_sheet(wb, ws, ws_name);
 // Export of concentration traces.
-var ws_name = "Concentration - Time";
-var aoa =  transpose(zip(this.time.array, this.concentration.array));
+ws_name = "Concentration - Time";
+aoa =  transpose(zip(this.time.array, this.concentration.array));
 var file_names = zip(uniform_array(this.origin_file_array.length, ''),this.origin_file_array);
 var names = zip(uniform_array(this.names.length, 'Time ('+this.time.units+')'), this.names.map((x,i)=>x+' ('+this.concentration.units[i]+')'));
 aoa.unshift(names);
 aoa.unshift(file_names);
-var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(aoa);
+ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
 // Export of parameters.
 ws_name = "Parametric Analysis";
@@ -431,11 +440,6 @@ var filename = "Calibration_hashemilab.xlsx";
 XLSX.writeFile(wb, filename);
 };
 };
-
-
-
-
-
 
 
 function HL_FSCV_ARRAY(data, units, name){

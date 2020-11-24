@@ -10,6 +10,7 @@
 <script src="JavaScriptPackages/nouislider.min.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/tf.min.js"></script>
+<script src="JavaScriptPackages/xlsx.full.min.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
 <script src = "OOP/LOADClass.js"></script>
 <script src = "OOP/MMClass.js"></script>
@@ -85,6 +86,8 @@ $(".se-pre-con").fadeOut("slow");
 <div id="autoreceptors_slider" style="width:70%;float:right; margin-top:1.5%"></div>
 <br><br>
 <div id="autoreceptors_list">A(t): <input type="number" id="autoreceptors_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+<br>
+<button onclick="optimisation_button_pushed()">Optimisation</button>
 </div>
 
 <div class="col-8">
@@ -102,6 +105,22 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 <div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
+</div>
+</div>
+
+<div id="optimisation_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+
+
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="optimisation_optimise_button_pushed()">Optimise</button>
+<button style="width:15%;" onclick="optimisation_close_button_pushed()">Close</button>
+</p>
+
+
 </div>
 </div>
 <script>
@@ -134,7 +153,28 @@ function values_changed(){
 mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('alpha').value, _('vmax_1').value,
 _('km_1').value, _('beta').value, _('vmax_2').value, _('km_2').value ], "release_rate_list", "autoreceptors_list");
 };
-function include_pushed(){};
+function include_pushed(){
+//get data from uploaded file.
+let fscv_concentration_loaded = new HL_FSCV_CONCENTRATION();
+let data_array = transpose(loaded_data.data_array[0]);
+fscv_concentration_loaded.average_concentration.array = data_array[1].slice(1);
+fscv_concentration_loaded.time.array = [data_array[0].slice(1)];
+add_data(fscv_concentration_loaded);
+};
+
+
+
+function optimisation_button_pushed(){
+_('optimisation_modal_window').style.display = "block";
+}
+
+function optimisation_close_button_pushed(){
+_('optimisation_modal_window').style.display = "none";
+}
+
+function optimisation_optimise_button_pushed(){
+
+};
 </script>
 
 <script>
@@ -146,8 +186,6 @@ mm_concentration.initialise_graph("ct_graph");
 mm_concentration.initialise_graph("release_graph");
 //Add listener to loading input.
 _("FSCVfiles").addEventListener('change', loaded_data.read_files);
-// Hide release_graph
-
 //Initialise sliders.
 noUiSlider.create(_('release_rate_slider'), mm_concentration.release_rate_slider);
 _('release_rate_slider').noUiSlider.on('change', values_changed);
@@ -155,10 +193,15 @@ noUiSlider.create(_('autoreceptors_slider'), mm_concentration.autoreceptors_slid
 _('autoreceptors_slider').noUiSlider.on('change', values_changed);
 //Check for signal.
 if (typeof(fscv_concentration) !== 'undefined'){
+add_data(fscv_concentration);
+};
+// Hide release_graph
+_('release_graph').style.display="none";
+// Define add data function.
+function add_data(fscv_concentration){
 mm_concentration.add_data_to_application("ct_graph", fscv_concentration, "release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider",
 [_('alpha').value, _('vmax_1').value, _('km_1').value, _('beta').value, _('vmax_2').value, _('km_2').value ], "release_rate_list", "autoreceptors_list");
 };
-_('release_graph').style.display="none";
 </script>
 
 
