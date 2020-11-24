@@ -88,19 +88,26 @@ this.invert_current_values = function(div){
 this.current.array = this.current.array.map(arr => arr.map(x => -x));
 this.graph_color_plot(div);
 };
+this.background_subtraction = function(div, start, end){
+for (var i = 0; i<fscv_data.current.array.length;++i){
+var tmp = average(fscv_data.current.array[i].slice(start, end));
+for (var j=0; j<fscv_data.current.array[0].length;++j){fscv_data.current.array[i][j] = fscv_data.current.array[i][j] - tmp};
+}
+this.graph_color_plot(div);
+};
 
 this.initialise_graph = function(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
 
-this.show_kinetic_limits = function(div, start_point, end_point){
+this.show_limits = function(div, y_start_point, y_end_point, x_start_point, x_end_point){
 this.plot_layout.shapes = [
 {
 type: 'rect',
-x0: this.cycling_time.array[0],
-y0: start_point,
-x1: this.cycling_time.array[this.cycling_time.array.length-1],
-y1: end_point,
+x0: x_start_point,
+y0: y_start_point,
+x1: x_end_point,
+y1: y_end_point,
 line: {
 color: 'red',
 width: 2

@@ -59,33 +59,48 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 </div>
 <div class="row">
-<label for="alpha" style="width: 16.6%;">&alpha; :</label>
-<label for="vmax_1" style="width: 16.6%;">V<sub>max1</sub> :</label>
-<label for="km_1" style="width: 16.6%;">K<sub>m1</sub> :</label>
-<label for="beta" style="width: 16.6%;">&beta; :</label>
-<label for="vmax_2" style="width: 16.6%;">V<sub>max2</sub> :</label>
-<label for="km_2" style="width: 16.6%;">K<sub>m2</sub> :</label>
-<input type="number" step="1" min=0 max=1 id="alpha" style="width: 16.6%;"  value=1 onchange="values_changed()" />
-<input type="number" step="1" min=1  id="vmax_1" style="width: 16.6%;" value=150 onchange="values_changed()" />
-<input type="number" id="km_1" style="width: 16.6%;" value=15 onchange="values_changed()" />
-<input type="number" step="1" min=0 max=1 id="beta" style="width: 16.6%;"  value=1 onchange="values_changed()" />
-<input type="number" step="1" min=1  id="vmax_2" style="width: 16.6%;" value=500 onchange="values_changed()" />
-<input type="number" id="km_2" style="width: 16.6%;" value=50 onchange="values_changed()" />
+<label for="vmax_1" style="width: 25%;">V<sub>max1</sub> :</label>
+<label for="km_1" style="width: 25%;">K<sub>m1</sub> :</label>
+<label for="vmax_2" style="width: 25%;">V<sub>max2</sub> :</label>
+<label for="km_2" style="width: 25%;">K<sub>m2</sub> :</label>
+<input type="number" step="1" min=1  id="vmax_1" style="width: 25%;" value=150 onchange="values_changed()" />
+<input type="number" id="km_1" style="width: 25%;" value=15 onchange="values_changed()" />
+<input type="number" step="1" min=1  id="vmax_2" style="width: 25%;" value=500 onchange="values_changed()" />
+<input type="number" id="km_2" style="width: 25%;" value=50 onchange="values_changed()" />
 </div>
 <br>
+<div id="release_rate_panel">
 <button onclick="add_break_release_button_pushed()">Add</button>
 &nbsp;
 <button onclick="remove_break_release_button_pushed()">Del</button>
 <div id="release_rate_slider" style="width:70%;float:right; margin-top:1.5%"></div>
 <br><br>
-<div id="release_rate_list"> R(t): <input type="number" id="release_rate_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+<div id="release_rate_list">dR: <input type="number" id="release_rate_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
 <br>
 <button onclick="add_break_autoreceptors_button_pushed()">Add</button>
 &nbsp;
 <button onclick="remove_break_autoreceptors_button_pushed()">Del</button>
 <div id="autoreceptors_slider" style="width:70%;float:right; margin-top:1.5%"></div>
 <br><br>
-<div id="autoreceptors_list">A(t): <input type="number" id="autoreceptors_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+<div id="autoreceptors_list">dA: <input type="number" id="autoreceptors_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+</div>
+
+<div id="alpha_beta_panel" style="display:none;">
+<button onclick="add_break_alpha_button_pushed()">Add</button>
+&nbsp;
+<button onclick="remove_break_alpha_button_pushed()">Del</button>
+<div id="alpha_slider" style="width:70%;float:right; margin-top:1.5%"></div>
+<br><br>
+<div id="alpha_list"> d&alpha; : <input type="number" id="alpha_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+<br>
+<button onclick="add_break_beta_button_pushed()">Add</button>
+&nbsp;
+<button onclick="remove_break_beta_button_pushed()">Del</button>
+<div id="beta_slider" style="width:70%;float:right; margin-top:1.5%"></div>
+<br><br>
+<div id="beta_list">d&beta; : <input type="number" id="beta_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+</div>
+
 <br>
 <button onclick="optimisation_button_pushed()">Optimisation</button>
 </div>
@@ -94,10 +109,12 @@ $(".se-pre-con").fadeOut("slow");
 <div class = "center" style = "float:right; width:100%;">
 <div id="ct_graph" class = "center" style="width:100%; height:80vh;"></div>
 <div id="release_graph" class = "center" style="width:100%; height:80vh;"></div>
+<div id="alpha_graph" class = "center" style="width:100%; height:80vh;"></div>
 </div>
 <div style="position:absolute;left:50%;margin-top:2.5%">
 <button class="graph_selection" id="ct_graph_button" style="font-size:12px;background-color:#3f51b5; color:white;">1</button>
 <button class="graph_selection" id="release_graph_button" style="font-size:12px">2</button>
+<button class="graph_selection" id="alpha_graph_button" style="font-size:12px">3</button>
 </div>
 </div>
 
@@ -139,12 +156,14 @@ $('.graph_selection').css('background-color','');
 $('.graph_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
-if (this.id == "ct_graph_button"){$('#ct_graph').show(); $('#release_graph').hide()}
-else{$('#ct_graph').hide(); $('#release_graph').show()};
+if (this.id == "ct_graph_button"){
+$('#ct_graph').show(); $('#release_graph').hide(); $('#alpha_graph').hide(); $('#release_rate_panel').show(); $('#alpha_beta_panel').hide();
+} else if (this.id == "release_graph_button") {
+$('#ct_graph').hide(); $('#release_graph').show(); $('#alpha_graph').hide(); $('#release_rate_panel').show(); $('#alpha_beta_panel').hide();
+} else{
+$('#ct_graph').hide(); $('#release_graph').hide(); $('#alpha_graph').show(); $('#release_rate_panel').hide(); $('#alpha_beta_panel').show();
+};
 });
-
-
-
 
 function add_break_release_button_pushed(){
 if(mm_concentration.release_rate_slider.start.length<5){mm_concentration.add_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")}
@@ -158,10 +177,26 @@ if(mm_concentration.autoreceptors_slider.start.length<5){mm_concentration.add_sl
 function remove_break_autoreceptors_button_pushed(){
 if(mm_concentration.autoreceptors_slider.start.length>1){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
 };
-function values_changed(){
-mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('alpha').value, _('vmax_1').value,
-_('km_1').value, _('beta').value, _('vmax_2').value, _('km_2').value ], "release_rate_list", "autoreceptors_list");
+function add_break_alpha_button_pushed(){
+if(mm_concentration.alpha_slider.start.length<5){mm_concentration.add_slider_break("alpha_slider", "alpha_list", "alpha_slider")};
 };
+function remove_break_alpha_button_pushed(){
+if(mm_concentration.alpha_slider.start.length>1){mm_concentration.remove_slider_break("alpha_slider", "alpha_list", "alpha_slider")};
+};
+function add_break_beta_button_pushed(){
+if(mm_concentration.beta_slider.start.length<5){mm_concentration.add_slider_break("beta_slider", "beta_list", "beta_slider")};
+};
+function remove_break_beta_button_pushed(){
+if(mm_concentration.beta_slider.start.length>1){mm_concentration.remove_slider_break("beta_slider", "beta_list", "beta_slider")};
+};
+
+function values_changed(){
+mm_concentration.input_values_changed("ct_graph","release_graph", "alpha_graph", "release_rate_slider", "autoreceptors_slider", "alpha_slider",
+"beta_slider", "release_rate_slider", "autoreceptors_slider",  "alpha_slider", "beta_slider", [_('vmax_1').value,_('km_1').value, _('vmax_2').value, _('km_2').value ],
+ "release_rate_list", "autoreceptors_list", "alpha_list", "beta_list");
+};
+
+
 function include_pushed(){
 //get data from uploaded file.
 let fscv_concentration_loaded = new HL_FSCV_CONCENTRATION();
@@ -181,9 +216,7 @@ function optimisation_close_button_pushed(){
 _('optimisation_modal_window').style.display = "none";
 }
 
-function optimisation_optimise_button_pushed(){
-
-};
+function optimisation_optimise_button_pushed(){};
 </script>
 
 <script>
@@ -193,6 +226,7 @@ var mm_concentration = new HL_MICHAELIS_MENTEN();
 //Initialise graphs.
 mm_concentration.initialise_graph("ct_graph");
 mm_concentration.initialise_graph("release_graph");
+mm_concentration.initialise_graph("alpha_graph");
 //Add listener to loading input.
 _("FSCVfiles").addEventListener('change', loaded_data.read_files);
 //Initialise sliders.
@@ -200,19 +234,24 @@ noUiSlider.create(_('release_rate_slider'), mm_concentration.release_rate_slider
 _('release_rate_slider').noUiSlider.on('change', values_changed);
 noUiSlider.create(_('autoreceptors_slider'), mm_concentration.autoreceptors_slider);
 _('autoreceptors_slider').noUiSlider.on('change', values_changed);
+noUiSlider.create(_('alpha_slider'), mm_concentration.alpha_slider);
+_('alpha_slider').noUiSlider.on('change', values_changed);
+noUiSlider.create(_('beta_slider'), mm_concentration.beta_slider);
+_('beta_slider').noUiSlider.on('change', values_changed);
 //Check for signal.
 if (typeof(fscv_concentration) !== 'undefined'){
 add_data(fscv_concentration);
 };
 // Hide release_graph
 _('release_graph').style.display="none";
+_('alpha_graph').style.display="none";
 // Define add data function.
 function add_data(fscv_concentration){
-mm_concentration.add_data_to_application("ct_graph", fscv_concentration, "release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider",
-[_('alpha').value, _('vmax_1').value, _('km_1').value, _('beta').value, _('vmax_2').value, _('km_2').value ], "release_rate_list", "autoreceptors_list");
+mm_concentration.add_data_to_application("ct_graph", fscv_concentration, "release_graph", "alpha_graph", "release_rate_slider", "autoreceptors_slider", "alpha_slider",
+"beta_slider" , "release_rate_slider", "autoreceptors_slider", "alpha_slider", "beta_slider", [_('vmax_1').value, _('km_1').value, _('vmax_2').value, _('km_2').value ],
+"release_rate_list", "autoreceptors_list", "alpha_list", "beta_list");
 };
 </script>
-
 
 
 </body>

@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script src="JavaScriptPackages/plotly-latest.min.js"></script>
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
-<script src="JavaScriptPackages/html2pdf.bundle.min.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/kissFFT.js"></script>
@@ -84,7 +83,7 @@ $(".se-pre-con").fadeOut("slow");
 </button>
 &nbsp;
 <button>
-<a id="invert_sign_button" onclick="downloadPDF()">Download as PDF</a>
+<a id="invert_sign_button" onclick="background_subtraction_button_pushed()">Background sub.</a>
 </button>
 &nbsp;
 <button>
@@ -277,6 +276,27 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 </div>
 
+<div id="background_subtraction_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="background_start_sample" style="width:59%">Start (sample): </label>
+<input style="width:30%" type="number" id="background_start_sample" value=0 />
+</div>
+<div class="col">
+<label for="background_end_sample" style="width:59%">End (sample): </label>
+<input style="width:30%" type="number" id="background_end_sample" value=10 />
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="background_subtraction_apply_pushed()">Apply</button>
+<button style="width:20%;" onclick="background_subtraction_show_pushed()">Show</button>
+<button style="width:15%;" onclick="background_subtraction_close_pushed()">Close</button>
+</p>
+</div>
+</div>
+
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -334,8 +354,8 @@ else{$('#transient_graph').hide(); $('#iv_graph').show()};
 });
 
 
-$('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").value = this.value});
-$('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").value = this.value});
+$('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").innerHTML = this.value});
+$('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").innerHTML = this.value});
 
 $(document).on("click", '.download_type_button', function(){
 $('.download_type_button').css('background-color','');
@@ -445,6 +465,23 @@ else {type = 'min'};
 fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, _('cycling_frequency').value);
 }};
 
+function background_subtraction_button_pushed(){
+_('background_subtraction_modal_window').style.display = "block";
+};
+function background_subtraction_close_pushed(){
+_('background_subtraction_modal_window').style.display = "none";
+}
+
+function background_subtraction_show_pushed(){
+if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
+fscv_data.show_limits("main_graph", 0, fscv_data.time.array.length, _('background_start_sample').value/_('cycling_frequency').value,
+_('background_end_sample').value/_('cycling_frequency').value);
+};
+
+function background_subtraction_apply_pushed(){
+fscv_data.background_subtraction("main_graph", _('background_start_sample').value, _('background_end_sample').value);
+};
+
 function nonlinear_fit_button_pushed(){
 fscv_concentration.get_nonlinear_exponential_fit();
 fscv_concentration.plot_graph("ct_graph");
@@ -461,7 +498,8 @@ _('kinetic_calibration_modal_window').style.display = "none";
 
 function kinetic_show_limits_pushed(){
 if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
-fscv_data.show_kinetic_limits("main_graph", _("kinetic_start_integration").value, _("kinetic_end_integration").value)
+fscv_data.show_limits("main_graph", _("kinetic_start_integration").value, _("kinetic_end_integration").value,
+fscv_data.cycling_time.array[0], fscv_data.cycling_time.array[fscv_data.cycling_time.array.length-1]);
 };
 
 function kinetic_calibration_pushed(){
