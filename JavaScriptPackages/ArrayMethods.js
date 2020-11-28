@@ -9,10 +9,10 @@ return Math.min.apply(null, num);
 //Max and min functions for large arrays where min() and max() do not work.
 function getMax(arr) {
 return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
-}
+};
 function getMin(arr) {
 return arr.reduce((min, v) => min <= v ? min : v, Infinity);
-}
+};
 // Index of the max value in array.
 function index_of_max(arr) {
 var max = arr[0], index = 0;
@@ -51,6 +51,17 @@ for (var i=0;i<arr.length;++i){tmp[i] = Math.abs(arr[i])};
 return tmp;
 };
 
+function diff_arr(arr, frequency){
+var tmp = [0];
+for (var i=0;i<arr.length-1;++i){ tmp[i+1] = (arr[i+1]-arr[i])*frequency};
+return tmp;
+};
+// Mean square errors of two arrays.
+function mse(arr1, arr2){
+var sum=0;
+for (var i =0; i<arr1.length;++i){sum+=(arr1[i]-arr2[i])*(arr1[i]-arr2[i])};
+return sum/arr1.length;
+};
 
 // Short form to calculate average.
 function average(arr){for(i=0, sum=0;i<arr.length;++i){sum+=arr[i]}; return sum/arr.length};
@@ -216,6 +227,15 @@ function uniform_array(len, value) {
 let arr = new Array(len); for (let i=0; i<len; ++i) arr[i] = Array.isArray(value) ? [...value] : value;
 return arr;
 }
+// Convert 2D array into square by the largest dimension.
+function squared_array(arr){
+var h_max = 0, tmp;
+for (var i=0; i<arr.length;++i){if(arr[i].length>h_max){h_max = arr[i].length}};
+if (arr.length>h_max){h_max = arr.length};
+var tmp = uniform_array(h_max, uniform_array(h_max, ''));
+for(var i=0;i<tmp.length;++i){for(var j=0;j<tmp.length;++j){if(arr[i] != undefined && arr[i][j] != undefined){tmp[i][j] = arr[i][j]}}};
+return tmp;
+};
 //Calculate transpose.
 function transpose(a) {
 return Object.keys(a[0]).map(function(c) {
@@ -411,3 +431,37 @@ var real = (num1.real * num2.real + num1.imaginary * num2.imaginary) /denom;
 var imaginary = (num2.real * num1.imaginary - num1.real * num2.imaginary) /denom;
 return new Complex(real, imaginary);
 }
+
+// Simple iteration to find non-linear best fit.
+fminsearch = function(fun,Parm0,x,y,opt){
+if(!opt){opt={}};
+if(!opt.maxIter){opt.maxIter=1000};
+if(!opt.step){
+opt.step = Parm0.map(function(p){return p/100});
+opt.step = opt.step.map(function(si){if(si==0){return 1}else{ return si}});
+};
+if (!opt.trainable){opt.trainable = uniform_array(Parm0.length,1)};
+if(!opt.objFun){opt.objFun=function(y,yp){return y.map(function(yi,i){return Math.pow((yi-yp[i]),2)}).reduce(function(a,b){return a+b})}}; //Sum squared errors.
+var cloneVector=function(V){return V.map(function(v){return v})};
+var P0=cloneVector(Parm0), P1=cloneVector(Parm0);
+var n = P0.length;
+var step = opt.step;
+var funParm = function(P){return opt.objFun(y, fun(x,P))}; //function (of Parameters) to minimize
+// silly multi-univariate screening
+for(var i=0;i<opt.maxIter;i++){
+for(var j=0;j<n;j++){ // take a step for each parameter
+if(opt.trainable[j]){
+P1=cloneVector(P0);
+P1[j]+=step[j];
+if(funParm(P1)<funParm(P0)){ // if parm value going in the righ direction
+step[j]=1.2*step[j]; // then go a little faster
+P0=cloneVector(P1);
+}
+else{
+step[j]=-(0.5*step[j]); // otherwiese reverse and go slower
+}
+}
+}
+}
+return P0;
+};

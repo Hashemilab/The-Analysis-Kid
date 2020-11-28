@@ -123,7 +123,7 @@ $(".se-pre-con").fadeOut("slow");
 <input type="checkbox" hidden id="graph_selection_checkbox">
 </button>
 &nbsp;
-<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()">Kinetic calibration</button>
+<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" hidden>Kinetic calibration</button>
 </div>
 </div>
 </div>
@@ -139,7 +139,7 @@ $(".se-pre-con").fadeOut("slow");
 <button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;">Filtered data</button>
 <button id="calibration_download_button" class="download_type_button">Calibration</button>
 <button style="margin-top:5px;" onclick="export_as_xlsx_pushed()">Export as XLSX</button>
-<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()">Open Kinetic Analysis</button>
+<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" >Open Reuptake Analysis</button>
 </div>
 
 <div class="col">
@@ -377,8 +377,8 @@ slider_changed();
 function slider_changed(){
 file_index = $('#file_slider').val();
 $("#slider_label").html(loaded_data.names_of_files[file_index-1]+" ("+file_index+"/"+ _('file_slider').max+")");
-fscv_data = new HL_FSCV_DATA(loaded_data.data_array[file_index-1],_('current_units').value, _('frequency').value,
-_('cycling_frequency').value, loaded_data.names_of_files[file_index-1], plot_type, color_palette);
+fscv_data = new HL_FSCV_DATA(loaded_data.data_array[file_index-1],_('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_('cycling_frequency').value), loaded_data.names_of_files[file_index-1], plot_type, color_palette);
 //Plot the main graph.
 fscv_data.graph_color_plot("main_graph");
 fscv_filtering = new HL_FILTERING(_('current_units').value);
@@ -403,8 +403,8 @@ if(_('graph_selection_checkbox').checked && evtObj.points.length != 0) {
 // Get index of clicked point.
 let pindex = evtObj.points[0].pointNumber;
 // Assign clicked point to the data object.
-fscv_transient.add_trace(fscv_data.current.array[pindex[0]], _('cycling_frequency').value, "transient_graph", fscv_data.name_of_file);
-fscv_iv.add_trace(arrayColumn(fscv_data.current.array, pindex[1]), _('frequency').value, "iv_graph", fscv_data.name_of_file);
+fscv_transient.add_trace(fscv_data.current.array[pindex[0]], parseFloat(_('cycling_frequency').value), "transient_graph", fscv_data.name_of_file);
+fscv_iv.add_trace(arrayColumn(fscv_data.current.array, pindex[1]), parseFloat(_('frequency').value), "iv_graph", fscv_data.name_of_file);
 $('#select_signal_button').append($('<option>', {value:fscv_transient.counter, text:'Curve '+fscv_transient.legend_array[fscv_transient.counter-1]}));
 }};
 function delete_trace_pushed(){
@@ -421,27 +421,27 @@ delete_trace_pushed();
 function apply_filtration_pushed(){
 if (getComputedStyle(_("convolution_button"))['background-color'] == 'rgb(63, 81, 181)'){
 //Convolution filtration.
-fscv_filtering.apply_convolution(fscv_data, _('convolution_sigma').value , _('convolution_repetitions').value);
+fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').value), parseInt(_('convolution_repetitions').value));
 } else {
-fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  _('frequency').value, _('cycling_frequency').value,
-_('horizontal_fft_slider').value, _('vertical_fft_slider').value, _('butter_order').value);
+fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
+parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value));
 _("show_filter_button").disabled = true;
 }
 fscv_data.graph_color_plot("main_graph");
 };
 function graph_2dfft_pushed(){
 _("show_filter_button").disabled = false;
-fscv_filtering.get_2dfft(fscv_data, "main_graph", _('frequency').value, _('cycling_frequency').value);
+fscv_filtering.get_2dfft(fscv_data, "main_graph", parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value));
 }
 function graph_filter_pushed(){
-fscv_filtering.graph_filter("main_graph", _('horizontal_fft_slider').value , _('vertical_fft_slider').value);
+fscv_filtering.graph_filter("main_graph", parseInt(_('horizontal_fft_slider').value),parseInt(_('vertical_fft_slider').value));
 };
 function apply_changes_pushed(){
 loaded_data.data_array[file_index-1] = fscv_data.current.array;
 }
 function calibrate_button_pushed(){
-fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, _('cycling_frequency').value,
-_('calibration_coefficient').value, _('concentration_units').value, _('calibration_name').value);
+fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, parseFloat(_('cycling_frequency').value),
+parseFloat(_('calibration_coefficient').value), _('concentration_units').value, _('calibration_name').value);
 };
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
@@ -462,7 +462,7 @@ let pindex = evtObj.points[0].pointNumber;
 let type;
 if (getComputedStyle(_("max_button"))['background-color'] == 'rgb(63, 81, 181)'){type = 'max'}
 else {type = 'min'};
-fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, _('cycling_frequency').value);
+fscv_concentration.change_max_and_min_values("ct_graph", pindex, type, parseFloat(_('cycling_frequency').value));
 }};
 
 function background_subtraction_button_pushed(){
@@ -474,12 +474,12 @@ _('background_subtraction_modal_window').style.display = "none";
 
 function background_subtraction_show_pushed(){
 if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
-fscv_data.show_limits("main_graph", 0, fscv_data.time.array.length, _('background_start_sample').value/_('cycling_frequency').value,
-_('background_end_sample').value/_('cycling_frequency').value);
+fscv_data.show_limits("main_graph", 0, fscv_data.time.array.length, parseFloat(_('background_start_sample').value/_('cycling_frequency').value),
+parseFloat(_('background_end_sample').value/_('cycling_frequency').value));
 };
 
 function background_subtraction_apply_pushed(){
-fscv_data.background_subtraction("main_graph", _('background_start_sample').value, _('background_end_sample').value);
+fscv_data.background_subtraction("main_graph", parseInt(_('background_start_sample').value), parseInt(_('background_end_sample').value));
 };
 
 function nonlinear_fit_button_pushed(){
@@ -498,14 +498,14 @@ _('kinetic_calibration_modal_window').style.display = "none";
 
 function kinetic_show_limits_pushed(){
 if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
-fscv_data.show_limits("main_graph", _("kinetic_start_integration").value, _("kinetic_end_integration").value,
+fscv_data.show_limits("main_graph", parseInt(_("kinetic_start_integration").value), parseInt(_("kinetic_end_integration").value),
 fscv_data.cycling_time.array[0], fscv_data.cycling_time.array[fscv_data.cycling_time.array.length-1]);
 };
 
 function kinetic_calibration_pushed(){
-fscv_concentration.kinetic_calibrate_trace("ct_graph", fscv_data, parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value), _('kinetic_start_integration').value,
-_('kinetic_end_integration').value, _('concentration_units').value, _('kinetic_calibration_name').value, _('diffusion_coefficient').value,
-_('absorption_strength').value, _('electrode_surface').value, _('valency_of_reaction').value);
+fscv_concentration.kinetic_calibrate_trace("ct_graph", fscv_data, parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
+parseInt(_('kinetic_start_integration').value),_('kinetic_end_integration').value, _('concentration_units').value, _('kinetic_calibration_name').value,
+parseFloat(_('diffusion_coefficient').value), parseFloat(_('absorption_strength').value), parseFloat(_('electrode_surface').value), parseInt(_('valency_of_reaction').value));
 }
 
 function open_kinetic_analysis_pushed(){
@@ -536,10 +536,10 @@ var file_index = 1;
 var plot_type = 'surface';
 var color_palette = 'Custom';
 //Initialise blank data objects.
-var fscv_data = new HL_FSCV_DATA([[0]], _('current_units').value, _('frequency').value,
-_('cycling_frequency').value, 'Blank', plot_type, color_palette);
-var fscv_transient = new HL_FSCV_1D_DATA(_('current_units').value, _('cycling_frequency').value, "i-t Curve");
-var fscv_iv = new HL_FSCV_1D_DATA(_('current_units').value, _('frequency').value, "i-V Curve");
+var fscv_data = new HL_FSCV_DATA([[0]], _('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_('cycling_frequency').value), 'Blank', plot_type, color_palette);
+var fscv_transient = new HL_FSCV_1D_DATA(_('current_units').value, parseFloat(_('cycling_frequency').value), "i-t Curve");
+var fscv_iv = new HL_FSCV_1D_DATA(_('current_units').value, parseFloat(_('frequency').value), "i-V Curve");
 var fscv_concentration = new HL_FSCV_CONCENTRATION(_('concentration_units').value);
 var fscv_filtering = new HL_FILTERING(_('current_units').value);
 // Assign callback to read the data from the input.

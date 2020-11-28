@@ -424,7 +424,7 @@ var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
 // Export of concentration traces.
 ws_name = "Concentration - Time";
-aoa =  transpose(zip(this.time.array, this.concentration.array));
+aoa =  transpose(squared_array(zip(this.time.array, this.concentration.array)));
 var file_names = zip(uniform_array(this.origin_file_array.length, ''),this.origin_file_array);
 var names = zip(uniform_array(this.names.length, 'Time ('+this.time.units+')'), this.names.map((x,i)=>x+' ('+this.concentration.units[i]+')'));
 aoa.unshift(names);

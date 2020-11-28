@@ -64,10 +64,10 @@ $(".se-pre-con").fadeOut("slow");
 <label for="km_1" style="width: 25%;">K<sub>m1</sub> :</label>
 <label for="vmax_2" style="width: 25%;">V<sub>max2</sub> :</label>
 <label for="km_2" style="width: 25%;">K<sub>m2</sub> :</label>
-<input type="number" step="1" min=1  id="vmax_1" style="width: 25%;" value=150 onchange="values_changed()" />
-<input type="number" id="km_1" style="width: 25%;" value=15 onchange="values_changed()" />
-<input type="number" step="1" min=1  id="vmax_2" style="width: 25%;" value=500 onchange="values_changed()" />
-<input type="number" id="km_2" style="width: 25%;" value=50 onchange="values_changed()" />
+<input type="number" step=1 min=1  id="vmax_1" style="width: 25%;" value=15 onchange="values_changed()" />
+<input type="number" step=1 id="km_1" style="width: 25%;" value=5 onchange="values_changed()" />
+<input type="number" step=1 min=1  id="vmax_2" style="width: 25%;" value=600 onchange="values_changed()" />
+<input type="number" step=1 id="km_2" style="width: 25%;" value=200 onchange="values_changed()" />
 </div>
 <br>
 
@@ -76,20 +76,22 @@ $(".se-pre-con").fadeOut("slow");
 <button onclick="remove_break_release_button_pushed()">Del</button>
 <div id="release_rate_slider" style="width:70%;float:right; margin-top:1.5%"></div>
 <br><br>
-<div id="release_rate_list">dR: <input type="number" id="release_rate_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
+<div id="release_rate_list">
+dR:
+<input type="number" id="release_rate_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /><input type="number" id="release_rate_slider_input_2" style="width:18%" value=0 onchange="values_changed()" /></div>
 <br>
 <button onclick="add_break_autoreceptors_button_pushed()">Add</button>
 &nbsp;
 <button onclick="remove_break_autoreceptors_button_pushed()">Del</button>
 <div id="autoreceptors_slider" style="width:70%;float:right; margin-top:1.5%"></div>
 <br><br>
-<div id="autoreceptors_list">dA: <input type="number" id="autoreceptors_slider_input_1" style="width:18%" value=0 onchange="values_changed()" /></div>
-
-
+<div id="autoreceptors_list">dA:
+<input type="number" id="autoreceptors_slider_input_1" style="width:18%;" value=0 onchange="values_changed()" /><input type="number" id="autoreceptors_slider_input_2" style="width:18%;" value=0 onchange="values_changed()" /></div>
 
 <br>
 <button onclick="alpha_open_button_pushed()">&alpha; - &beta;</button>
 <button onclick="optimisation_button_pushed()">Optimisation</button>
+<button onclick="export_as_xlsx_pushed()">Export as XLSX</button>
 </div>
 
 <div class="col-8">
@@ -179,22 +181,24 @@ else  {$('#ct_graph').hide(); $('#release_graph').show(); mm_concentration.conce
 });
 
 function add_break_release_button_pushed(){
-if(mm_concentration.release_rate_slider.start.length<5){mm_concentration.add_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")}
+if(mm_concentration.release_rate_slider_values.length<5){mm_concentration.add_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")}
 };
 function remove_break_release_button_pushed(){
-if(mm_concentration.release_rate_slider.start.length>1){mm_concentration.remove_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")};
+if(mm_concentration.release_rate_slider_values.length>2){mm_concentration.remove_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")};
 };
 function add_break_autoreceptors_button_pushed(){
-if(mm_concentration.autoreceptors_slider.start.length<5){mm_concentration.add_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
+if(mm_concentration.autoreceptors_slider_values.length<5){mm_concentration.add_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
 };
 function remove_break_autoreceptors_button_pushed(){
-if(mm_concentration.autoreceptors_slider.start.length>1){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
+if(mm_concentration.autoreceptors_slider_values.length>2){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
 };
 
 
 function values_changed(){
-mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('vmax_1').value,_('km_1').value, _('vmax_2').value, _('km_2').value ],
-[_('alpha_1').value, _('alpha_2').value, _('alpha_threshold').value, _('beta_1').value, _('beta_2').value, _('beta_threshold').value], "release_rate_list", "autoreceptors_list");
+mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider",
+[parseFloat(_('vmax_1').value),parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value),
+parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value),
+parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
 };
 
 function include_pushed(){
@@ -223,11 +227,15 @@ _('optimisation_modal_window').style.display = "none";
 }
 
 function optimisation_optimise_button_pushed(){
-mm_concentration.optimisation_parameters(_('epochs').value, _('learning_rate'), [_('vmax1_check').checked, _('km1_check').checked, _('vmax2_check').checked,
-_('km2_check').checked],"ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider", [_('vmax_1').value,
-_('km_1').value, _('vmax_2').value, _('km_2').value ], [_('alpha_1').value, _('alpha_2').value, _('alpha_threshold').value, _('beta_1').value,
-_('beta_2').value, _('beta_threshold').value], "release_rate_list", "autoreceptors_list");
+mm_concentration.optimisation_parameters(parseInt(_('epochs').value), parseFloat(_('learning_rate').value), [_('vmax1_check').checked, _('km1_check').checked, _('vmax2_check').checked,
+_('km2_check').checked], ['vmax_1', 'km_1', 'vmax_2', 'km_2'], "ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider",
+[parseFloat(_('vmax_1').value),parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value), parseFloat(_('alpha_2').value),
+parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value), parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
 };
+
+function export_as_xlsx_pushed(){
+mm_concentration.export_kinetic_parameters();
+}
 </script>
 
 <script>
@@ -254,8 +262,8 @@ _('release_graph').style.display="none";
 // Define add data function.
 function add_data(fscv_concentration){
 mm_concentration.add_data_to_application("ct_graph", fscv_concentration, "release_graph", "release_rate_slider", "autoreceptors_slider",
-"release_rate_slider", "autoreceptors_slider",[_('vmax_1').value, _('km_1').value, _('vmax_2').value, _('km_2').value ], [_('alpha_1').value,
-_('alpha_2').value, _('alpha_threshold').value, _('beta_1').value, _('beta_2').value, _('beta_threshold').value], "release_rate_list", "autoreceptors_list");
+"release_rate_slider", "autoreceptors_slider",[parseFloat(_('vmax_1').value), parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value),
+parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value), parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
 };
 </script>
 

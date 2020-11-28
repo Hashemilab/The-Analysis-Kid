@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>Analysis Kid</title>
+<title>The Analysis Kid</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="Styling/w3.css">
@@ -54,26 +54,22 @@ $(".se-pre-con").fadeOut("slow");
 <nav class="w3-sidebar w3-indigo w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
 <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
 <div class="w3-container">
-<h3 class="w3-padding-64"><b>Analysis<br>Kid</b></h3>
+<h3 class="w3-padding-64"><b>The Analysis<br>Kid</b></h3>
 </div>
 <div class="w3-bar-block">
 <a href="#top" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-home w3-large"></i> Home</a>
 <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-list" aria-hidden="true"></i> About</a>
 <a href="#dashboards" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fas fa-chart-line w3-large"></i> Dashboards</a>
-<a href="Documentation.php" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-file-text-o" aria-hidden="true"></i> Documentation</a>
-<a href="#references" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-book" aria-hidden="true"></i> References</a>
-<a href="#acknowledgments" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-users" aria-hidden="true"></i> Acknowledgments</a>
+<a href="#documentation" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-file-text-o" aria-hidden="true"></i> Documentation</a>
 </div>
-<br>
-<br>
-&emsp;&emsp; &thinsp;&thinsp;&thinsp; <a href="#contact" onclick="ContactWindow()" class="w3-bar-item w3-center w3-button w3-hover-white">Contact Us <i class="fas fa-paper-plane w3-large"></i></a>
+<a href="#contact" onclick="ContactWindow()" class="w3-bar-item w3-center w3-button w3-hover-white"><i class="fas fa-paper-plane w3-large"></i> Contact Us</a>
 
 </nav>
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-indigo w3-xlarge w3-padding">
 <a href="javascript:void(0)" class="w3-button w3-indigo w3-margin-right" onclick="w3_open()">☰</a>
-<span>Analysis Kid</span>
+<span>The Analysis Kid</span>
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
@@ -84,11 +80,11 @@ $(".se-pre-con").fadeOut("slow");
 
 <!-- Header -->
 <div class="w3-container" style="margin-top:80px" id="about">
-<h1 href="#top" class="w3-jumbo"><b>Analysis Kid</b> <img style ="float:right" src="/Images/HL_Icon.png" alt="Hashemi Lab Icon" width="375" height="125"></h1>
+<h1 href="#top" class="w3-jumbo"><b>The Analysis Kid</b> <img style ="float:right" src="/Images/HL_Icon.png" alt="Hashemi Lab Icon" width="375" height="125"></h1>
 
 <h1 class="w3-xxxlarge w3-text-indigo"><b>About.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-<p  align=”justify”> Analysis Kid is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
+<p  align=”justify”> The Analysis Kid is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
 vitro and in vivo. This is achieved by providing a series of open-source and user-friendly dashboards with automatic algorithms that analise FSCV neurochemical data both qualitatively and quantitatively.
 The general description of the implemented dashboards at the time of writing can be found below. Extensive information of the algorithms and technical requirements for each of the dashboards can be found in the documentation <a href ="Documentation.php" target="_blank">here</a>.
 <p  align=”justify”>The web application is currently in development and any suggestions, bugs or errors will be welcomed. Error handling is also in development and the application might be irresponsive to specific errors.
@@ -133,11 +129,10 @@ Do not hesitate to contact through the contact form, email or any other social p
 <div class="w3-container" id="documentation" style="margin-top:75px">
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-</div>
 
-<div class="w3-container" id="references" style="margin-top:75px">
-<h1 class="w3-xxxlarge w3-text-indigo"><b>References.</b></h1>
-<hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
+<iframe width="900" height="500" style="text-align:center;display:block;margin: 0 auto;border-style:none;" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>
+
+
 <p><cite>[1]	S. Samaranayake et al., “A voltammetric and mathematical analysis of histaminergic modulation of serotonin in the mouse hypothalamus,” J. Neurochem., pp. 374–383, Aug. 2016, doi: 10.1111/jnc.13659.
 </cite></p>
 
@@ -158,32 +153,13 @@ Do not hesitate to contact through the contact form, email or any other social p
 <p><cite>[9]	S. M. Riad, “The Deconvolution Problem: An Overview,” Proc.  IEEE, vol. 76, no. 1, pp. 82–85, 1986.</cite></p>
 </div>
 
-<div class="w3-container" id="acknowledgments" style="margin-top:75px">
-<h1 class="w3-xxxlarge w3-text-indigo"><b>Acknowledgements.</b></h1>
-<hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-<h2 class="w3-large w3-text-indigo"><b>Project Acknowledgements.</b></h2>
-<p style="text-align: center">My first sincere gratitude goes to Dr. Parastoo Hashemi, Senior Lecturer at Imperial College London (ICL) and supervisor of this MSc project, for her constant support, guidance and dynamism throughout the whole project. Even during Covid19 lockdown times, she has given her best to help us to keep the team connected and find the right research questions together. I also hugely thank The Hashemi Lab team at the University of South Carolina (USC) for providing the FSCV signals used to build and optimise the algorithms. Especially, I would like to thank Shane N. Berger, Graduate Student at USC for his invaluable help providing signals crucial to build the algorithms, great physiological knowledge on histamine modulation of serotonin and patience answering my science questions. </p>
-<p style="text-align: center"> Across the pond, I would like to thank Melissa F. Hexter, PhD student at ICL for her warming welcome and support when I first joined the laboratory, as well as Solene P. Dietsch and Nathan J. Robins, MSc students at ICL, for out enriching meetings to discuss our projects.  </p>
-<p style="text-align: center"> I would also like to thank the whole online programming community of StackOverflow who have offered an invaluable technical help building this website and answered many of my toughest coding questions during lockdown.</p>
-<p style="text-align: center"> At last but not least, all my gratitude to my family, friends and my partner who have emotionally helped me to complete this project.</p>
-<h2 class="w3-large w3-text-indigo"><b>Software Acknowledgements.</b></h2>
-<p> Analysis Kid may utilize the following copyrighted software or programming libraries and therefore acknowledged: </p>
-<ul>
-<li><a href="https://plotly.com/">Plotly software package</a> in Javascript for the plotting of signals and interactive algorithms</li>
-<li><a href="https://apexcharts.com/">Apexcharts software package</a> in Javascript for the plotting of signals and interactive algorithms</li>
-<li><a href="https://www.tensorflow.org/">Tensorflow</a> and <a href="https://keras.io/">Keras</a> for the creation and training of neural networks and prediction algorithms</li>
-<li><a href="https://numpy.org/" >Numpy</a>, <a href="https://www.scipy.org/" >SciPy</a>, <a href="https://lmfit.github.io/lmfit-py/" >lmfit</a> and <a href="https://pandas.pydata.org/" >Pandas</a> libraries for the data analysis and handling of signals </li>
-<li><a href="https://flask.palletsprojects.com/en/1.1.x/quickstart/" >Flask</a> library for the creation of a data analysis API service in Python</li>
-<li> <a href="https://www.w3schools.com/" >w3schools</a> for partial CSS styling of the website </li>
-</ul>
-</div>
 
 <footer class="w3-content w3-padding-64 w3-light-grey w3-text-black w3-center">
 <p> <a href="#top" class="w3-button w3-black"><i class="fa fa-arrow-up "></i>To the top</a></p>
 
 <p class="w3-large">
 <a href = "mailto:sergio.mena19@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
-<a href="https://twitter.com/sermeor"><i class="fab fa-twitter"></i></a>
+<a href="https://twitter.com/HashemiLab"><i class="fab fa-twitter"></i></a>
 <a href="https://www.linkedin.com/in/sergio-mena-ortega-a418ab120/"><i class="fab fa-linkedin-in"></i></a>
 
 </p>
