@@ -440,12 +440,13 @@ if(!opt.step){
 opt.step = Parm0.map(function(p){return p/100});
 opt.step = opt.step.map(function(si){if(si==0){return 1}else{ return si}});
 };
-if (!opt.trainable){opt.trainable = uniform_array(Parm0.length,1)};
+if(!opt.trainable){opt.trainable = uniform_array(Parm0.length,1)};
 if(!opt.objFun){opt.objFun=function(y,yp){return y.map(function(yi,i){return Math.pow((yi-yp[i]),2)}).reduce(function(a,b){return a+b})}}; //Sum squared errors.
+if(!opt.max_limits){opt.max_limits = uniform_array(Parm0.length, Infinity)};
+if(!opt.min_limits){opt.min_limits = uniform_array(Parm0.length, -Infinity)};
 var cloneVector=function(V){return V.map(function(v){return v})};
 var P0=cloneVector(Parm0), P1=cloneVector(Parm0);
-var n = P0.length;
-var step = opt.step;
+var n = P0.length, step = opt.step, fun_P1, fun_P0;
 var funParm = function(P){return opt.objFun(y, fun(x,P))}; //function (of Parameters) to minimize
 // silly multi-univariate screening
 for(var i=0;i<opt.maxIter;i++){
@@ -453,15 +454,11 @@ for(var j=0;j<n;j++){ // take a step for each parameter
 if(opt.trainable[j]){
 P1=cloneVector(P0);
 P1[j]+=step[j];
-if(funParm(P1)<funParm(P0)){ // if parm value going in the righ direction
-step[j]=1.2*step[j]; // then go a little faster
-P0=cloneVector(P1);
-}
-else{
-step[j]=-(0.5*step[j]); // otherwiese reverse and go slower
-}
-}
-}
-}
+if(P1[j]<opt.min_limits[j]){P1[j] = opt.min_limits[j]}
+else if(P1[j]>opt.max_limits[j]){P1[j] = opt.max_limits[j]};
+fun_P1 = funParm(P1), fun_P0 = funParm(P0);
+if(fun_P1<fun_P0){step[j]=1.2*step[j], P0=cloneVector(P1)}
+else{step[j]=-(0.5*step[j])};
+}}};
 return P0;
 };

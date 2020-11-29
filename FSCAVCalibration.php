@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>FSCAV Calibration</title>
+<title>FSCAV Analysis</title>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script src="JavaScriptPackages/plotly-latest.min.js"></script>
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
-<script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
-<script src="JavaScriptPackages/sweetalert.min.js"></script>
+<script src="JavaScriptPackages/ArrayMethods.js"></script>
+<script src="JavaScriptPackages/tf.min.js"></script>
+<script src="JavaScriptPackages/xlsx.full.min.js"></script>
+<script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/FSCAVClass.js"></script>
+<script src = "OOP/LOADClass.js"></script>
+
 <head>
-<title>FSCAV Calibration</title>
+<title>FSCAV Analysis</title>
 <link rel="shortcut icon" href="Images/cv.png"/>
 <link type="text/css" rel="stylesheet" href="Styling/styles.css"/>
 <link rel="stylesheet" href="Styling/bootstrap.min.css"/>
@@ -25,121 +29,135 @@ $(".se-pre-con").fadeOut("slow");
 </script>
 
 <body>
-<div class="header">
-<h1>FSCAV Calibration</h1>
-</div>
-<br>
 <div id="loading" class="se-pre-con"></div>
 
-<div style = "text-align: left; margin-left: 30px;">
-<b> Graph Selection: </b>
-<label class="switch">
-<input type="checkbox" id="graph_selection" name="graph_selection" value="graph_selection">
-<span class="slider round"></span>
-</label>
-<span style="display:inline-block; width: 40px"></span>
-<button>
-<a id="recalculate_parameters_button" onclick="recalculate_button_pushed()" >Recalculate</a>
-</button>
+<div id="wrapper" style="background-color: #eff4f7;">
+<div class="header">
+<h1>FSCAV Analysis</h1>
 </div>
-<div style = "text-align: left; margin-left: 30px;">
-<button  id="min1" class="graph_selection" style = "background-color:#3f51b5; color: white">
-<a>Min</a>
-</button>
-<button id="max" class="graph_selection">
-<a>Max</a>
-</button>
-<button  id="min2" class="graph_selection">
-<a id="min2">Min</a>
-</button>
-</div>
-<div class = "center" style = " margin:auto; width:90%;">
-<div class = "center" style = "float:left; width:50%;">
-<div id="graph1" class = "center"></div>
-</div>
-<div class = "center" style = "float:right; width:50%;">
-<div id="graph2" class = "center"></div>
-</div>
-</div>
-
-<div style = "text-align: center">
-<button>
-<a id="previous_button" onclick="previous_pushed()" >← Prev.</a>
-</button>
-<input type="range" class="custom-range w-25" id="plot_slider" min="1" max="10" value="1" step = "1" onchange="slider_changed()">
-<button>
-<a id="next_button" onclick="next_pushed()">Next →</a>
-</button>
-</div>
-<div style = "text-align: center">
-<label id="slider_label" for="plot_slider">1</label>
-</div>
-
 <br>
+<div style = "margin:auto; width: 90%;">
+<div class="row" style="margin:auto;">
+<div class="col-4">
+<div class="row">
+<input type="file" name="FSCAVfiles" id="FSCAVfiles" accept=".xls,.xlsx,.csv,.txt" style="width:75%;"  multiple data-toggle="tooltip" title="Add files to the application from a local path"> </input>
+<button>
+<a id="include_button" onclick="include_pushed()" style="width: 25%;" data-toggle="tooltip" title="Include loaded files into the application">Include</a>
+</button>
+</div>
+<div class="row">
+<p id="status"> Upload the files.</p>
+</div>
+<div class="row">
+<label for="frequency" style="width: 33%;">Freq. (Hz):</label>
+<label for="current_units" style="width: 33%;">Units:</label>
+<label for="neurotransmitter" style="width: 33%;">Molecule:</label>
+<input type="number" step="1" min=1 name="frequency" id="frequency" style="width: 33%;"  value=500000 data-toggle="tooltip" title="Sampling frequency of the acquisition" />
+<input type="text" name="current_units" id="current_units" style="width: 33%;" value="nA" data-toggle="tooltip" title="Current units of uploaded data"/>
+<select id="select_neurotransmitter" style="width: 33%;" data-toggle="tooltip" title="Select molecule to calibrate">
+<option value="serotonin">5-HT</option>
+<option value="dopamine">DA</option>
+</select>
+
+</div>
+<br>
+<div class="row">
+<button onclick="invert_pushed()" data-toggle="tooltip" title="Invert the sign of the current values in the voltammogram">Invert</button>
+&nbsp;
+<button id="graph_point_selection" class="graph_point_selection" data-toggle="tooltip" title="Select horizontal traces from the color plot &#x0a; by interactively clicking on the graph">
+Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
+</button>
+&nbsp;
+<button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
+</div>
+</div>
+
+
+<div class="col-8">
+<div class = "center" style = "float:right; width:100%;">
+<div id="cv_graph" class = "cv_graph center" style="width:100%; height:80vh;"></div>
+<div id="concentration_graph" class = "center" style="width:100%; height:80vh;"></div>
+</div>
+<div style="position:absolute;left:60%;margin-top:2.5%">
+<button class="graph_selection" id="cv_graph_button" style="font-size:12px;background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Toggle to show the current traces">1</button>
+<button class="graph_selection" id="concentration_graph_button" style="font-size:12px" data-toggle="tooltip" title="Toggle to show predicted concentrations">2</button>
+</div>
+
+<div class ="cv_graph" style="position:absolute;left:50%;margin-top:2.5%">
+<button style="font-size:12px" onclick="previous_cv_clicked()" data-toggle="tooltip" title="Graph previous current trace"> < </button>
+<button style="font-size:12px" onclick="next_cv_clicked()" data-toggle="tooltip" title="Graph next current trace"> > </button>
+</div>
+
+<div  id = "cv_point_selection" class="cv_graph" style="position:absolute;left:25%;margin-top:2.5%">
+<button class="max_min_selection" id="min_button_1" style="font-size:12px;background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Toggle to select the minimum point in the graph">Min 1</button>
+<button class="max_min_selection" id="max_button" style="font-size:12px"  data-toggle="tooltip" title="Toggle to select the maximum point in the graph">Max</button>
+<button class="max_min_selection" id="min_button_2" style="font-size:12px" data-toggle="tooltip" title="Toggle to select the minimum point in the graph">Min 2</button>
+</div>
+</div>
+
+
+</div>
+</div>
+
+
 <div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
 </div>
+</div>
 
 <script>
-//Buttons callbacks.
-//Change colors of graph selection buttons when clicking.
+// Calbacks
 $(document).on("click", '.graph_selection', function(){
 $('.graph_selection').css('background-color','');
 $('.graph_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
-graph_selection_changed(this.id);
+if (this.id == "cv_graph_button"){$('.cv_graph').show(); $('#concentration_graph').hide(); fscav_data.cv_plot_state = 'block'; fscav_data.concentration_plot_state = 'none'}
+else  {$('.cv_graph').hide(); $('#concentration_graph').show(); fscav_data.cv_plot_state = 'none'; fscav_data.concentration_plot_state = 'block'};
 });
-function previous_pushed(){
-_('plot_slider').stepDown();
-slider_changed();
+
+$(document).on("click", '.graph_point_selection', function(){
+if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
+$(this).css('background-color','');
+$(this).css('color','');
+} else{
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
 };
-function next_pushed(){
-_('plot_slider').stepUp();
-slider_changed();
-};
-function slider_changed(){
-graph_index = $('#plot_slider').val();
-$("#slider_label").html(graph_index);
-Data.plot_current_time("graph1", graph_index - 1);
-};
-function graph_selection_changed(id){
-graph_selected_point = id;
-};
-function graph_clicked(evtObj){
-if(_('graph_selection').checked) {
-if(evtObj.points.length != 0){
-// Get index of clicked point.
-let pindex = evtObj.points[0].pointIndex;
-// Assign clicked point.
-Data.change_points(graph_index-1, pindex, graph_selected_point);
-Data.plot_current_time("graph1", graph_index-1);
-}}};
-function recalculate_button_pushed(){
-Data.recalculate_auc_and_max();
-};
-</script>
-<script>
-// Create FSCAV Object, plot the first graph and link callbacks. .
-var Data;
-var graph_index = 1;
-var graph_selected_point = "min1";
-try {
-Data = new HL_FSCAV_DATA(DataArray, neurotransmitter, v_units, c_units, frequency);
+_("graph_selection_checkbox").checked = !_("graph_selection_checkbox").checked;
+});
+
+$(document).on("click", '.max_min_selection', function(){
+$('.max_min_selection').css('background-color','');
+$('.max_min_selection').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+});
+
+function include_pushed(){
+
 }
-catch {
-Swal.fire({
-icon: 'error',
-title: "Data Error",
-text: "The uploaded data was not succesfully processed. Please make sure your upload follows the description given in the documentation."
-}).then((result => window.close()));
+
+function reset_pushed(){
+location.reload();
 };
-// Determine number of signals.
-_('plot_slider').max = Data.number_of_signals;
-// Plot first cyclic voltammogram.
-Data.plot_current_time("graph1", graph_index-1);
-// Plot initial concentration-sample trace.
-Data.plot_current_time("graph2", graph_index-1);
+function invert_pushed(){
+fscav_data.invert_current_values('cv_graph');
+};
+
+function previous_cv_clicked(){};
+function next_cv_clicked(){};
+</script>
+
+<script>
+var loaded_data = new HL_LOAD_DATA("status");
+var fscav_data = new HL_FSCAV_DATA([0], parseFloat(_('frequency').value), 'Blank', _('current_units').value, _('select_neurotransmitter').value);
+// Assign callback to read the data from the input.
+_("FSCAVfiles").addEventListener('change', loaded_data.read_files);
+//Initialise graphs.
+fscav_data.initialise_graph('cv_graph'); fscav_data.initialise_graph('concentration_graph');
+// Hide concentration_graph
+_('concentration_graph').style.display="none";
 </script>
 </body>
 </html>

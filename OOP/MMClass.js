@@ -19,7 +19,7 @@ range: {
 'min': 0,
 'max': 100
 },
-step:0.1,
+step:0.05,
 };
 
 this.autoreceptors_slider = {
@@ -29,7 +29,7 @@ range: {
 'min': 0,
 'max': 100
 },
-step:0.1,
+step:0.05,
 };
 this.release_rate_slider_values = [0,0];
 this.autoreceptors_slider_values = [0,0];
@@ -140,39 +140,25 @@ get_alpha_beta_values(param_1, param_2, s_threshold, s){
 if(s>s_threshold){return param_1} else{return param_2};
 };
 
-
-///--------------------------------------------------------------------------------------------------
-
-optimisation_parameters(epochs, learning_rate, train_array, parameters_id, concentration_graph_div, release_graph_div, release_div, autoreceptors_div,
-release_type, autoreceptors_type, parameters, alpha_beta, release_list_div, autoreceptors_list_div){
-var opt_params = this.get_optimised_parameters(epochs, learning_rate, train_array);
+optimisation_parameters(epochs, learning_rate, train_array, parameters_id, min_limits_array, max_limits_array){
+var opt_params = this.get_optimised_parameters(epochs, learning_rate, train_array, min_limits_array, max_limits_array);
 this.update_parameters(opt_params, parameters_id);
-this.input_values_changed(concentration_graph_div, release_graph_div, release_div, autoreceptors_div, release_type,
-autoreceptors_type, parameters, alpha_beta, release_list_div, autoreceptors_list_div);
 };
 
-get_optimised_parameters(epochs, learning_rate, train_array){
+get_optimised_parameters(epochs, learning_rate, train_array, min_limits_array, max_limits_array){
 var self = this;
 var func = function([],P){return self.generate_modelled_concentration(self.release_rate.array, self.autoreceptors_rate.array, P, self.alpha_beta)};
-var optimised_parameters = fminsearch(func,this.parameters,[],this.average_concentration.array,
-{maxIter:epochs, trainable:train_array, step: uniform_array(this.parameters.length, learning_rate)});
+var optimised_parameters = fminsearch(func, this.parameters,[],this.average_concentration.array,
+{maxIter:epochs, trainable:train_array, step: uniform_array(this.parameters.length, learning_rate), min_limits: min_limits_array, max_limits: max_limits_array});
 return optimised_parameters;
 };
 
-
-
-
-get_alpha_beta_arrays(param_1, param_2, s_threshold, s_array){
-var tmp = [];
-for(var i=0;i<s_array.length;++i){if(s_array[i]>s_threshold){tmp[i] = param_2} else {tmp[i] = param_1}};
-return tmp;
-};
 
 update_parameters([vmax1, km1, vmax2, km2], [vmax1_id, km1_id, vmax2_id, km2_id]){
 _(vmax1_id).value = vmax1, _(km1_id).value = km1, _(vmax2_id).value = vmax2, _(km2_id).value = km2;
 this.parameters = [vmax1, km1, vmax2, km2];
 };
-///--------------------------------------------------------------------------------------------------
+
 
 graph_concentration(div){
 var layout = this.plot_settings.plot_layout;

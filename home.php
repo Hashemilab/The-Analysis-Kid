@@ -59,7 +59,7 @@ $(".se-pre-con").fadeOut("slow");
 <div class="w3-bar-block">
 <a href="#top" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-home w3-large"></i> Home</a>
 <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-list" aria-hidden="true"></i> About</a>
-<a href="#dashboards" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fas fa-chart-line w3-large"></i> Dashboards</a>
+<a href="#applications" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fas fa-chart-line w3-large"></i> Applications</a>
 <a href="#documentation" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-file-text-o" aria-hidden="true"></i> Documentation</a>
 </div>
 <a href="#contact" onclick="ContactWindow()" class="w3-bar-item w3-center w3-button w3-hover-white"><i class="fas fa-paper-plane w3-large"></i> Contact Us</a>
@@ -103,9 +103,9 @@ Do not hesitate to contact through the contact form, email or any other social p
 </div>
 </div>
 
-<!-- Dashboards -->
-<div class="w3-container" id="dashboards" style="margin-top:75px">
-<h1 class="w3-xxxlarge w3-text-indigo"><b>Dashboards.</b></h1>
+<!-- Applications -->
+<div class="w3-container" id="applications" style="margin-top:75px">
+<h1 class="w3-xxxlarge w3-text-indigo"><b>Applications.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 
 <div class="w3-row-padding" id="fscv_analysis">
@@ -113,14 +113,13 @@ Do not hesitate to contact through the contact form, email or any other social p
 <ul class="w3-ul w3-light-grey">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCV Analysis</li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVWindow()"> Open application</a> </li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVMichaelisMenten()"> Open reuptake analysis</a> </li>
 </ul>
 </div>
 <div class="w3-half w3-margin-bottom w3-center">
 <ul class="w3-ul w3-light-grey">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCAV Analysis</li>
-<form id="upload_form3" enctype="multipart/form-data" method="post">
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow(DataArray)"> Open application</a> </li>
-</form>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow()"> Open application</a> </li>
 </ul>
 </div>
 </div>
@@ -188,19 +187,23 @@ var captionText = document.getElementById("caption");
 captionText.innerHTML = element.alt;
 }
 
-// Script to open Dashboards depending on plot selected
+// Script to open applications depending on plot selected
 // Contact pop up window.
 function ContactWindow(){
 window.open(encodeURI('ContactForm.php'), "", "width=500,height=550",'resizesable=yes');
 }
 
 //Callback for the FSCAV Application.
-function FSCAVWindow(DataArray){
-
+function FSCAVWindow(){
+window.open(encodeURI('FSCAVCalibration.php'), "");
 }
 // Callback for the FSCV application.
 function FSCVWindow(){
 window.open(encodeURI('FSCVCalibration.php'), "");
+};
+// Callback for the FSCV application.
+function FSCVMichaelisMenten(){
+window.open(encodeURI('FSCVMichaelisMenten.php'), "");
 };
 </script>
 

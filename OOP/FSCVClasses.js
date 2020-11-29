@@ -372,22 +372,11 @@ this.change_fitted_parameters(index, c0, k, x, y);
 get_nonlinear_exponential_fit(){
 var y = this.absolute_concentration.array[this.graph_index].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
 var x = this.time.array[0].slice(this.max_index.array[this.graph_index], this.min_index.array[this.graph_index]);
-var y_tensor = tf.tensor1d(y), x_tensor = tf.tensor1d(x), c0 = this.regression_parameters.array[this.graph_index][2];
+var c0 = this.regression_parameters.array[this.graph_index][2];
 var k = this.regression_parameters.array[this.graph_index][0];
-const c0_tensor = tf.scalar(c0).variable(), k_tensor = tf.scalar(k).variable();
-// y = c0*e^(k*x)
-const fun = (t) => t.mul(k_tensor).exp().mul(c0_tensor);
-const cost = (pred, label) => pred.sub(label).square().mean();
-const learning_rate = 0.1;
-const optimizer = tf.train.adagrad(learning_rate);
-// Train the model.
-for (let i = 0; i < 500; i++) {
-optimizer.minimize(() => cost(fun(x_tensor), y_tensor));
-};
-// Change regression parameters. PROVISIONAL.
-k = k_tensor.dataSync()[0], c0 = c0_tensor.dataSync()[0];
-this.change_fitted_parameters(this.graph_index, c0, k, x, y);
-k_tensor.dispose(), c0_tensor.dispose(), x_tensor.dispose(), y_tensor.dispose();
+var exp_fun = (arr, P) => arr.map(t => P[0]*Math.exp(P[1]*t));
+var opt_params = fminsearch(exp_fun, [c0, k], x, y, {maxIter:5000, step: [0.1, 0.1]});
+this.change_fitted_parameters(this.graph_index, opt_params[0], opt_params[1], x, y);
 };
 
 change_fitted_parameters(index, c0, k, x, y){
@@ -445,56 +434,5 @@ aoa=transpose(tmp); aoa.unshift(head);
 ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name);
 var filename = "Calibration_hashemilab.xlsx";
 XLSX.writeFile(wb, filename);
-};
-};
-
-
-function HL_FSCV_ARRAY(data, units, name){
-this.units = units;
-this.name = name;
-this.array = data;
-};
-
-function HL_FSCV_TIME(frequency, length, units, name){
-this.units = units;
-this.name = name;
-this.array = makeArr(0,(length-1)/frequency, length);
-};
-
-function HL_FSCV_COLORPALETTE(){
-this.custom =  [[0.0, 'rgb(0, 0, 240)'],[0.2478, 'rgb(0, 2, 39)'], [0.3805, 'rgb(245, 213, 1)'],[0.65555, 'rgb(168, 98, 0)'],
-[0.701, 'rgb(76, 2, 69)'],[0.7603, 'rgb(0, 182, 136)'],[0.7779, 'rgb(0, 138, 30)'], [1.0, 'rgb(1, 248, 1)']];
-this.plotly_colours = ['#1f77b4','#ff7f0e', '#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf'];
-};
-// Class that integrates plot settings used accross the plots.
-function HL_PLOT_SETTINGS(){
-
-this.plot_configuration = {
-showEditInChartStudio: true,
-plotlyServerURL: "https://chart-studio.plotly.com",
-displayModeBar: true,
-displaylogo: false,
-responsive: true,
-toImageButtonOptions: {
-format: 'svg',
-filename: 'plot',
-height: 600,
-width: 800,
-scale: 1
-}};
-
-this.plot_layout = {
-autosize: true,
-title: {
-text: '<b> Blank </b>',
-font: {
-size: 20,
-family:'Arial'
-},
-x: 0.05,
-y: 1.2,
-xanchor: 'left',
-yanchor: 'bottom',
-}
 };
 };

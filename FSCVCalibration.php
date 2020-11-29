@@ -11,6 +11,7 @@
 <script src="JavaScriptPackages/kissFFT.js"></script>
 <script src="JavaScriptPackages/tf.min.js"></script>
 <script src="JavaScriptPackages/xlsx.full.min.js"></script>
+<script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
 <script src = "OOP/LOADClass.js"></script>
 <script src = "OOP/FilterClass.js"></script>
@@ -40,10 +41,8 @@ $(".se-pre-con").fadeOut("slow");
 <div class="row" style="margin:auto;">
 <div class="col">
 <div class="row">
-<input type="file" name="FSCVfiles" id="FSCVfiles" accept=".xls,.xlsx,.csv,.txt" style="width:75%;"  multiple> </input>
-<button>
-<a id="include_button" onclick="include_pushed()" style="width: 25%;">Include</a>
-</button>
+<input type="file" name="FSCVfiles" id="FSCVfiles" accept=".xls,.xlsx,.csv,.txt" style="width:75%;"  multiple data-toggle="tooltip" title="Add files to the application from a local path"> </input>
+<button id="include_button" onclick="include_pushed()" style="width: 25%;" data-toggle="tooltip" title="Include loaded files into the application">Include</button>
 </div>
 <div class="row">
 <p id="status"> Upload the files.</p>
@@ -52,9 +51,9 @@ $(".se-pre-con").fadeOut("slow");
 <label for="frequency" style="width: 33%;">Freq. (Hz):</label>
 <label for="cycling_frequency" style="width: 33%;">Cyc. freq (Hz):</label>
 <label for="current_units" style="width: 33%;">Units:</label>
-<input type="number" step="1" min=1 name="frequency" id="frequency" style="width: 33%;"  value=500000 />
-<input type="number" step="1" min=1 name="cycling_frequency" id="cycling_frequency" style="width: 33%;" value=10 />
-<input type="text" name="current_units" id="current_units" style="width: 33%;" value="nA"/>
+<input type="number" step="1" min=1 name="frequency" id="frequency" style="width: 33%;"  value=500000 data-toggle="tooltip" title="Sampling frequency of the acquisition" />
+<input type="number" step="1" min=1 name="cycling_frequency" id="cycling_frequency" style="width: 33%;" value=10 data-toggle="tooltip" title="Frequency at which the voltage cycle is applied"/>
+<input type="text" name="current_units" id="current_units" style="width: 33%;" value="nA" data-toggle="tooltip" title="Current units of uploaded data"/>
 </div>
 </div>
 
@@ -63,13 +62,9 @@ $(".se-pre-con").fadeOut("slow");
 <label id="slider_label" for="plot_slider" ></label>
 </div>
 <div style = "text-align: center">
-<button>
-<a id="previous_button" onclick="previous_pushed()" >< Prev.</a>
-</button>
+<button id="previous_button" onclick="previous_pushed()" data-toggle="tooltip" title="Change to previous file">< Prev.</button>
 <input type="range" class="custom-range w-25" id="file_slider" min="1" max="1" value="1" step = "1" onchange="slider_changed()">
-<button>
-<a id="next_button" onclick="next_pushed()">Next></a>
-</button>
+<button id="next_button" onclick="next_pushed()" data-toggle="tooltip" title="Change to next file">Next ></button>
 </div>
 <div style = "text-align: center; margin-top:10px">
 <img src="/Images/HL_Icon.png" alt="Hashemi Lab Icon" width="375" height="125">
@@ -78,52 +73,34 @@ $(".se-pre-con").fadeOut("slow");
 
 <div class="col">
 <div class="row">
-<button>
-<a id="invert_sign_button" onclick="invert_pushed()">Invert</a>
-</button>
+<button id="invert_sign_button" onclick="invert_pushed()" data-toggle="tooltip" title="Invert the sign of the current values in the voltammograms">Invert</button>
 &nbsp;
-<button>
-<a id="invert_sign_button" onclick="background_subtraction_button_pushed()">Background sub.</a>
-</button>
+<button id="invert_sign_button" onclick="background_subtraction_button_pushed()" data-toggle="tooltip" title="Background subtraction of capacitative current">Background sub.</button>
 &nbsp;
-<button>
-<a id="invert_sign_button" onclick="reset_pushed()" >Reset</a>
-</button>
+<button id="invert_sign_button" onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
 </div>
 <div class="row" style="margin-top:5px">
-<button id="surface" class="type_of_plot_selection" style="background-color:#3f51b5; color:white;">
-<a>3D</a>
-</button>
+<button id="surface" class="type_of_plot_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Type of graph: 3D surface">3D</button>
 &nbsp;
-<button id="heatmap" class="type_of_plot_selection">
-<a>2D</a>
-</button>
+<button id="heatmap" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: 2D heatmap">2D</button>
 &nbsp;
-<button id="contour" class="type_of_plot_selection">
-<a>Contour</a>
-</button>
+<button id="contour" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: contour plot">Contour</button>
 </div>
 
 <div class="row" style="margin-top:5px">
-<button id="Custom" class="color_palette_selection" style="background-color:#3f51b5; color:white;">
-<a>Custom</a>
-</button>
+<button id="Custom" class="color_palette_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Color palette: custom">Custom</button>
 &nbsp;
-<button id="Portland" class="color_palette_selection">
-<a>Portland</a>
-</button>
+<button id="Portland" class="color_palette_selection" data-toggle="tooltip" title="Color palette: Portland">Portland</button>
 &nbsp;
-<button id="Jet" class="color_palette_selection">
-<a>Jet</a>
-</button>
+<button id="Jet" class="color_palette_selection" data-toggle="tooltip" title="Color palette: jet">Jet</button>
+&nbsp;
+<button id="Hot" class="color_palette_selection" data-toggle="tooltip" title="Color palette: hot">Hot</button>
 </div>
 <div class="row" style="margin-top:5px">
-<button id="graph_point_selection" class="graph_point_selection">
-<a>Graph selection</a>
-<input type="checkbox" hidden id="graph_selection_checkbox">
-</button>
+<button id="graph_point_selection" class="graph_point_selection" data-toggle="tooltip" title="Select horizontal traces from the color plot &#x0a; by interactively clicking on the graph">
+Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></button>
 &nbsp;
-<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" hidden>Kinetic calibration</button>
+<button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled  data-toggle="tooltip" title="Calibration of color plot accounting for mass diffusivity">Kinetic calibration</button>
 </div>
 </div>
 </div>
@@ -136,52 +113,58 @@ $(".se-pre-con").fadeOut("slow");
 <div id="middle_panel" style = " margin:auto; width:90%;">
 <div class="row">
 <div class="col">
-<button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;">Filtered data</button>
-<button id="calibration_download_button" class="download_type_button">Calibration</button>
-<button style="margin-top:5px;" onclick="export_as_xlsx_pushed()">Export as XLSX</button>
-<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" >Open Reuptake Analysis</button>
+<h5>Export Panel</h5>
+<hr>
+<button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;"  data-toggle="tooltip" title="Export filtered color plots">Filtered data</button>
+<button id="calibration_download_button" class="download_type_button" data-toggle="tooltip" title="Export calibrated data" >Calibration</button>
+<button style="margin-top:5px;" onclick="export_as_xlsx_pushed()" style="float:right;" data-toggle="tooltip" title="Download selected data as XLSX">Export as XLSX</button>
+<hr>
+<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" data-toggle="tooltip" title="Open Michaelis Menten application with the average trace obtained from the calibrations" >Open Reuptake Analysis</button>
 </div>
 
-<div class="col">
-<div class="row">
-<button class="filter_selection" id="convolution_button" style="background-color:#3f51b5; color:white;">Conv.</button>
-&nbsp;
-<button class="filter_selection" id="2dfft_button">2D FFT</button>
-&nbsp;
-<button onclick="apply_filtration_pushed()">Filter</button>
-<button onclick="apply_changes_pushed()" style="margin-right:0px; margin-left:auto;">Apply changes</button>
-</div>
-<div class="row">
+<div class="col"> <div class="position:relative">
+<h5>
+Filtration Panel
+<button class="filter_selection text-right" id="2dfft_button" style="font-size:16px;float:right;" data-toggle="tooltip" title="Fourier transform Butterworth 2D low-pass filtration">2D FFT</button>
+<button class="filter_selection text-right" id="convolution_button" style="background-color:#3f51b5; color:white; font-size:16px; float:right;" data-toggle="tooltip" title="2D convolution smoothing">Conv.</button>
+</h5>
+<hr>
+<button onclick="apply_filtration_pushed()" data-toggle="tooltip" title="Apply selected filtration to the signal">Filter</button>
+<button onclick="apply_changes_pushed()" style="float:right;" data-toggle="tooltip" title="Apply filtration changes to the stored signal. &#x0a;Use to save the filtration.">Apply changes</button>
+
 <div id="convolution_panel" style="margin-top:5px;">
 <label  for="convolution_sigma" style="width:49%">Gaussian STD (px):</label>
 <label for="convolution_repetitions" style="width:49%">Repetitions:</label>
-<input style="width:49%" type="number" step="1" min=1 name="convolution_sigma" id="convolution_sigma" value=1 />
-<input style="width:49%" type="number" step="1" min=1 name="convolution_repetitions" id="convolution_repetitions" value=1 max=5 />
+<input style="width:49%" type="number" step="1" min=1 name="convolution_sigma" id="convolution_sigma" value=1   data-toggle="tooltip" title="Standard deviation of the Gaussian smoothing kernel.&#x0a;Higher STD will increase the smoothing strength." />
+<input style="width:49%" type="number" step="1" min=1 name="convolution_repetitions" id="convolution_repetitions" value=1 max=5 data-toggle="tooltip" title="Number of times the convolution is applied"/>
 </div>
 <div id="2dfft_panel" style="display: none; margin-top:5px;">
 <label for="horizontal_fft_slider" style="width:35%"> X cutoff (%):</label>
-<input type="range" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=1 max=100 />
+<input type="range" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Horizontal cutoff frequency defined as a percentage of the maximum frequency."/>
 <span id="horizontal_fft_slider_number" style="width:40%">50</span>
 <label for="vertical_fft_slider" style="width:35%"> Y cutoff (%):</label>
-<input type="range" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=1 max=100 />
+<input type="range" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Vertical cutoff frequency defined as a percentage of the maximum frequency." />
 <span id="vertical_fft_slider_number" style="width:40%">50</span>
-<button onclick="graph_2dfft_pushed()" style="float: right;">Show</button>
+<button onclick="graph_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Graph the magnitude of the 2D FFT spectrum">Show</button>
 <label for="butter_order" style="width:35%"> Order:</label>
-<input type="number" step="1" id="butter_order" style="width:25%" value=2 min=1 max=20 />
-<button onclick="graph_filter_pushed()" id="show_filter_button" style="float: right;" disabled>Show filter</button>
+<input type="number" step="1" id="butter_order" style="width:25%" value=2 min=1 max=20 data-toggle="tooltip" title="Order of the 2D Butterworth filter"/>
+<button onclick="graph_filter_pushed()" id="show_filter_button" style="float: right;" disabled data-toggle="tooltip" title="Graph the cutoff limits of the filter.">Show filter</button>
 </div>
-</div>
-</div>
+
+</div> </div>
 <div class="col">
+<h5>Calibration Panel</h5>
+<hr>
 <label for="calibration_coefficient" style="width:35%"> Coefficient:</label>
-<input type="number" step="1" id="calibration_coefficient" style="width:25%" value=11 min=1 max=100 />
-<button onclick="calibrate_button_pushed()" id="calibrate_button" style="float: right;">Calibrate</button>
+<input type="number" step="1" id="calibration_coefficient" style="width:25%" value=11 min=1 max=100 data-toggle="tooltip" title="Calibration coefficient of the neurotransmitter." />
+<button onclick="calibrate_button_pushed()" id="calibrate_button" style="float: right;" data-toggle="tooltip" title="Calibrate the selected trace">Calibrate</button>
 <label for="concentration_units" style="width:35%"> Units:</label>
-<input type="text" step="1" id="concentration_units" style="width:25%" value="nM"/>
-<button onclick="nonlinear_fit_button_pushed()" id="calibrate_button" style="float: right;">Nonlinear opt.</button>
+<input type="text" step="1" id="concentration_units" style="width:25%" value="nM" data-toggle="tooltip" title="Concentration units of the calibration coefficient"/>
+<button onclick="nonlinear_fit_button_pushed()" id="calibrate_button" style="float: right;" data-toggle="tooltip" title="Improve exponential fit applying nonlinear optimization">Nonlinear opt.</button>
 <label for="calibration_name" style="width:35%"> Name:</label>
-<input type="text" step="1" id="calibration_name" style="width:25%" value="5-HT"/>
-<select id="select_signal_button" style="float: right;">
+<input type="text" step="1" id="calibration_name" style="width:25%" value="5-HT" data-toggle="tooltip" title="Name of the calibration"/>
+<select id="select_signal_button" style="float: right;" data-toggle="tooltip" title="Select current trace to calibrate">
+
 </select>
 </div>
 </div>
@@ -199,28 +182,28 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 
 <div style="position:absolute;left:25%;margin-top:2.5%">
-<button class="current_trace_selection" id="i-t_button" style="font-size:12px;background-color:#3f51b5; color:white;">1</button>
-<button class="current_trace_selection" id="i-v_button" style="font-size:12px">2</button>
+<button class="current_trace_selection" id="i-t_button" style="font-size:12px;background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Show horizontal current traces">1</button>
+<button class="current_trace_selection" id="i-v_button" style="font-size:12px" data-toggle="tooltip" title="Show vertical current traces">2</button>
 </div>
 
 <div style="position:absolute;left:35%;margin-top:2.5%">
-<button style="font-size:12px" onclick="delete_trace_pushed()">Delete last</button>
-<button style="font-size:12px" onclick="delete_all_pushed()">Delete all</button>
+<button style="font-size:12px" onclick="delete_trace_pushed()" data-toggle="tooltip" title="Delete last current trace">Delete last</button>
+<button style="font-size:12px" onclick="delete_all_pushed()" data-toggle="tooltip" title="Delete all current traces">Delete all</button>
 </div>
 
 <div style="position:absolute;left:65%;margin-top:2.5%">
-<button class="max_min_selection" id="max_button" style="font-size:12px;background-color:#3f51b5; color:white;">Max</button>
-<button class="max_min_selection" id="min_button" style="font-size:12px">Min</button>
+<button class="max_min_selection" id="max_button" style="font-size:12px;background-color:#3f51b5; color:white;"  data-toggle="tooltip" title="Toggle to select the maximum point in the graph">Max</button>
+<button class="max_min_selection" id="min_button" style="font-size:12px" data-toggle="tooltip" title="Toggle to select the minimum point in the graph">Min</button>
 </div>
 
 <div style="position:absolute;left:75%;margin-top:2.5%">
-<button style="font-size:12px" onclick="previous_concentration_clicked()"> < </button>
-<button style="font-size:12px" onclick="next_concentration_clicked()"> > </button>
+<button style="font-size:12px" onclick="previous_concentration_clicked()" data-toggle="tooltip" title="Graph previous concentration trace"> < </button>
+<button style="font-size:12px" onclick="next_concentration_clicked()" data-toggle="tooltip" title="Graph next concentration trace"> > </button>
 </div>
 
 <div style="position:absolute;left:80%;margin-top:2.5%">
-<button style="font-size:12px" onclick="delete_concentration_trace_pushed()">Delete last</button>
-<button style="font-size:12px" onclick="delete_all_concentration_pushed()">Delete all</button>
+<button style="font-size:12px" onclick="delete_concentration_trace_pushed()" data-toggle="tooltip" title="Delete last calibration">Delete last</button>
+<button style="font-size:12px" onclick="delete_all_concentration_pushed()" data-toggle="tooltip" title="Delete all calibrations">Delete all</button>
 </div>
 </div>
 
@@ -236,40 +219,40 @@ $(".se-pre-con").fadeOut("slow");
 <div class="row">
 <div class = "col">
 <label for="valency_of_reaction" style="width:59%">Valency (e<sup>-</sup>):</label>
-<input style="width:30%" type="number" step="1" min=1 max=10 id="valency_of_reaction" value=2 />
+<input style="width:30%" type="number" step="1" min=1 max=10 id="valency_of_reaction" value=2 data-toggle="tooltip" title="Number of electrons of the faradaic reaction"/>
 <label for="electrode_length" style="width:59%">Electrode length (μm):</label>
-<input style="width:30%" type="number" step="1" min=1 id="electrode_length" onchange="calculate_surface()" value=150 />
+<input style="width:30%" type="number" step="1" min=1 id="electrode_length" onchange="calculate_surface()" value=150 data-toggle="tooltip" title="Electrode length to calculate electrode surface"/>
 <label for="electrode_width" style="width:59%">Electrode width (μm):</label>
-<input style="width:30%" type="number" step="1" min=1 id="electrode_width" onchange="calculate_surface()" value=7 />
+<input style="width:30%" type="number" step="1" min=1 id="electrode_width" onchange="calculate_surface()" value=7 data-toggle="tooltip" title="Electrode width to calculate electrode surface"/>
 <label for="electrode_surface" style="width:59%">Electrode surface (μm<sup>2</sup>):</label>
-<input style="width:30%" type="number" min=1 step=1 value=3337.16 id="electrode_surface">
+<input style="width:30%" type="number" min=1 step=1 value=3337.16 id="electrode_surface" data-toggle="tooltip" title="Electrode surface">
 
 </div>
 <div class = "col">
 <label for="absorption_strength" style="width:59%">Absorption (cm):</label>
-<input style="width:30%" type="number" step="1" min=0 id="absorption_strength" value=0.0055 />
+<input style="width:30%" type="number" step="1" min=0 id="absorption_strength" value=0.0055 data-toggle="tooltip" title="Electrode absorption strength "/>
 <label for="diffusion_coefficient" style="width:59%">Diffusion coef. (cm<sup>2</sup>/s):</label>
-<input style="width:30%" type="number" step="1" min=0 id="diffusion_coefficient" value=0.000002 />
+<input style="width:30%" type="number" step="1" min=0 id="diffusion_coefficient" value=0.000002 data-toggle="tooltip" title="Diffusion coefficient of the neurotransmitter"/>
 <label for="kinetic_calibration_name" style="width:59%">Name:</label>
-<input style="width:30%" type="text" id="kinetic_calibration_name" value="5-HT"/>
+<input style="width:30%" type="text" id="kinetic_calibration_name" value="5-HT" data-toggle="tooltip" title="Name of the calibration"/>
 
 </div>
 </div>
 <div class="row">
 <div class="col">
 <label for="kinetic_start_integration" style="width:59%">Start (sample): </label>
-<input style="width:30%" type="number" id="kinetic_start_integration" value=0 />
+<input style="width:30%" type="number" id="kinetic_start_integration" value=0 data-toggle="tooltip" title="Cyclic voltammgram sample from where the integration starts "/>
 </div>
 <div class="col">
 <label for="kinetic_end_integration" style="width:59%">End (sample): </label>
-<input style="width:30%" type="number" id="kinetic_end_integration" value=3000 />
+<input style="width:30%" type="number" id="kinetic_end_integration" value=3000 data-toggle="tooltip" title="Cyclic voltammgram sample from where the integration ends " />
 </div>
 </div>
 <br>
 <p style="text-align:center">
-<button style="width:15%;" onclick="kinetic_calibration_pushed()">Calibrate</button>
-<button style="width:20%;" onclick="kinetic_show_limits_pushed()">Show limits</button>
-<button style="width:15%;" onclick="kinetic_calibration_close_pushed()">Close</button>
+<button style="width:15%;" onclick="kinetic_calibration_pushed()" data-toggle="tooltip" title="Apply kinetic calibration ">Calibrate</button>
+<button style="width:20%;" onclick="kinetic_show_limits_pushed()" data-toggle="tooltip" title="Show integration limits in the graph ">Show limits</button>
+<button style="width:15%;" onclick="kinetic_calibration_close_pushed()" data-toggle="tooltip" title="Close window ">Close</button>
 </p>
 
 
@@ -281,18 +264,18 @@ $(".se-pre-con").fadeOut("slow");
 <div class="row">
 <div class="col">
 <label for="background_start_sample" style="width:59%">Start (sample): </label>
-<input style="width:30%" type="number" id="background_start_sample" value=0 />
+<input style="width:30%" type="number" id="background_start_sample" value=0 data-toggle="tooltip" title="First cyclic voltammogram from where the average is calculated "/>
 </div>
 <div class="col">
 <label for="background_end_sample" style="width:59%">End (sample): </label>
-<input style="width:30%" type="number" id="background_end_sample" value=10 />
+<input style="width:30%" type="number" id="background_end_sample" value=10 data-toggle="tooltip" title="Last cyclic voltammogram from where the average is calculated "/>
 </div>
 </div>
 <br>
 <p style="text-align:center">
-<button style="width:15%;" onclick="background_subtraction_apply_pushed()">Apply</button>
-<button style="width:20%;" onclick="background_subtraction_show_pushed()">Show</button>
-<button style="width:15%;" onclick="background_subtraction_close_pushed()">Close</button>
+<button style="width:15%;" onclick="background_subtraction_apply_pushed()" data-toggle="tooltip" title="Apply background subtraction">Apply</button>
+<button style="width:20%;" onclick="background_subtraction_show_pushed()" data-toggle="tooltip" title="Show limits of background subtraction in the graph">Show</button>
+<button style="width:15%;" onclick="background_subtraction_close_pushed()" data-toggle="tooltip" title="Close window">Close</button>
 </p>
 </div>
 </div>
