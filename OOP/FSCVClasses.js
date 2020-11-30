@@ -26,7 +26,7 @@ z:this.current.array,
 x:this.cycling_time.array,
 type:this.plot_type,
 colorscale:this.color_palette,
-colorbar: {len:0.5, xpad:30, title:this.current.name+'('+this.current.units+')'}
+colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'}
 }];
 
 this.plot_layout = this.plot_settings.plot_layout;

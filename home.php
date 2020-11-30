@@ -6,8 +6,8 @@
 <link rel="stylesheet" href="Styling/w3.css">
 <script src="JavaScriptPackages/fontawesome-828d573e3a.js"></script>
 <script type="text/javascript" src="JavaScriptPackages/shim.min.js"></script>
+<script type="text/javascript" src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
-
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
 body {font-size:16px;}
@@ -35,6 +35,7 @@ background: url("Images/loading.gif") center no-repeat #eff4f7;
 .br2 {
 height:1px;
 }
+
 </style>
 
 <script>
@@ -84,22 +85,22 @@ $(".se-pre-con").fadeOut("slow");
 
 <h1 class="w3-xxxlarge w3-text-indigo"><b>About.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-<p  align=”justify”> The Analysis Kid is a web application that offers a data analysis tool for Fast Scan Cyclic Voltammetry (FSCV) signals of real-time measurement of neurotransmitter dynamics in
-vitro and in vivo. This is achieved by providing a series of open-source and user-friendly dashboards with automatic algorithms that analise FSCV neurochemical data both qualitatively and quantitatively.
-The general description of the implemented dashboards at the time of writing can be found below. Extensive information of the algorithms and technical requirements for each of the dashboards can be found in the documentation <a href ="Documentation.php" target="_blank">here</a>.
-<p  align=”justify”>The web application is currently in development and any suggestions, bugs or errors will be welcomed. Error handling is also in development and the application might be irresponsive to specific errors.
-Do not hesitate to contact through the contact form, email or any other social platform available.  </p>
+<p style="text-align:justify;text-justify: inter-word;"> The Analysis Kid is a web application created by <a href="https://www.hashemilab.com/">The Hashemi Lab</a> with calibration and data analysis tools for fast-scan cyclic voltammetry (FSCV) signals of electroactive molecules.
+This is achieved by providing a series of open-source and user-friendly applications that allow visualization, filtration, calibration and analysis of neurochemical signals.
+A brief description of the applications can be found below, as well as <a href="#documentation">documentation</a> to get started with the applications.
+<p style="text-align:justify;text-justify: inter-word;">The applications have been fully tested on desktop applications of Google Chrome v86, Microsoft Edge v87 and Mozilla Firefox v83.
+The use of the applications in any other browser might generate errors and it is not recommended. The web application is in continuous development and any suggestions or bug reports will be welcomed.  Do not hesitate to contact through the contact form, email, The Hashemi Lab twitter or any other social platform available.  </p>
 </p>
 </div>
 
 
 
-<!-- Modal for full size images on click-->
-<div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-<span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
+<!-- Modal for  videos on click-->
+<div id="modal01" class="w3-modal" style="padding-top:0" onclick="this.style.display='none'">
+<span class="w3-button w3-xxlarge w3-display-topright w3-white">×</span>
 <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
-<img id="img01" class="w3-image">
-<p id="caption"></p>
+<iframe id = "video" width="80%" height="500" allowfullscreen=true style="text-align:center;display:block;margin: 0 auto;border-style:none;"></iframe>
+<p id="caption" style="color:white"></p>
 </div>
 </div>
 
@@ -112,13 +113,18 @@ Do not hesitate to contact through the contact form, email or any other social p
 <div class="w3-half w3-margin-bottom w3-center">
 <ul class="w3-ul w3-light-grey">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCV Analysis</li>
+<li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> FSCV Analysis allows to upload one or more acquisitions in .txt, .csv or .xlsx format.
+The application has a user-friendly pipeline to allow visualization, filtration, calibration and analysis of several FSCV signals. Find out more in the <a href="#documentation">documentation</a>. </li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVWindow()"> Open application</a> </li>
+<li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> The Michaelis Menten reuptake analysis can be opened from the FSCV Analysis application. Alternatively, it can also be accessed from the link below by uploading the export file provided by the FSCV Analysis. Find out how to do this in the video tutorials.</li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVMichaelisMenten()"> Open reuptake analysis</a> </li>
 </ul>
 </div>
 <div class="w3-half w3-margin-bottom w3-center">
 <ul class="w3-ul w3-light-grey">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCAV Analysis</li>
+<li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> FSCAV Analysis allows to upload one or more acquisitions in .txt, .csv or .xlsx format.
+The application allows a fast and user-friendly calibration of 5-HT basal measurements. Find out more in the <a href="#documentation">documentation</a>. </li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow()"> Open application</a> </li>
 </ul>
 </div>
@@ -128,14 +134,18 @@ Do not hesitate to contact through the contact form, email or any other social p
 <div class="w3-container" id="documentation" style="margin-top:75px">
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
+<h4 class=" w3-text-indigo"><b> Video Tutorials </b></h4>
+<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCV Analysis</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">Reutake Kinetics</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
 
-<iframe width="900" height="500" style="text-align:center;display:block;margin: 0 auto;border-style:none;" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>
-
-
+<h4 class=" w3-text-indigo"><b> References </b></h4>
+<div style=" border:1px solid black;" id="references_window">
+<div style="margin-left:2%; margin-right:2%;text-align:justify;text-justify:inter-word;font-size:14px;">
 <p><cite>[1]	S. Samaranayake et al., “A voltammetric and mathematical analysis of histaminergic modulation of serotonin in the mouse hypothalamus,” J. Neurochem., pp. 374–383, Aug. 2016, doi: 10.1111/jnc.13659.
 </cite></p>
 
-<p><cite>[2]	N. Elgrishi, K. J. Rountree, B. D. McCarthy, E. S. Rountree, T. T. Eisenhart, and J. L. Dempsey, “A Practical Beginner’s Guide to Cyclic Voltammetry,” J. Chem. Educ., vol. 95, no. 2, pp. 197–206, Feb. 2018, doi: 10.1021/acs.jchemed.7b00361.</cite></p>
+<p><cite>[2]	C. W. Atcherley, N. D. Laude, K. L. Parent, and M. L. Heien, “Fast-scan controlled-adsorption voltammetry for the quantification of absolute concentrations and adsorption dynamics,” Langmuir, vol. 29, no. 48, pp. 14885–14892, Dec. 2013, doi: 10.1021/la402686s. </cite></p>
 
 <p><cite>[3]	V. Dumoulin and F. Visin, “A guide to convolution arithmetic for deep learning,” Mar. 2016. </cite></p>
 
@@ -150,6 +160,15 @@ Do not hesitate to contact through the contact form, email or any other social p
 <p><cite>[8]	C. W. Atcherley, N. D. Laude, E. B. Monroe, K. M. Wood, P. Hashemi, and M. L. Heien, “Improved Calibration of Voltammetric Sensors for Studying Pharmacological Effects on Dopamine Transporter Kinetics in Vivo,” ACS Chem. Neurosci., vol. 6, no. 9, pp. 1509–1516, Jul. 2014, doi: 10.1021/cn500020s.</cite></p>
 
 <p><cite>[9]	S. M. Riad, “The Deconvolution Problem: An Overview,” Proc.  IEEE, vol. 76, no. 1, pp. 82–85, 1986.</cite></p>
+
+<p><cite>[10] A. Abdalla et al., “In Vivo Ambient Serotonin Measurements at Carbon-Fiber Microelectrodes,” Anal. Chem., vol. 89, no. 18, pp. 9703–9711, Sep. 2017, doi: 10.1021/acs.analchem.7b01257. </cite></p>
+
+<p><cite>[11] A. Martin et al., “TensorFlow: Large-Scale Machine Learning on Heterogeneous Systems.” 2015. </cite></p>
+
+<p><cite>[12]	Plotly Technologies, “Collaborative data science.” Plotly Technologies Inc., Montreal, QC, 2015. </cite></p>
+</div>
+</div>
+<br>
 </div>
 
 
@@ -169,23 +188,25 @@ Do not hesitate to contact through the contact form, email or any other social p
 </div>
 
 
+
+
 <script>
 // Script to open and close sidebar from w3.
 function w3_open() {
-document.getElementById("mySidebar").style.display = "block";
-document.getElementById("myOverlay").style.display = "block";
+_("mySidebar").style.display = "block";
+_("myOverlay").style.display = "block";
 }
 function w3_close() {
-document.getElementById("mySidebar").style.display = "none";
-document.getElementById("myOverlay").style.display = "none";
+_("mySidebar").style.display = "none";
+_("myOverlay").style.display = "none";
 }
 // Modal Image Gallery
-function onClick(element) {
-document.getElementById("img01").src = element.src;
-document.getElementById("modal01").style.display = "block";
-var captionText = document.getElementById("caption");
-captionText.innerHTML = element.alt;
-}
+function video_modal_window(element) {
+_("video").src = element.value;
+_("modal01").style.display = "block";
+_("caption").innerHTML = element.name;
+};
+
 
 // Script to open applications depending on plot selected
 // Contact pop up window.
