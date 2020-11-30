@@ -55,15 +55,15 @@ $(".se-pre-con").fadeOut("slow");
 <nav class="w3-sidebar w3-indigo w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
 <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
 <div class="w3-container">
-<h3 class="w3-padding-64"><b>The Analysis<br>Kid</b></h3>
+<h3 class="w3-padding-64"><b>The Analysis<br>Kid</b> </h3>
 </div>
 <div class="w3-bar-block">
 <a href="#top" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-home w3-large"></i> Home</a>
 <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-list" aria-hidden="true"></i> About</a>
 <a href="#applications" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fas fa-chart-line w3-large"></i> Applications</a>
 <a href="#documentation" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-file-text-o" aria-hidden="true"></i> Documentation</a>
+<a href="#contact" onclick="ContactWindow()" class="w3-bar-item w3-button w3-hover-white"><i class="fas fa-paper-plane w3-large"></i> Contact Us</a>
 </div>
-<a href="#contact" onclick="ContactWindow()" class="w3-bar-item w3-center w3-button w3-hover-white"><i class="fas fa-paper-plane w3-large"></i> Contact Us</a>
 
 </nav>
 

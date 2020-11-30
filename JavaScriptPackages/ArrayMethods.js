@@ -25,24 +25,27 @@ var min = arr[0], index = 0;
 for (var i = 1; i < arr.length; i++) {if (arr[i] < min) {index = i; min = arr[i]}}
 return [min, index];
 };
-// Array of local minima considering 4 neighbours.
-function localminima(arr){
+// Array of local minima considering n neighbours.
+function local_minima(arr, n){
 mins = []; mins_index = [];
-for (var i = 2; i < arr.length - 2; ++i) {
-if (arr[i-1] > arr[i] && arr[i-2] > arr[i] && arr[i] < arr[i+1] && arr[i] < arr[i+2]) {
-mins.push(arr[i]); mins_index.push(i);
-}};
+for (var i = n; i < arr.length - n; ++i) {
+ev = true;
+for (var j = 1; j<n+1;++j){ev = ev && (arr[i]<arr[i-j] && arr[i]<arr[i+j]);};
+if(ev){mins.push(arr[i]); mins_index.push(i)};
+}
 return [mins_index, mins];
-}
+};
+
 //Array of local maxima considering 4 neighbours.
-function localmaxima(arr){
+function local_maxima(arr, n){
 maxes = []; maxes_index = [];
-for (var i = 1; i < arr.length - 1; ++i) {
-if (arr[i-1] < arr[i] && arr[i-2] < arr[i] && arr[i] > arr[i+1] && arr[i] > arr[i+2]) {
-maxes.push(arr[i]); maxes_index.push(i);
-}};
-return [maxes_index, maxes];
+for (var i = n; i < arr.length - n; ++i) {
+ev = true;
+for (var j = 1; j<n+1;++j){ev = ev && (arr[i]>arr[i-j] && arr[i]>arr[i+j]);};
+if(ev){maxes.push(arr[i]); maxes_index.push(i)};
 }
+return [maxes_index, maxes];
+};
 
 // Calculates the absolute of array.
 function absolute_array(arr){
@@ -303,7 +306,7 @@ return tmp;
 };
 
 // Fast gaussian convolution. IMPORTANT: convolution is applied IN PLACE.
-// http://blog.ivank.net/fastest-gaussian-blur.html
+// https://blog.ivank.net/fastest-gaussian-blur.html
 function conv_2d_gaussian(scl, tcl, w, h, r){
 var bxs = boxesForGauss(r, 3);
 boxBlur(scl, tcl, w, h, (bxs[0]-1)/2);
