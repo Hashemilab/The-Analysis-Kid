@@ -12,7 +12,9 @@ this.max_indexes = [];
 this.max_values = [];
 this.min_indexes = [];
 this.min_values = [];
-this.auc = [];
+this.total_auc = [];
+this.line_auc = [];
+this.auc =[];
 this.graph_index = 0;
 this.number_of_files = this.current.array.length;
 this.local_neighbours = peak_width;
@@ -30,7 +32,12 @@ get_max_and_min_values(index){
 };
 
 get_auc(index){
-this.auc[index] = simpson_auc(this.current.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
+this.total_auc[index] = simpson_auc(this.current.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
+var linear_parameters = linear_fit([this.time.array[index][this.min_indexes[index][0]], this.time.array[index][this.min_indexes[index][1]]],
+[this.current.array[index][this.min_indexes[index][0]], this.current.array[index][this.min_indexes[index][1]]]);
+var line = this.time.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]).map(x => linear_parameters[0]+linear_parameters[1]*x);
+this.line_auc[index] = simpson_auc(line,this.frequency);
+this.auc[index] = this.total_auc[index] - this.line_auc[index];
 };
 
 change_points(pindex, type){

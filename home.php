@@ -182,7 +182,7 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 
 </p>
 <p class="w3-small"><a href="https://www.hashemilab.com/">The Hashemi Lab</a></p>
-<p class="w3-small">Imperial College London</p>
+<p class="w3-small">Imperial College London & University of South Carolina</p>
 <p class="w3-small">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
 </footer>
 </div>

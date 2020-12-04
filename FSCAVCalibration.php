@@ -105,7 +105,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 
 
 <div>
-<p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
+<p class="footdash">Application created by The Hashemi Lab, Imperial College London & University of South Carolina.</p>
 </div>
 </div>
 
@@ -166,7 +166,7 @@ function include_pushed(){
 if(loaded_data.data_array !== [] ){
 fscav_data = new HL_FSCAV_DATA(loaded_data.data_array, loaded_data.names_of_files, parseFloat(_('frequency').value), _('current_units').value, 'V', _('select_neurotransmitter').value, parseInt(_('peak_width').value));
 fscav_data.plot_graph('cv_graph');
-}; 
+};
 };
 
 function reset_pushed(){
