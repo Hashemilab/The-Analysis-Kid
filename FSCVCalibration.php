@@ -120,6 +120,9 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 <button style="margin-top:5px;" onclick="export_as_xlsx_pushed()" style="float:right;" data-toggle="tooltip" title="Download selected data as XLSX">Export as XLSX</button>
 <hr>
 <button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" data-toggle="tooltip" title="Open Michaelis Menten application with the average trace obtained from the calibrations" >Open Reuptake Analysis</button>
+<select id="kinetic_select_signal_button" style="float: right;" data-toggle="tooltip" title="Select concentration trace to open kinetic analysis">
+<option value="average">Average</option>
+</select>
 </div>
 
 <div class="col"> <div class="position:relative">
@@ -164,7 +167,6 @@ Filtration Panel
 <label for="calibration_name" style="width:35%"> Name:</label>
 <input type="text" step="1" id="calibration_name" style="width:25%" value="5-HT" data-toggle="tooltip" title="Name of the calibration"/>
 <select id="select_signal_button" style="float: right;" data-toggle="tooltip" title="Select current trace to calibrate">
-
 </select>
 </div>
 </div>
@@ -394,7 +396,6 @@ function delete_trace_pushed(){
 $('#select_signal_button').find('[value='+fscv_transient.counter+']').remove();
 fscv_transient.remove_trace("transient_graph");
 fscv_iv.remove_trace("iv_graph");
-
 };
 function delete_all_pushed(){
 while(fscv_transient.counter != 0){
@@ -423,8 +424,11 @@ function apply_changes_pushed(){
 loaded_data.data_array[file_index-1] = fscv_data.current.array;
 }
 function calibrate_button_pushed(){
+if( _('select_signal_button').value != ""){
+$('#kinetic_select_signal_button').append($('<option>', {value:fscv_concentration.counter, text:_('calibration_name').value+'('+String(fscv_concentration.counter+1)+')'}));
 fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, parseFloat(_('cycling_frequency').value),
 parseFloat(_('calibration_coefficient').value), _('concentration_units').value, _('calibration_name').value);
+};
 };
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
@@ -434,6 +438,7 @@ if(fscv_concentration.graph_index < fscv_concentration.counter - 1){++fscv_conce
 };
 function delete_concentration_trace_pushed(){
 fscv_concentration.remove_trace("ct_graph");
+$('#kinetic_select_signal_button').find('[value='+fscv_concentration.counter+']').remove();
 };
 function delete_all_concentration_pushed(){
 while(fscv_concentration.counter != 0){delete_concentration_trace_pushed()};
@@ -493,8 +498,16 @@ parseFloat(_('diffusion_coefficient').value), parseFloat(_('absorption_strength'
 
 function open_kinetic_analysis_pushed(){
 fscv_concentration.calculate_average_trace();
+let input_trace = new HL_FSCV_ARRAY(), time_array;
 var mm_window = window.open(encodeURI('FSCVMichaelisMenten.php'), "");
-mm_window.fscv_concentration = fscv_concentration;
+if (_('kinetic_select_signal_button').value == 'average'){input_trace = fscv_concentration.average_concentration, time_array = fscv_concentration.time.array[0]}
+else {
+input_trace.array = fscv_concentration.concentration.array[_('kinetic_select_signal_button').value];
+input_trace.units = fscv_concentration.concentration.units[_('kinetic_select_signal_button').value];
+input_trace.name = fscv_concentration.concentration.name; time_array = fscv_concentration.time.array[_('kinetic_select_signal_button').value];
+}
+mm_window.input_trace = input_trace;
+mm_window.time_array = time_array
 };
 
 function calculate_surface(){

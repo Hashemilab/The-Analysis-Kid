@@ -149,8 +149,8 @@ butter_2d(width, length, frequency, cycling_frequency, cutoffx, cutoffy, order){
 var d, i, j, fx = this.frequency_x.array, fy = this.frequency_y.array;
 var b_2d = uniform_array(length, uniform_array(width, 0));
 for (i = 0;i<length;++i){for (j = 0;j<width;++j){
-d = Math.pow((Math.pow((fy[i])/cutoffy,2) + Math.pow((fx[j])/cutoffx, 2)), 0.5);
-b_2d[i][j] = 1/(1 + Math.pow((d), 2*order));
+d = Math.pow((fy[i])/cutoffy,2) + Math.pow((fx[j])/cutoffx, 2);
+b_2d[i][j] = 1/(1 + Math.pow((d), order));
 }};
 return b_2d;
 };
@@ -161,8 +161,8 @@ var b_2d = uniform_array(length, uniform_array(half_width + 1, 0));
 for (i = 0;i<length;++i){for (j = 0;j<width/2;++j){
 if(i<length/2){fi = fy[i+half_length]}
 else{fi = fy[i-half_length]};
-d = Math.pow((Math.pow((fi)/cutoffy,2) + Math.pow((fx[j+half_width])/cutoffx, 2)), 0.5);
-b_2d[i][j] = 1/(1 + Math.pow((Math.pow((Math.pow((fi)/cutoffy,2) + Math.pow((fx[j+half_width])/cutoffx, 2)), 0.5)), 2*order));
+d = Math.pow((fi)/cutoffy,2) + Math.pow((fx[j+half_width])/cutoffx, 2);
+b_2d[i][j] = 1/(1 + Math.pow((d), order));
 }};
 b_2d.push(uniform_array(length*(width/2 - 1), 0)); //fill with zeros for the parts that have not been calculated.
 return b_2d;

@@ -218,11 +218,10 @@ parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_
 
 function include_pushed(){
 //get data from uploaded file.
-let fscv_concentration_loaded = new HL_FSCV_CONCENTRATION();
 let data_array = transpose(loaded_data.data_array[0]);
-fscv_concentration_loaded.average_concentration.array = data_array[1].slice(1);
-fscv_concentration_loaded.time.array = [data_array[0].slice(1)];
-add_data(fscv_concentration_loaded);
+let input_trace = new HL_FSCV_ARRAY(data_array[1].slice(1), '', 'Concentration');
+time_array = data_array[0].slice(1);
+add_data(input_trace, time_array);
 };
 
 function alpha_open_button_pushed(){
@@ -277,14 +276,14 @@ _('release_rate_slider').noUiSlider.on('change', values_changed);
 noUiSlider.create(_('autoreceptors_slider'), mm_concentration.autoreceptors_slider);
 _('autoreceptors_slider').noUiSlider.on('change', values_changed);
 //Check for signal.
-if (typeof(fscv_concentration) !== 'undefined'){
-add_data(fscv_concentration);
+if (typeof(input_trace) !== 'undefined'){
+add_data(input_trace, time_array);
 };
 // Hide release_graph
 _('release_graph').style.display="none";
 // Define add data function.
-function add_data(fscv_concentration){
-mm_concentration.add_data_to_application("ct_graph", fscv_concentration, "release_graph", "release_rate_slider", "autoreceptors_slider",
+function add_data(input_trace, time_array){
+mm_concentration.add_data_to_application("ct_graph", input_trace, time_array, "release_graph", "release_rate_slider", "autoreceptors_slider",
 "release_rate_slider", "autoreceptors_slider",[parseFloat(_('vmax_1').value), parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value),
 parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value), parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
 };
