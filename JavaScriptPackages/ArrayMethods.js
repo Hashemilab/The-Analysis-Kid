@@ -208,7 +208,7 @@ function scalar_product(arr, scalar){
 tmp=[];
 for(var i=0;i<arr.length;++i){tmp[i] = arr[i]*scalar};
 return tmp;
-}
+};
 
 // Copy a 2D array.
 function deep_copy_2d_array(arr){
@@ -350,7 +350,7 @@ return sizes;
 };
 
 
-// 2D FFT FUNCTIONS from KISSFFT
+// 2D FFT FUNCTIONS from KISSFFT, Mark Borgerding.
 /** Compute the FFT of a real-valued mxn matrix. */
 function rfft2d(data, m, n) {
 /* Allocate input and output arrays on the heap. */

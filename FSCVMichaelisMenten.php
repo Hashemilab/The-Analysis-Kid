@@ -91,7 +91,7 @@ dA:
 <input type="number" id="autoreceptors_slider_input_1" style="width:18%;" value=0 onchange="values_changed()" /><input type="number" id="autoreceptors_slider_input_2" style="width:18%;" value=0 onchange="values_changed()" /></div>
 
 <br>
-<button onclick="alpha_open_button_pushed()" data-toggle="tooltip" title=" Open alpha and beta configuration ">&alpha; - &beta;</button>
+<button onclick="config_open_button_pushed()" data-toggle="tooltip" title=" Open fitting configuration ">Config.</button>
 <button onclick="optimisation_button_pushed()" data-toggle="tooltip" title="Open configuration for the automatic optimization of parameters">Optimisation</button>
 <button onclick="export_as_xlsx_pushed()" data-toggle="tooltip" title="Export reuptake analysis as XLSX">Export as XLSX</button>
 <button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
@@ -115,8 +115,19 @@ dA:
 </div>
 </div>
 
-<div id="alpha_modal_window" class="modal">
+<div id="config_modal_window" class="modal">
 <div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="basal_concentration" style="width: 74%;">Basal concentration:</label>
+<input type="number" step=1 min=0  id="basal_concentration" style="width: 24%;" value=0 onchange="basal_concentration_changed()" data-toggle="tooltip" title="Estimation of the basal concentration of the neurotransmitter." />
+</div>
+<div class="col">
+<label for="basal_release" style="width: 74%;">Basal R(t):</label>
+<input type="number" step=1 min=0  id="basal_release_rate" style="width: 24%;" value=0 onchange="values_changed()" data-toggle="tooltip" title="Estimation of the basal concentration of the neurotransmitter." />
+</div>
+</div>
+<hr style="width:100%;text-align:left;margin-left:0;">
 <div class="row">
 <div class="col">
 <p> Initial values: </p>
@@ -213,7 +224,7 @@ function values_changed(){
 mm_concentration.input_values_changed("ct_graph","release_graph", "release_rate_slider", "autoreceptors_slider", "release_rate_slider", "autoreceptors_slider",
 [parseFloat(_('vmax_1').value),parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value),
 parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value),
-parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
+parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], parseFloat(_('basal_release_rate').value), "release_rate_list", "autoreceptors_list");
 };
 
 function include_pushed(){
@@ -224,12 +235,19 @@ time_array = data_array[0].slice(1);
 add_data(input_trace, time_array);
 };
 
-function alpha_open_button_pushed(){
-_('alpha_modal_window').style.display = "block";
+function basal_concentration_changed(){
+mm_concentration.assign_concentration_trace(input_trace, time_array, parseFloat(_('basal_concentration').value));
+mm_concentration.graph_concentration('ct_graph');
+values_changed();
+};
+
+
+function config_open_button_pushed(){
+_('config_modal_window').style.display = "block";
 };
 
 function alpha_close_button_pushed(){
-_('alpha_modal_window').style.display = "none";
+_('config_modal_window').style.display = "none";
 };
 
 function optimisation_button_pushed(){
@@ -264,6 +282,7 @@ location.reload();
 //Initialise objects.
 var loaded_data = new HL_LOAD_DATA("status");
 var mm_concentration = new HL_MICHAELIS_MENTEN();
+var input_trace, time_array;
 //Initialise graphs.
 mm_concentration.initialise_graph("ct_graph");
 mm_concentration.initialise_graph("release_graph");
@@ -283,9 +302,10 @@ add_data(input_trace, time_array);
 _('release_graph').style.display="none";
 // Define add data function.
 function add_data(input_trace, time_array){
-mm_concentration.add_data_to_application("ct_graph", input_trace, time_array, "release_graph", "release_rate_slider", "autoreceptors_slider",
+mm_concentration.add_data_to_application("ct_graph", input_trace, time_array, parseFloat(_('basal_concentration').value), "release_graph", "release_rate_slider", "autoreceptors_slider",
 "release_rate_slider", "autoreceptors_slider",[parseFloat(_('vmax_1').value), parseFloat(_('km_1').value), parseFloat(_('vmax_2').value), parseFloat(_('km_2').value)], [parseFloat(_('alpha_1').value),
-parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value), parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], "release_rate_list", "autoreceptors_list");
+parseFloat(_('alpha_2').value), parseFloat(_('alpha_threshold').value), parseFloat(_('beta_1').value), parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)],
+parseFloat(_('basal_release_rate').value), "release_rate_list", "autoreceptors_list");
 };
 </script>
 

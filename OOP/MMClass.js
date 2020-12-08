@@ -8,6 +8,7 @@ this.modelled_concentration = new HL_FSCV_ARRAY([],[], 'Modelled concentration')
 this.release_rate = new HL_FSCV_ARRAY([],[], 'Release rate');
 this.autoreceptors_rate = new HL_FSCV_ARRAY([],[], 'Autoreceptors rate');
 this.time = new HL_FSCV_ARRAY([],'s', 'Time');
+this.basal_concentration = 0;
 this.frequency;
 this.mean_squared_errors = '';
 this.parameters = []; // vmax1, km1, vmax2, km2.
@@ -35,16 +36,19 @@ this.release_rate_slider_values = [0,0];
 this.autoreceptors_slider_values = [0,0];
 };
 
-add_data_to_application(div, input_trace, time_array, release_graph_div, release_div, autoreceptors_div,
-release_type, autoreceptors_type, parameters, alpha_beta, release_list_div, autoreceptors_list_div){
-this.assign_concentration_trace(input_trace, time_array);
+add_data_to_application(div, input_trace, time_array, basal_concentration, release_graph_div, release_div, autoreceptors_div,
+release_type, autoreceptors_type, parameters, alpha_beta, basal_release_rate, release_list_div, autoreceptors_list_div){
+this.assign_concentration_trace(input_trace, time_array, basal_concentration);
 this.initialise_sliders(release_div, release_type, autoreceptors_div, autoreceptors_type);
 this.input_values_changed(div, release_graph_div, release_div, autoreceptors_div, release_type,
-autoreceptors_type, parameters, alpha_beta, release_list_div, autoreceptors_list_div);
+autoreceptors_type, parameters, alpha_beta, basal_release_rate, release_list_div, autoreceptors_list_div);
 };
 
-assign_concentration_trace(input_trace, time_array){
-this.concentration = input_trace;
+assign_concentration_trace(input_trace, time_array, basal_concentration){
+this.concentration.units = input_trace.units;
+this.concentration.name = input_trace.name;
+this.concentration.array = input_trace.array.map(x => x + basal_concentration);
+this.basal_concentration = basal_concentration;
 this.time.array = time_array;
 };
 
@@ -92,11 +96,11 @@ _(list_div).removeChild(_(list_div).lastChild);
 
 
 input_values_changed(concentration_graph_div, release_graph_div, release_div, autoreceptors_div,
-release_type, autoreceptors_type, parameters, alpha_beta, release_list_div, autoreceptors_list_div){
+release_type, autoreceptors_type, parameters, alpha_beta, basal_release_rate, release_list_div, autoreceptors_list_div){
 this.assign_slider_values(release_div, release_type); this.assign_slider_values(autoreceptors_div, autoreceptors_type);
 this.parameters = parameters; this.alpha_beta = alpha_beta;
 this.get_input_values(release_list_div, release_type); this.get_input_values(autoreceptors_list_div, autoreceptors_type);
-this.release_rate.array = this.generate_input_arrays(release_type, this.concentration.array.length);
+this.release_rate.array = this.generate_input_arrays(release_type, this.concentration.array.length).map(x => x + basal_release_rate);
 this.release_rate.units = this.concentration.units+'/s';
 this.autoreceptors_rate.array = this.generate_input_arrays(autoreceptors_type, this.concentration.array.length);
 this.autoreceptors_rate.units = '%';
@@ -128,7 +132,7 @@ return flatten(arr);
 };
 
 generate_modelled_concentration(Rt, At, [vmax1, km1, vmax2, km2], [alpha_1, alpha_2, alpha_threshold, bata_1, beta_2, beta_threshold]){
-var s = [0], alpha, beta;
+var s = [this.basal_concentration], alpha, beta;
 for(var i=0;i<Rt.length-1;++i){
 alpha = this.get_alpha_beta_values(alpha_1, alpha_2, alpha_threshold), beta = this.get_alpha_beta_values(beta_1, beta_2, beta_threshold);
 s[i+1] = s[i] + (1/this.frequency)*(Rt[i]*(1-At[i]/100) - (alpha)*(vmax1*s[i])/(km1+s[i]) - (beta)*(vmax2*s[i])/(km2+s[i]));
