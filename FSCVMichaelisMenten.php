@@ -237,7 +237,6 @@ add_data(input_trace, time_array);
 
 function basal_concentration_changed(){
 mm_concentration.assign_concentration_trace(input_trace, time_array, parseFloat(_('basal_concentration').value));
-mm_concentration.graph_concentration('ct_graph');
 values_changed();
 };
 
