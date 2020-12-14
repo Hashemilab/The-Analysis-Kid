@@ -125,7 +125,7 @@ The application has a user-friendly pipeline to allow visualization, filtration,
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCAV Analysis</li>
 <li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> FSCAV Analysis allows to upload one or more acquisitions in .txt, .csv or .xlsx format.
 The application allows a fast and user-friendly calibration of 5-HT basal measurements. Find out more in the <a href="#documentation">documentation</a>. </li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow()"> Open application</a> </li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCAVWindow()" disabled> Open application</a> </li>
 </ul>
 </div>
 </div>

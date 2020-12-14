@@ -317,7 +317,7 @@ function boxBlur (scl, tcl, w, h, r) {
 for(var i=0; i<scl.length; i++) tcl[i] = scl[i];
 boxBlurH(tcl, scl, w, h, r);
 boxBlurT(scl, tcl, w, h, r);
-}
+};
 function boxBlurH(scl, tcl, w, h, r) {
 var iarr = 1 / (r+r+1);
 for(var i=0; i<h; i++) {
@@ -348,7 +348,6 @@ var m = Math.round(mIdeal);
 var sizes = [];  for(var i=0; i<n; i++) sizes.push(i<m?wl:wu);
 return sizes;
 };
-
 
 // 2D FFT FUNCTIONS from KISSFFT, Mark Borgerding.
 /** Compute the FFT of a real-valued mxn matrix. */
