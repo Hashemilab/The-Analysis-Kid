@@ -1,18 +1,3 @@
-//Maximum of an array.
-function max(num){
-return Math.max.apply(null, num);
-};
-//Minimum of an array.
-function min(num){
-return Math.min.apply(null, num);
-};
-//Max and min functions for large arrays where min() and max() do not work.
-function getMax(arr) {
-return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
-};
-function getMin(arr) {
-return arr.reduce((min, v) => min <= v ? min : v, Infinity);
-};
 // Index of the max value in array.
 function index_of_max(arr) {
 var max = arr[0], index = 0;
@@ -176,8 +161,8 @@ tmp.push(array.slice(i, i + part));
 return tmp;
 }
 // Linearise an n-dimension array.
-function linearise(array){
-return array.flat(Infinity);
+function linearise(array, level){
+return array.flat(level);
 }
 //Linarise a n-dimension array (faster).
 const flatten = function(arr, result = []) {
