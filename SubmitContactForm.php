@@ -55,7 +55,7 @@ $body = [
 'Name' => "Sergio"
 ]
 ],
-'Subject' => "NeuroCloud Message from ".htmlspecialchars($_POST['ContactEmail']),
+'Subject' => "The Analysis Kid Message from ".htmlspecialchars($_POST['ContactEmail']),
 'TextPart' => "",
 'HTMLPart' => "Message: ".htmlspecialchars($_POST['ContactMessage']),
 'CustomID' => htmlspecialchars($_POST['ContactEmail'])
