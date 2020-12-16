@@ -1,1 +1,2 @@
-print('Python test')
+def test:
+    return 'Python test'
