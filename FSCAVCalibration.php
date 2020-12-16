@@ -50,6 +50,12 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 &nbsp;
 <button onclick="peak_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak limits detection and type of model.">Config.</button>
 </div>
+<div class="row" style="margin-top:5px">
+<button class="fit_predict_selection" id="fit_button_selection" style=";background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Switch to fitting panel">Fitting Panel</button>
+&nbsp;
+<button class="fit_predict_selection" id="predict_button_selection" data-toggle="tooltip" title="Switch to prediction panel">Prediction Panel</button>
+</div>
+<div id="fitting_panel">
 <br>
 <h5>Fitting Panel</h5>
 <hr>
@@ -78,6 +84,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <div class="row">
 <button onclick="fit_button_pushed()" data-toggle="tooltip" title="Fit the signal parameters to the concentration labels.">Fit</button>
 </div>
+</div>
+<div id="prediction_panel" style="display:none">
 <br>
 <h5>Prediction Panel</h5>
 <hr>
@@ -87,11 +95,13 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 &nbsp;
 <button id="finish_button_predict" onclick="finish_pushed_predict()" style="width: 17%;" data-toggle="tooltip" title="Finish loading files and include them into the application">Finish</button>
 </div>
-
 <div class="row">
-<p id="status_predictions"> Upload the files.</p>
+<p id="status_predict"> Upload the files.</p>
 </div>
-
+<div class="row">
+<button id="predict_button" onclick="predict_button_pushed()" style="width: 17%;" data-toggle="tooltip" title="Predict concentration from uploaded signals. Notice that the fitting is required to provide predictions.">Predict</button>
+</div>
+</div>
 
 
 </div>
@@ -158,8 +168,15 @@ $('.graph_selection').css('background-color','');
 $('.graph_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
-if (this.id == "cv_graph_button"){$('.cv_graph').show(); $('#fit_graph').hide(); fscav_data.cv_plot_state = 'block'; fscav_data.fit_plot_state = 'none'}
-else  {$('.cv_graph').hide(); $('#fit_graph').show(); fscav_data.cv_plot_state = 'none'; fscav_data.fit_plot_state = 'block'};
+if (this.id == "cv_graph_button"){
+$('.cv_graph').show(); $('#fit_graph').hide();
+fscav_data_fit.cv_plot_state = 'block'; fscav_data_fit.fit_plot_state = 'none';
+fscav_data_predict.cv_plot_state = 'block'; fscav_data_predict.fit_plot_state = 'none'}
+else  {
+$('.cv_graph').hide(); $('#fit_graph').show();
+fscav_data_fit.cv_plot_state = 'none'; fscav_data_fit.fit_plot_state = 'block';
+fscav_data_predict.cv_plot_state = 'none'; fscav_data_predict.fit_plot_state = 'block';
+};
 });
 
 $(document).on("click", '.graph_point_selection', function(){
@@ -181,35 +198,56 @@ $(this).css('color','white');
 graph_selection_changed(this.id);
 });
 
+$(document).on("click", '.fit_predict_selection', function(){
+$('.fit_predict_selection').css('background-color','');
+$('.fit_predict_selection').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+if (this.id == "fit_button_selection"){$('#fitting_panel').show(); $('#prediction_panel').hide(); switch_fscav_data_object('fit')}
+else{$('#prediction_panel').show(); $('#fitting_panel').hide(); switch_fscav_data_object('predict')};
+});
+
 function graph_selection_changed(id){
 graph_selected_point = id;
 };
 
+function switch_fscav_data_object(type){
+if(type == 'fit'){fscav_data = fscav_data_fit} else{fscav_data = fscav_data_predict};
+if(fscav_data.current.array?.length){fscav_data.plot_graph('cv_graph')} else{fscav_data.initialise_graph('cv_graph')};
+};
+
 function add_pushed_fit(){
-if(loaded_data_fit.data_array !== []){
-fscav_data.read_data_from_loaded_files(loaded_data_fit.data_array, loaded_data_fit.names_of_files, parseFloat(_('concentration_label').value));
+if(loaded_data_fit.data_array?.length){
+fscav_data_fit.read_data_from_loaded_files(loaded_data_fit.data_array, loaded_data_fit.names_of_files, parseFloat(_('concentration_label').value));
 loaded_data_fit.reset_loaded_data();
 _('status_fit').innerHTML = 'Added succesfully.';
 };
 };
 
 function finish_pushed_fit(){
-if(fscav_data.current.array !== [] ){
-fscav_data.data_loading_finished(parseFloat(_('peak_width').value)); fscav_data.plot_graph('cv_graph');
-_('add_button').disabled = true;
+if(fscav_data_fit.current.array?.length){
+fscav_data_fit.data_loading_finished(parseFloat(_('peak_width').value)); switch_fscav_data_object('fit');
+_('add_button_fit').disabled = true; _('finish_button_fit').disabled = true;
 };
 };
 
 function add_pushed_predict(){
-
+if(loaded_data_predict.data_array?.length){
+fscav_data_predict.read_data_from_loaded_files(loaded_data_predict.data_array, loaded_data_predict.names_of_files, null);
+loaded_data_predict.reset_loaded_data();
+_('status_predict').innerHTML = 'Added succesfully.';
+};
 };
 
 function finish_pushed_predict(){
-
-}
+if(fscav_data_predict.current.array?.length){
+fscav_data_predict.data_loading_finished(parseFloat(_('peak_width').value)); switch_fscav_data_object('predict');
+_('add_button_predict').disabled = true; _('finish_button_predict').disabled = true;
+};
+};
 
 function recalculate_pushed(){
-fscav_data.calculate_limits(parseFloat(_('peak_width').value));
+fscav_data.calculate_limits_and_auc(parseFloat(_('peak_width').value));
 fscav_data.plot_graph('cv_graph');
 };
 
@@ -229,9 +267,14 @@ fscav_data.plot_graph('cv_graph');
 };
 };
 
+function predict_button_pushed(){
+if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_params?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_params)}
+else if(0 == 1){predict_from_snn()};// slot for neural network model.
+};
+
 function fit_button_pushed(){
-if(_('model_type_selection').value =='linear_fit'){fscav_data.get_linear_fit('fit_graph')}
-else{};
+if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph')}
+else{}; // slot for neural network fitting.
 }
 
 function previous_cv_clicked(){if(fscav_data.graph_index>0){--fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
@@ -244,8 +287,11 @@ function peak_configuration_close_pushed(){_('peak_configuration_modal_window').
 <script>
 // Initialise variables.
 var loaded_data_fit = new HL_LOAD_DATA("status_fit");
-var loaded_data_predict = new HL_LOAD_DATA("status_predictions");
-var fscav_data = new HL_FSCAV_DATA(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value,  parseInt(_('peak_width').value));
+var loaded_data_predict = new HL_LOAD_DATA("status_predict");
+var fscav_data_fit = new HL_FSCAV_DATA(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value,  parseInt(_('peak_width').value), 'fit');
+var fscav_data_predict = new HL_FSCAV_DATA(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value,  parseInt(_('peak_width').value), 'predict');
+//Assign the UI variable initially to the fit data.
+var fscav_data = fscav_data_fit;
 var graph_selected_point = 'min1';
 // Assign callback to read the data from the inputs.
 _("FSCAVfiles_fit").addEventListener('change', loaded_data_fit.read_files);

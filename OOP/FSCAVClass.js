@@ -1,12 +1,11 @@
 // Class for uploaded FSCAV data.
 class HL_FSCAV_DATA{
-constructor(frequency, units, c_units, peak_width){
+constructor(frequency, units, c_units, peak_width, state){
 this.frequency = frequency;
 this.origin_file_array = [];
 this.current = new HL_FSCV_ARRAY([], units, 'Current');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
-this.concentration_labels = [];
-this.concentration_units = c_units;
+this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration');
 // Parameters to calculate the charge.
 this.max_indexes = [];
 this.max_values = [];
@@ -24,7 +23,7 @@ this.local_neighbours = peak_width;
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.cv_plot_state = 'block';
 this.fit_plot_state = 'none';
-this.state = 'fit';
+this.state = state;
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -32,22 +31,22 @@ this.current.array.push(data.map(x => arrayColumn(x, 2)));
 this.time.array.push(data.map(x => makeArr(0,(x.length-1)/this.frequency, x.length)));
 this.origin_file_array.push(names_of_files);
 this.number_of_files+=data.length;
-this.concentration_labels.push(uniform_array(data.length, concentration_label));
+this.concentration.array.push(uniform_array(data.length, concentration_label));
 };
 
 linearise_data_arrays(){
 this.current.array = linearise(this.current.array, 1);
 this.time.array = linearise(this.time.array, 1);
 this.origin_file_array = linearise(this.origin_file_array, 1);
-this.concentration_labels = linearise(this.concentration_labels, 1);
+this.concentration.array = linearise(this.concentration.array, 1);
 };
 
 data_loading_finished(peak_width){
 this.linearise_data_arrays();
-this.calculate_limits(peak_width);
+this.calculate_limits_and_auc(peak_width);
 };
 
-calculate_limits(peak_width){
+calculate_limits_and_auc(peak_width){
 this.local_neighbours = peak_width;
 for(var i=0;i<this.current.array.length; ++i){this.get_max_and_min_values(i); this.get_auc(i)};
 };
@@ -83,20 +82,31 @@ this.current.array[this.graph_index] = this.current.array[this.graph_index].map(
 this.plot_graph(div);
 };
 
-get_linear_fit(div){
-this.linear_fit_params[0] = linear_fit(this.auc, this.concentration_labels);
-this.linear_fit_params[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_params[0]+this.linear_fit_params[1]*x), this.concentration_labels, this.auc);
+get_linear_fit(div){if(this.state = 'fit'){
+this.linear_fit_params[0] = linear_fit(this.auc, this.concentration.array);
+this.linear_fit_params[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_params[0]+this.linear_fit_params[1]*x), this.concentration.array, this.auc);
 // Plot the fitting on second graph.
 this.plot_linear_fitting(div);
-};
+}};
+
+predict_from_linear_fit(div, linear_fit_parameters){ if(this.state = 'predict'){
+// Method onlyto be used by objects in predict mode.
+this.concentration.array = this.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
+this.plot_predictions(div);
+}};
+
 
 get_snn_fit(){};
+
+predict_from_snn(){};
 
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
 layout.title.text = "<b>"+this.origin_file_array[this.graph_index]+"</b>";
 layout.xaxis = {title:this.time.name +" ("+this.time.units+")"};
 layout.yaxis = {title:this.current.name +" ("+this.current.units+")"};
+
+if(this.state == 'fit'){
 layout.annotations = [{
 xref: 'paper',
 yref: 'paper',
@@ -104,10 +114,21 @@ x: 0.98,
 xanchor: 'right',
 y: 0.9,
 yanchor: 'bottom',
-text: '<b>Concentration: '+this.concentration_labels[this.graph_index]+' '+this.concentration_units+'</b>',
+text: '<b>Fitting signals<br>'+this.concentration.name+': '+this.concentration.array[this.graph_index]+' '+this.concentration.units+'</b>',
 showarrow: false
 }];
-
+} else{
+layout.annotations = [{
+xref: 'paper',
+yref: 'paper',
+x: 0.98,
+xanchor: 'right',
+y: 0.9,
+yanchor: 'bottom',
+text: '<b>Prediction signals</b>',
+showarrow: false
+}];
+};
 
 var trace = {
 y: this.current.array[this.graph_index],
@@ -153,7 +174,7 @@ plot_linear_fitting(div){
 var layout = this.plot_settings.plot_layout;
 layout.title.text = "<b>Linear Fit</b>";
 layout.xaxis = {title:"Charge ("+this.current.units+"·s)"};
-layout.yaxis = {title:"Concentration ("+this.concentration_units+")"};
+layout.yaxis = {title: this.concentration.name+"("+this.concentration.units+")"};
 layout.annotations = [{
 xref: 'paper',
 yref: 'paper',
@@ -175,7 +196,7 @@ showlegend: false,
 };
 
 let scatter = {
-y:this.concentration_labels,
+y:this.concentration.array,
 x:this.auc,
 name: 'Experimental',
 type: 'scatter',
@@ -189,14 +210,28 @@ Plotly.newPlot(div, [trace], layout, this.plot_settings.plot_configuration);
 Plotly.addTraces(div, [scatter]);
 _(div).style.display = this.fit_plot_state;
 };
-//Provisional
-change_to_predict_state(){
-this.state = 'predict';
 
+plot_predictions(div){
+var layout = this.plot_settings.plot_layout;
+layout.title.text = "<b>Predictions</b>";
+layout.xaxis = {title:'File number'};
+layout.yaxis = {title:this.concentration.name +" ("+this.concentration.units+")"};
+
+let scatter = {
+y:this.concentration.array,
+x:makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1),
+name: 'Predictions',
+type: 'scatter',
+showlegend: false,
+mode: 'markers',
+marker: {color: 'black'},
+text:this.origin_file_array
 };
 
-reset_arrays(){
+_(div).style.display = "block";
+Plotly.newPlot(div, [scatter], layout, this.plot_settings.plot_configuration);
+_(div).style.display = this.fit_plot_state;
+};
 
-}
 
 };
