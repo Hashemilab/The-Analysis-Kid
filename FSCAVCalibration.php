@@ -302,8 +302,8 @@ fscav_data.initialise_graph('cv_graph'); fscav_data.initialise_graph('fit_graph'
 // Hide fit_graph
 _('fit_graph').style.display="none";
 
-let test = <?php echo shell_exec(escapeshellcmd('/test.py'))?>
-alert(test);
+
+alert(<?php echo shell_exec(escapeshellcmd('/test.py'))?>);
 </script>
 </body>
 </html>
