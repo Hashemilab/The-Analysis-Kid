@@ -186,8 +186,6 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 </div>
 <div class="w3-light-grey w3-container w3-padding-32" style="height:300px; margin-top:-300px"></div>
 
-
-
 <script>
 // Script to open and close sidebar from w3.
 function w3_open() {
