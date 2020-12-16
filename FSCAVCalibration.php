@@ -302,9 +302,9 @@ fscav_data.initialise_graph('cv_graph'); fscav_data.initialise_graph('fit_graph'
 // Hide fit_graph
 _('fit_graph').style.display="none";
 
-console.time();
-alert("<?php echo json_decode(shell_exec(escapeshellcmd('python3 test.py')))?>");
-console.timeEnd();
+
+
+
 </script>
 </body>
 </html>
