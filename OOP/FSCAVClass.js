@@ -14,8 +14,8 @@ this.min_values = [];
 this.total_auc = [];
 this.line_auc = [];
 this.auc =[];
-this.linear_fit_params = [];
-
+this.linear_fit_parameters = [];
+this.snn_model;
 this.graph_index = 0;
 this.number_of_files = 0;
 this.local_neighbours = peak_width;
@@ -24,6 +24,7 @@ this.plot_settings = new HL_PLOT_SETTINGS();
 this.cv_plot_state = 'block';
 this.fit_plot_state = 'none';
 this.state = state;
+var self = this;
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -82,23 +83,42 @@ this.current.array[this.graph_index] = this.current.array[this.graph_index].map(
 this.plot_graph(div);
 };
 
-get_linear_fit(div){if(this.state = 'fit'){
-this.linear_fit_params[0] = linear_fit(this.auc, this.concentration.array);
-this.linear_fit_params[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_params[0]+this.linear_fit_params[1]*x), this.concentration.array, this.auc);
+get_linear_fit(div, status_id){if(this.state = 'fit'){
+this.linear_fit_parameters[0] = linear_fit(this.auc, this.concentration.array);
+this.linear_fit_parameters[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_parameters[0]+this.linear_fit_parameters[1]*x), this.concentration.array, this.auc);
 // Plot the fitting on second graph.
 this.plot_linear_fitting(div);
+_(status_id).innerHTML += "&#10004";
 }};
 
-predict_from_linear_fit(div, linear_fit_parameters){ if(this.state = 'predict'){
-// Method onlyto be used by objects in predict mode.
+predict_from_linear_fit(div, linear_fit_parameters){if(this.state = 'predict'){
+// Method only to be used by objects in predict mode.
+this.linear_fit_parameters = linear_fit_parameters;
 this.concentration.array = this.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
 this.plot_predictions(div);
 }};
 
 
-get_snn_fit(){};
+get_snn_fit(div, epochs, learning_rate, status_id){if(this.state = 'fit'){
+//Define shallow neural network model.
+this.snn_model = tf.sequential({layers: [tf.layers.layerNormalization({inputShape: [5]}), tf.layers.dense({units: 64}),
+tf.layers.dense({units: 64}),tf.layers.dense({units: 1})]});
+this.snn_model.compile({optimizer: tf.train.adam(learning_rate), loss: tf.losses.meanSquaredError, metrics: [tf.metrics.meanSquaredError]});
+// Fit the model.
+const data = tf.tensor(this.auc.map((x,i) => [x, this.line_auc[i], this.min_values[i][0], this.min_values[i][1], this.max_values[i][0]]));
+const labels = tf.tensor(this.concentration.array.map(x => [x]));
+this.snn_model.fit(data, labels, {epochs: epochs,
+ }).then(info => {
+// Assign plotting function here and if possible, the data of the fitting.
+ });
+}};
 
-predict_from_snn(){};
+predict_from_snn(div, snn_model){if(this.state = 'predict'){
+this.snn_model = snn_model;
+const data = tf.tensor(this.auc.map((x,i) => [x, this.line_auc[i], this.min_values[i][0], this.min_values[i][1], this.max_values[i][0]]));
+let concentration_labels = this.snn_model.predict(data);
+concentration_labels.print(); // save the predictions in this.concentration and plot them. 
+}};
 
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
@@ -182,14 +202,14 @@ x: 0.98,
 xanchor: 'right',
 y: 0.1,
 yanchor: 'bottom',
-text: '<b>S(Q) = '+this.linear_fit_params[0][0].toFixed(2)+' + '+this.linear_fit_params[0][1].toFixed(2)+' · Q<br>'+
-'R<sup>2</sup> = '+this.linear_fit_params[0][2].toFixed(2)+'</b>',
+text: '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q<br>'+
+'R<sup>2</sup> = '+this.linear_fit_parameters[0][2].toFixed(2)+'</b>',
 showarrow: false
 }];
 
 let x_array = makeArr(index_of_min(this.auc)[0], index_of_max(this.auc)[0], 100);
 let trace = {
-y: x_array.map(x => this.linear_fit_params[0][0]+this.linear_fit_params[0][1]*x),
+y: x_array.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x),
 x: x_array,
 text:'Fit',
 showlegend: false,

@@ -377,7 +377,6 @@ slider_changed();
 
 function invert_pushed(){
 fscv_data.invert_current_values("main_graph");
-apply_changes_pushed();
 };
 
 function reset_pushed(){

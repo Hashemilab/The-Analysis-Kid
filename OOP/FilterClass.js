@@ -3,6 +3,8 @@ class HL_FILTERING {
 constructor(c_units) {
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.wrapped_data = new HL_FSCV_ARRAY([], c_units, 'Mirrored FSCV Data');
+this.width;
+this.height;
 this.wrapped_width;
 this.wrapped_height;
 this.spectrum_layout;
@@ -47,9 +49,9 @@ fscv_data.current.array = this.get_unwrapped_data(split_array(Array.from(linear_
 };
 
 wrap_and_get_spectrum(frequency, cycling_frequency){
+this.width = fscv_data.current.array[0].length; this.wrapped_width = this.width + parseInt(this.width/3);
+this.height = fscv_data.current.array.length; this.wrapped_height = this.height+ parseInt(this.height/3);
 this.wrapped_data.array = this.get_wrapped_data(fscv_data.current.array);
-this.wrapped_width = fscv_data.current.array[0].length + fscv_data.current.array[0].length/3;
-this.wrapped_height = fscv_data.current.array.length;
 this.get_spectrum_arrays(frequency, cycling_frequency);
 this.get_unzipped_complex_array(this.spectrum_output.array);
 };
@@ -126,17 +128,21 @@ return (cutoff/100)*frequency_array[frequency_array.length - 1];
 };
 
 get_wrapped_data(data){
-var wrapped_data = deep_copy_2d_array(data), n_padding = parseInt(data[0].length/6);
+var wrapped_data = deep_copy_2d_array(data), n_padding = parseInt((this.wrapped_width-this.width)/2), m_padding = parseInt((this.wrapped_height-this.height)/2);
 for (var i=0;i<data.length;++i){
 wrapped_data[i].push(reverse_array(wrapped_data[i].slice(wrapped_data[i].length - n_padding)));
 wrapped_data[i].unshift(reverse_array(wrapped_data[i].slice(0, n_padding)));
 };
+//Provisional
+wrapped_data.push(reverse_array(wrapped_data.slice(wrapped_data.length - m_padding)));
+wrapped_data.unshift(reverse_array(wrapped_data.slice(0, m_padding)));
 return wrapped_data;
 };
 
 get_unwrapped_data(data){
-var n_padding = parseInt(data[0].length/8);
-for (var i=0;i<data.length;++i){data[i] = data[i].slice(n_padding, data[i].length - n_padding)};
+var n_padding = parseInt((this.wrapped_width-this.width)/2), m_padding = parseInt((this.wrapped_height-this.height)/2);
+for (var i=0;i<data.length;++i){data[i].splice(0, n_padding); data[i].splice(-n_padding, n_padding)};
+data.splice(0, m_padding); data.splice(-m_padding, m_padding);
 return data;
 };
 

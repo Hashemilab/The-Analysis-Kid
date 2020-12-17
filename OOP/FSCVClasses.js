@@ -85,14 +85,14 @@ this.graph_color_plot(div);
 };
 
 this.invert_current_values = function(div){
-this.current.array = this.current.array.map(arr => arr.map(x => -x));
+for(var i = 0;i<this.current.array.length;++i){for(var j = 0;j<this.current.array[i].length;++j){this.current.array[i][j] = - this.current.array[i][j]}};
 this.graph_color_plot(div);
 };
 this.background_subtraction = function(div, start, end){
 for (var i = 0; i<fscv_data.current.array.length;++i){
-var tmp = average(fscv_data.current.array[i].slice(start, end));
-for (var j=0; j<fscv_data.current.array[0].length;++j){fscv_data.current.array[i][j] = fscv_data.current.array[i][j] - tmp};
-}
+var avg = average(fscv_data.current.array[i].slice(start, end));
+for (var j=0; j<fscv_data.current.array[0].length;++j){fscv_data.current.array[i][j] = fscv_data.current.array[i][j] - avg};
+};
 this.graph_color_plot(div);
 };
 
