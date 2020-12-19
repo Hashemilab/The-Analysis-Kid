@@ -10,7 +10,7 @@ this.autoreceptors_rate = new HL_FSCV_ARRAY([],[], 'Autoreceptors rate');
 this.time = new HL_FSCV_ARRAY([],'s', 'Time');
 this.basal_concentration = 0;
 this.frequency;
-this.mean_squared_errors = '';
+this.root_mean_squared_errors = '';
 this.parameters = []; // vmax1, km1, vmax2, km2.
 this.alpha_beta = []; // alpha_1, alpha_2, alpha_threshold, beta_1, beta_2, beta_threshold.
 this.release_rate_slider = {
@@ -105,7 +105,7 @@ this.release_rate.units = this.concentration.units+'/s';
 this.autoreceptors_rate.array = this.generate_input_arrays(autoreceptors_type, this.concentration.array.length);
 this.autoreceptors_rate.units = '%';
 this.modelled_concentration.array = this.generate_modelled_concentration(this.release_rate.array, this.autoreceptors_rate.array, this.parameters, this.alpha_beta);
-this.mean_squared_errors = mse(this.concentration.array, this.modelled_concentration.array);
+this.root_mean_squared_errors = Math.sqrt(mse(this.concentration.array, this.modelled_concentration.array));
 this.graph_input_arrays(release_graph_div, this.release_rate, 'Release rate', this.autoreceptors_rate, 'Autoreceptors', 'R(t) and A(t)');
 this.graph_concentration(concentration_graph_div);
 };
@@ -176,7 +176,7 @@ x: 0.98,
 xanchor: 'right',
 y: 0.9,
 yanchor: 'bottom',
-text: '<b>MSE : '+this.mean_squared_errors.toFixed(2)+' '+this.concentration.units+'</b>',
+text: '<b>RMSE : '+this.root_mean_squared_errors.toFixed(2)+' '+this.concentration.units+'</b>',
 showarrow: false
 }];
 

@@ -148,10 +148,18 @@ return tmp;
 }
 
 
-// Normalize value to 0-1 having a min and max value of the array.
-function normalize(val0, max0, min0) { return (val0 - min0) / (max0 - min0);};
+// Normalize array to 0-1 having a min and max value of the array.
+function normalize(arr, max, min){
+var norm_arr = [];
+for (var i=0;i<arr.length;++i){norm_arr[i] = (arr[i]-min)/(max-min)};
+return norm_arr;
+};
 // Denormalize value having a min and max value of the array.
-function denormalize(val0, max0, min0) { return (val0*(max0-min0))+min0;};
+function denormalize(norm_arr, max, min){
+var arr = [];
+for (var i=0;i<norm_arr.length;++i){arr[i] = norm_arr[i]*(max-min)+min};
+return arr;
+};
 // Convert linear array to 2D array given the number of columns.
 function split_array(array, part) {
 var tmp = [];

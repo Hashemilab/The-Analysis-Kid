@@ -82,7 +82,11 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 </div>
 <br>
 <div class="row">
-<button onclick="fit_button_pushed()" data-toggle="tooltip" title="Fit the signal parameters to the concentration labels.">Fit</button> <span id="fit_state_text"></span>
+<button onclick="fit_button_pushed()" data-toggle="tooltip" title="Fit the signal parameters to the concentration labels.">Fit</button>&nbsp;
+<button id="show_fitting_button" onclick="show_fitting_button_pushed()" data-toggle="tooltip" title="Regraph the calculated fitting.">Show fit</button>
+</div>
+<div class="row" style="margin-top:5px">
+<span id="fit_state_text"></span>
 </div>
 </div>
 <div id="prediction_panel" style="display:none">
@@ -144,6 +148,11 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <div class="col">
 <label for="peak_width" style="width:59%">Peak prom. (samples):</label>
 <input style="width:30%" type="number" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to assign local minima/maxima "/>
+<label for="linear_fit_plot_type" style="width:59%">Plot type:</label>
+<select id="linear_fit_plot_type" style="float: right;width:39%" data-toggle="tooltip" title="type of graph to be shown for the linear fit.">
+<option value="regression_plot_type">Regression</option>
+<option value="true_predicted_plot_type">True vs. Predicted</option>
+</select>
 </div>
 <div class="col">
 <label for="peak_width" style="width:59%">Model type:</label>
@@ -272,15 +281,20 @@ fscav_data.plot_graph('cv_graph');
 };
 
 function predict_button_pushed(){
-if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_params?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_params)}
-else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model)};// slot for neural network model.
+if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_parameters)}
+else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)};// slot for neural network model.
 };
 
 function fit_button_pushed(){
-_('fit_state_text').innerHTML = '';
-if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text')}
-else{fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value, 'fit_state_text'))}; // slot for neural network fitting.
+_('fit_state_text').innerHTML = 'Fitting...';
+if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
+else{fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), 'fit_state_text')};
 };
+
+function show_fitting_button_pushed(){
+if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_fit.get_linear_fit_metrics('fit_graph', _('linear_fit_plot_type').value)}
+else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_fit.get_snn_fitting_metrics('fit_graph')};
+}
 
 function previous_cv_clicked(){if(fscav_data.graph_index>0){--fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
 function next_cv_clicked(){if(fscav_data.graph_index<fscav_data.number_of_files-1){++fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};

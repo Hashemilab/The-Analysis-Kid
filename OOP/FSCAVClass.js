@@ -5,8 +5,9 @@ this.frequency = frequency;
 this.origin_file_array = [];
 this.current = new HL_FSCV_ARRAY([], units, 'Current');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
-this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration');
-// Parameters to calculate the charge.
+this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration'); //Labels or predictions.
+// Parameters to calculate the charge, get the linear fit and the SNN model.
+this.local_neighbours = peak_width;
 this.max_indexes = [];
 this.max_values = [];
 this.min_indexes = [];
@@ -14,17 +15,18 @@ this.min_values = [];
 this.total_auc = [];
 this.line_auc = [];
 this.auc =[];
+this.normalised_dataset = [];
+this.normalised_labels = [];
 this.linear_fit_parameters = [];
+this.snn_fit_parameters = [];
 this.snn_model;
-this.graph_index = 0;
-this.number_of_files = 0;
-this.local_neighbours = peak_width;
-
+// Plotting parameters.
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.cv_plot_state = 'block';
 this.fit_plot_state = 'none';
 this.state = state;
-var self = this;
+this.graph_index = 0;
+this.number_of_files = 0;
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -42,6 +44,8 @@ this.origin_file_array = linearise(this.origin_file_array, 1);
 this.concentration.array = linearise(this.concentration.array, 1);
 };
 
+
+
 data_loading_finished(peak_width){
 this.linearise_data_arrays();
 this.calculate_limits_and_auc(peak_width);
@@ -58,12 +62,18 @@ get_max_and_min_values(index){
 };
 
 get_auc(index){
-this.total_auc[index] = simpson_auc(this.current.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
+let norm_current = this.get_normalized_current_array(index);
+this.total_auc[index] = simpson_auc(norm_current.slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
 var linear_parameters = linear_fit([this.time.array[index][this.min_indexes[index][0]], this.time.array[index][this.min_indexes[index][1]]],
-[this.current.array[index][this.min_indexes[index][0]], this.current.array[index][this.min_indexes[index][1]]]);
+[norm_current[this.min_indexes[index][0]], norm_current[this.min_indexes[index][1]]]);
 var line = this.time.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]).map(x => linear_parameters[0]+linear_parameters[1]*x);
 this.line_auc[index] = simpson_auc(line,this.frequency);
 this.auc[index] = this.total_auc[index] - this.line_auc[index];
+};
+get_normalized_current_array(index){
+let norm_current = [];
+for(var j = 0; j<this.current.array[index].length; ++j){norm_current[j] = this.current.array[index][j] - this.min_values[index][0]};
+return norm_current;
 };
 
 change_points(pindex, type){
@@ -80,45 +90,91 @@ Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_
 
 invert_current_values(div){
 this.current.array[this.graph_index] = this.current.array[this.graph_index].map(x => -x);
+this.get_max_and_min_values(this.graph_index); this.get_normalized_current_array(this.graph_index); this.get_auc(this.graph_index);
 this.plot_graph(div);
 };
 
-get_linear_fit(div, status_id){if(this.state = 'fit'){
+get_linear_fit(div, status_id, type){if(this.state = 'fit'){
 this.linear_fit_parameters[0] = linear_fit(this.auc, this.concentration.array);
-this.linear_fit_parameters[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_parameters[0]+this.linear_fit_parameters[1]*x), this.concentration.array, this.auc);
-// Plot the fitting on second graph.
-this.plot_linear_fitting(div);
-_(status_id).innerHTML += "&#10004";
+this.linear_fit_parameters[1] = linear_estimation_errors(this.auc.map(x =>this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), this.concentration.array, this.auc);
+this.get_linear_fit_metrics(div, type);
+this.update_fitting_status(status_id);
 }};
+
+get_linear_fit_metrics(div, type){
+if(type =='regression_plot_type'){
+let x_line_fit = makeArr(index_of_min(this.auc)[0], index_of_max(this.auc)[0], 100);
+this.plot_scatter_and_line(div, this.auc, this.concentration.array, 'Experimental', 'Experimental', x_line_fit, x_line_fit.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x),
+'Fit', "Charge ("+this.current.units+"·s)",  this.concentration.name +" ("+this.concentration.units+")", '<b>Linear Fit</b>', '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+
+' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q<br>'+'R<sup>2</sup> = '+this.linear_fit_parameters[0][2].toFixed(2)+'</b>');
+} else{
+this.plot_scatter_and_line(div, this.concentration.array, this.auc.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), 'Experimental', this.origin_file_array,
+makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_max(this.concentration.array)[0], 100), "Ideal", 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
+'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'Linear Fit', '<b>SEE: ' + this.linear_fit_parameters[1][0].toFixed(2) +' '+this.concentration.units+'</b>');
+};
+};
 
 predict_from_linear_fit(div, linear_fit_parameters){if(this.state = 'predict'){
 // Method only to be used by objects in predict mode.
 this.linear_fit_parameters = linear_fit_parameters;
 this.concentration.array = this.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
-this.plot_predictions(div);
+this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
+[], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from linear fit');
 }};
 
 
 get_snn_fit(div, epochs, learning_rate, status_id){if(this.state = 'fit'){
 //Define shallow neural network model.
-this.snn_model = tf.sequential({layers: [tf.layers.layerNormalization({inputShape: [5]}), tf.layers.dense({units: 64}),
-tf.layers.dense({units: 64}),tf.layers.dense({units: 1})]});
+var self = this;
+this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array); //Parameters included in the training.
+this.snn_model = tf.sequential({layers: [tf.layers.dense({units: 64, inputShape: [4], activation: 'relu'}), tf.layers.dense({units: 64, activation: 'relu'}), tf.layers.dense({units: 1})]});
 this.snn_model.compile({optimizer: tf.train.adam(learning_rate), loss: tf.losses.meanSquaredError, metrics: [tf.metrics.meanSquaredError]});
 // Fit the model.
-const data = tf.tensor(this.auc.map((x,i) => [x, this.line_auc[i], this.min_values[i][0], this.min_values[i][1], this.max_values[i][0]]));
-const labels = tf.tensor(this.concentration.array.map(x => [x]));
-this.snn_model.fit(data, labels, {epochs: epochs,
- }).then(info => {
-// Assign plotting function here and if possible, the data of the fitting.
- });
+const data = tf.tensor(transpose(this.normalised_dataset[0]));
+const labels = tf.tensor(this.normalised_labels[0]);
+this.snn_model.fit(data, labels, {epochs: epochs, validationSplit:0.1}).then(info => {
+self.update_fitting_status(status_id);
+this.snn_fit_parameters[0] = [info.history.loss, info.history.val_loss];
+self.get_snn_fitting_metrics(div);
+});
 }};
 
-predict_from_snn(div, snn_model){if(this.state = 'predict'){
+get_snn_fitting_metrics(div){
+// Function to calculate and plot the predictions of the snn with the train data. Important: good predictions do not mean it will perform well with other data.
+const data = tf.tensor(transpose(this.normalised_dataset[0]));
+let predicted_concentration = denormalize(Array.from(this.snn_model.predict(data).dataSync()), this.normalised_labels[1], this.normalised_labels[2]);
+this.snn_fit_parameters[1] = Math.sqrt(mse(this.concentration.array,  predicted_concentration));
+this.plot_scatter_and_line(div, this.concentration.array, predicted_concentration, 'Experimental', this.origin_file_array, makeArr(0,index_of_max(this.concentration.array)[0], 100),
+makeArr(0,index_of_max(this.concentration.array)[0], 100), 'Ideal', 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
+'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'SNN Fit', '<b>RMSE: ' + this.snn_fit_parameters[1].toFixed(2) +' '+this.concentration.units+'</b>');
+};
+
+
+
+predict_from_snn(div, snn_model, norm_data, norm_labels){if(this.state = 'predict'){
+//Assign model and normalization to predict object.
 this.snn_model = snn_model;
-const data = tf.tensor(this.auc.map((x,i) => [x, this.line_auc[i], this.min_values[i][0], this.min_values[i][1], this.max_values[i][0]]));
-let concentration_labels = this.snn_model.predict(data);
-concentration_labels.print(); // save the predictions in this.concentration and plot them. 
+const data = tf.tensor(transpose(this.get_normalised_prediction_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], norm_data[1], norm_data[2])));
+this.concentration.array = denormalize(Array.from(this.snn_model.predict(data).dataSync()), norm_labels[1], norm_labels[2]);
+this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
+[], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
 }};
+
+update_fitting_status(status_id){
+_(status_id).innerHTML = "&#10004";
+};
+
+get_normalised_training_set(data, labels){
+let max = [], min = [], norm_data = [], max_labels = index_of_max(labels)[0], min_labels = index_of_min(labels)[0], norm_labels = normalize(labels, max_labels, min_labels);
+for(var i = 0; i<data.length;++i){max[i] = index_of_max(data[i])[0]; min[i] = index_of_min(data[i])[0]; norm_data[i] = normalize(data[i], max[i], min[i])};
+this.normalised_dataset = [norm_data, max, min]; this.normalised_labels = [norm_labels, max_labels, min_labels];
+};
+
+get_normalised_prediction_set(data, training_max, training_min){
+let norm_data = [];
+for(var i = 0; i<data.length; ++i){norm_data[i] = normalize(data[i], training_max[i], training_min[i])};
+return norm_data;
+};
 
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
@@ -190,11 +246,11 @@ _(div).on('plotly_click', function(data){graph_clicked(data)});
 _(div).style.display = this.cv_plot_state;
 };
 
-plot_linear_fitting(div){
+plot_scatter_and_line(div, x, y, scatter_name, scatter_text, x_line, y_line, line_name, x_label, y_label, title, annotations){
 var layout = this.plot_settings.plot_layout;
-layout.title.text = "<b>Linear Fit</b>";
-layout.xaxis = {title:"Charge ("+this.current.units+"·s)"};
-layout.yaxis = {title: this.concentration.name+"("+this.concentration.units+")"};
+layout.title.text = "<b>"+title+"</b>";
+layout.xaxis = {title:x_label};
+layout.yaxis = {title:y_label};
 layout.annotations = [{
 xref: 'paper',
 yref: 'paper',
@@ -202,56 +258,34 @@ x: 0.98,
 xanchor: 'right',
 y: 0.1,
 yanchor: 'bottom',
-text: '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q<br>'+
-'R<sup>2</sup> = '+this.linear_fit_parameters[0][2].toFixed(2)+'</b>',
+text: annotations,
 showarrow: false
 }];
 
-let x_array = makeArr(index_of_min(this.auc)[0], index_of_max(this.auc)[0], 100);
-let trace = {
-y: x_array.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x),
-x: x_array,
-text:'Fit',
-showlegend: false,
-};
-
 let scatter = {
-y:this.concentration.array,
-x:this.auc,
-name: 'Experimental',
+y:y,
+x:x,
+name: scatter_name,
 type: 'scatter',
 showlegend: false,
 mode: 'markers',
 marker: {color: 'black'},
-text:'Experimental'
+text:scatter_text
 };
+
+let trace = {
+y: y_line,
+x: x_line,
+text:line_name,
+showlegend: false,
+};
+
 _(div).style.display = "block";
 Plotly.newPlot(div, [trace], layout, this.plot_settings.plot_configuration);
 Plotly.addTraces(div, [scatter]);
 _(div).style.display = this.fit_plot_state;
 };
 
-plot_predictions(div){
-var layout = this.plot_settings.plot_layout;
-layout.title.text = "<b>Predictions</b>";
-layout.xaxis = {title:'File number'};
-layout.yaxis = {title:this.concentration.name +" ("+this.concentration.units+")"};
-
-let scatter = {
-y:this.concentration.array,
-x:makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1),
-name: 'Predictions',
-type: 'scatter',
-showlegend: false,
-mode: 'markers',
-marker: {color: 'black'},
-text:this.origin_file_array
-};
-
-_(div).style.display = "block";
-Plotly.newPlot(div, [scatter], layout, this.plot_settings.plot_configuration);
-_(div).style.display = this.fit_plot_state;
-};
 
 
 };
