@@ -135,9 +135,9 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 <h4 class=" w3-text-indigo"><b> Video Tutorials </b></h4>
-<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCV Analysis</button>
-<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">Reutake Kinetics</button>
-<button class="w3-button w3-indigo w3-hover-black" name="Tutorial video for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCV Analysis</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for Reuptake Kinetics" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">Reutake Kinetics</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
 
 <h4 class=" w3-text-indigo"><b> References </b></h4>
 <div style=" border:1px solid black;" id="references_window">

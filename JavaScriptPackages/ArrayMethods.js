@@ -427,7 +427,7 @@ var imaginary = (num2.real * num1.imaginary - num1.real * num2.imaginary) /denom
 return new Complex(real, imaginary);
 }
 
-// Simple iteration to find non-linear best fit.
+// Simple iteration to find non-linear best fit based on stochastic gradient descent. 
 fminsearch = function(fun,Parm0,x,y,opt){
 if(!opt){opt={}};
 if(!opt.maxIter){opt.maxIter=1000};

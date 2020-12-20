@@ -116,30 +116,34 @@ makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_ma
 
 predict_from_linear_fit(div, linear_fit_parameters){if(this.state = 'predict'){
 // Method only to be used by objects in predict mode.
-this.linear_fit_parameters = linear_fit_parameters;
-this.concentration.array = this.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
+this.get_prediction_from_linear_fit(linear_fit_parameters, this);
 this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
 [], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from linear fit');
 }};
 
+get_prediction_from_linear_fit(linear_fit_parameters, fscav_data){
+fscav_data.linear_fit_parameters = linear_fit_parameters;
+fscav_data.concentration.array = fscav_data.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
+};
 
-get_snn_fit(div, epochs, learning_rate, status_id){if(this.state = 'fit'){
+get_snn_fit(div, epochs, learning_rate, layer_size, patience, min_delta, dropout_rate, std_noise, status_id){if(this.state = 'fit'){
 //Define shallow neural network model.
 var self = this;
 this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array); //Parameters included in the training.
-this.snn_model = tf.sequential({layers: [tf.layers.dense({units: 64, inputShape: [4], activation: 'relu'}), tf.layers.dense({units: 64, activation: 'relu'}), tf.layers.dense({units: 1})]});
+this.snn_model = tf.sequential({layers: [tf.layers.gaussianNoise({stddev:std_noise, inputShape: [4]}), tf.layers.dense({units: layer_size, activation: 'relu'}),
+tf.layers.gaussianDropout({rate:dropout_rate}), tf.layers.dense({units: layer_size, activation: 'relu'}), tf.layers.dense({units: 1})]});
 this.snn_model.compile({optimizer: tf.train.adam(learning_rate), loss: tf.losses.meanSquaredError, metrics: [tf.metrics.meanSquaredError]});
 // Fit the model.
 const data = tf.tensor(transpose(this.normalised_dataset[0]));
 const labels = tf.tensor(this.normalised_labels[0]);
-this.snn_model.fit(data, labels, {epochs: epochs, validationSplit:0.1}).then(info => {
+this.snn_model.fit(data, labels, {epochs: epochs, validationSplit:0.1, callbacks: tf.callbacks.earlyStopping({monitor: 'val_loss', patience: patience, minDelta: min_delta})}).then(info => {
 self.update_fitting_status(status_id);
 this.snn_fit_parameters[0] = [info.history.loss, info.history.val_loss];
-self.get_snn_fitting_metrics(div);
+self.get_snn_fitting_metrics(div); console.log(info);
 });
 }};
 
-get_snn_fitting_metrics(div){
+get_snn_fitting_metrics(div){if(this.state = 'fit'){
 // Function to calculate and plot the predictions of the snn with the train data. Important: good predictions do not mean it will perform well with other data.
 const data = tf.tensor(transpose(this.normalised_dataset[0]));
 let predicted_concentration = denormalize(Array.from(this.snn_model.predict(data).dataSync()), this.normalised_labels[1], this.normalised_labels[2]);
@@ -147,34 +151,38 @@ this.snn_fit_parameters[1] = Math.sqrt(mse(this.concentration.array,  predicted_
 this.plot_scatter_and_line(div, this.concentration.array, predicted_concentration, 'Experimental', this.origin_file_array, makeArr(0,index_of_max(this.concentration.array)[0], 100),
 makeArr(0,index_of_max(this.concentration.array)[0], 100), 'Ideal', 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
 'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'SNN Fit', '<b>RMSE: ' + this.snn_fit_parameters[1].toFixed(2) +' '+this.concentration.units+'</b>');
-};
+}};
 
 
 
 predict_from_snn(div, snn_model, norm_data, norm_labels){if(this.state = 'predict'){
-//Assign model and normalization to predict object.
-this.snn_model = snn_model;
-const data = tf.tensor(transpose(this.get_normalised_prediction_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], norm_data[1], norm_data[2])));
-this.concentration.array = denormalize(Array.from(this.snn_model.predict(data).dataSync()), norm_labels[1], norm_labels[2]);
+this.get_prediction_from_snn(snn_model, norm_data, norm_labels, this);
 this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
 [], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
 }};
+
+get_prediction_from_snn(snn_model, norm_data, norm_labels, fscav_data){
+//Assign model and normalization to predict object.
+this.snn_model = snn_model;
+const data = tf.tensor(transpose(this.get_normalised_prediction_set([fscav_data.auc, fscav_data.line_auc, arrayColumn(fscav_data.min_values, 1), arrayColumn(fscav_data.max_values, 0)], norm_data[1], norm_data[2])));
+fscav_data.concentration.array = denormalize(Array.from(fscav_data.snn_model.predict(data).dataSync()), norm_labels[1], norm_labels[2]);
+};
 
 update_fitting_status(status_id){
 _(status_id).innerHTML = "&#10004";
 };
 
-get_normalised_training_set(data, labels){
+get_normalised_training_set(data, labels){if(this.state = 'fit'){
 let max = [], min = [], norm_data = [], max_labels = index_of_max(labels)[0], min_labels = index_of_min(labels)[0], norm_labels = normalize(labels, max_labels, min_labels);
 for(var i = 0; i<data.length;++i){max[i] = index_of_max(data[i])[0]; min[i] = index_of_min(data[i])[0]; norm_data[i] = normalize(data[i], max[i], min[i])};
 this.normalised_dataset = [norm_data, max, min]; this.normalised_labels = [norm_labels, max_labels, min_labels];
-};
+}};
 
-get_normalised_prediction_set(data, training_max, training_min){
+get_normalised_prediction_set(data, training_max, training_min){if(this.state = 'predict'){
 let norm_data = [];
 for(var i = 0; i<data.length; ++i){norm_data[i] = normalize(data[i], training_max[i], training_min[i])};
 return norm_data;
-};
+}};
 
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
@@ -286,6 +294,34 @@ Plotly.addTraces(div, [scatter]);
 _(div).style.display = this.fit_plot_state;
 };
 
-
+export_to_xlsx(fscav_data_predict){if(this.state = 'fit'){
+// Export parameters calculated from the CVs.
+var wb = XLSX.utils.book_new(), aoa;
+// Export fitting parameters.
+if(this.current.array?.length){
+aoa = transpose([this.auc, this.line_auc, arrayColumn(this.min_indexes, 0), arrayColumn(this.min_indexes, 1), arrayColumn(this.max_indexes, 0), this.origin_file_array, this.concentration.array]);
+aoa.unshift(['Charge above line ('+this.current.units+'· s)', 'Charge below line ('+this.current.units+'· s)', 'Interval start (sample)',  'Interval end (sample)', 'Max point (sample)',
+'File', this.concentration.name +' ('+this.concentration.units+')']); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "FSCAV Parameters")};
+// Export prediction parameters.
+if(fscav_data_predict.current.array?.length){
+aoa = transpose([fscav_data_predict.auc, fscav_data_predict.line_auc, arrayColumn(fscav_data_predict.min_indexes, 0), arrayColumn(fscav_data_predict.min_indexes, 1),
+arrayColumn(fscav_data_predict.max_indexes, 0), fscav_data_predict.origin_file_array]); aoa.unshift(['Charge above line ('+fscav_data_predict.current.units+'· s)',
+'Charge below line ('+fscav_data_predict.current.units+'· s)', 'Interval start (sample)',  'Interval end (sample)', 'Max point (sample)','File']);
+XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Prediction Parameters')};
+// Export linear fit parameters.
+if(this.linear_fit_parameters?.length){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Slope','SE slope', 'Intercept', 'SE intercept', 'R^2', 'SEE'],
+[this.linear_fit_parameters[0][1], this.linear_fit_parameters[1][1], this.linear_fit_parameters[0][0], this.linear_fit_parameters[1][2], this.linear_fit_parameters[0][2],
+this.linear_fit_parameters[1][0]]]), 'Fitting Parameters')};
+//Export SNN fit parameters
+if(this.snn_model){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['RMSE'], [this.snn_fit_parameters[1]]]), 'SNN Fit Parameters')};
+//Export model linear predictions.
+if(this.linear_fit_parameters?.length && fscav_data_predict.current.array?.length){fscav_data_predict.get_prediction_from_linear_fit(this.linear_fit_parameters, fscav_data_predict);
+aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Linear Fit Predictions')};
+//Export model SNN predictions.
+if(this.linear_fit_parameters?.length && fscav_data_predict.current.array?.length){fscav_data_predict.get_prediction_from_snn(this.snn_model, this.normalised_dataset, this.normalised_labels, fscav_data_predict);
+aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'SNN Fit Predictions')};
+XLSX.writeFile(wb, 'FSCAV_calibration_hashemilab.xlsx');
+};
+};
 
 };

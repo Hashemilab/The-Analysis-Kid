@@ -106,7 +106,11 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <button id="predict_button" onclick="predict_button_pushed()" style="width: 17%;" data-toggle="tooltip" title="Predict concentration from uploaded signals. Notice that the fitting is required to provide predictions.">Predict</button>
 </div>
 </div>
-
+<div id="export_panel">
+<div class="row" style="margin-top:5px">
+<button onclick="export_button_pushed()"  data-toggle="tooltip" title="Export data as XLSX.">Export to XLSX</button>
+</div>
+</div>
 
 </div>
 
@@ -134,7 +138,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 
 
 </div>
-</div>
+
 
 
 <div>
@@ -147,7 +151,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <div class="row">
 <div class="col">
 <label for="peak_width" style="width:59%">Peak prom. (samples):</label>
-<input style="width:30%" type="number" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to assign local minima/maxima "/>
+<input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to assign local minima/maxima "/>
 <label for="linear_fit_plot_type" style="width:59%">Plot type:</label>
 <select id="linear_fit_plot_type" style="float: right;width:39%" data-toggle="tooltip" title="type of graph to be shown for the linear fit.">
 <option value="regression_plot_type">Regression</option>
@@ -160,15 +164,33 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <option value="linear_fit">Linear fit</option>
 <option value="shallow_neural_networks">SNN</option>
 </select>
+<label for="export_tf_model_button" style="width:59%">TensorFlow model:</label>
+<button id="export_tf_model_button" onclick="export_tf_model()" data-toggle="tooltip" title="Close the window">Export model</button>
+</div>
+</div>
+<hr style="width:100%;text-align:left;margin-left:0;">
+<div class="row">
+<div class="col">
 <label for="epochs" style="width:59%">Epochs:</label>
 <input style="width:30%" type="number" step="1" min=1 max = 5000 id="epochs" value=500 data-toggle="tooltip" title="Number of iterations for the SNN to learn the calibration data."/>
 <label for="learning_rate" style="width:59%">Learning rate:</label>
 <input style="width:30%" type="number" step="0.001" min=0 id="learning_rate" value=0.001 data-toggle="tooltip" title="Learning rate of the fitting."/>
+<label for="layer_size" style="width:59%">Layer size:</label>
+<input style="width:30%" type="number" step="0.01" min=1 id="layer_size" value=64 data-toggle="tooltip" title="Number of neurons per layer."/>
+<label for="std_noise" style="width:59%">STD noise:</label>
+<input style="width:30%" type="number" step="0.01" id="std_noise" value=0.1 min=0 max=1 data-toggle="tooltip" title="Standard deviation of gaussian noise added to the signals to train the SNN.&#x0a;Allows to reduce overfitting when increasing the number of epochs."/>
+</div>
+<div class="col">
+<label for="patience" style="width:59%">Patience:</label>
+<input style="width:30%" type="number" step="1" min=0 id="patience" value=10 data-toggle="tooltip" title="Number of iterations for the SNN to stop the fitting if the metrics do not improve."/>
+<label for="min_delta" style="width:59%">Min. delta:</label>
+<input style="width:30%" type="number" step="0.01" min=0 id="min_delta" value=0.01 data-toggle="tooltip" title="Minimum required improvement of the loss for the SNN to keep training."/>
+<label for="dropout_rate" style="width:59%">Dropout rate:</label>
+<input style="width:30%" type="number" step="0.1" id="dropout_rate" value=0.2 min=0 max=1 data-toggle="tooltip" title="Dropout rate of units in the SNN during training.&#x0a;Allows to reduce overfitting, although it will likely require more iterations to converge."/>
 </div>
 </div>
 <br>
 <p style="text-align:center">
-<button onclick="recalculate_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Recalculate</button>
 <button onclick="peak_configuration_close_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Close</button>
 </p>
 </div>
@@ -288,13 +310,20 @@ else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_dat
 function fit_button_pushed(){
 _('fit_state_text').innerHTML = 'Fitting...';
 if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
-else{fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), 'fit_state_text')};
+else{fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), parseInt(_('layer_size').value), parseInt(_('patience').value),
+parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text')};
 };
 
 function show_fitting_button_pushed(){
 if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_fit.get_linear_fit_metrics('fit_graph', _('linear_fit_plot_type').value)}
 else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_fit.get_snn_fitting_metrics('fit_graph')};
-}
+};
+
+function export_button_pushed(){
+fscav_data_fit.export_to_xlsx(fscav_data_predict);
+};
+
+function export_tf_model(){if(fscav_data_fit.snn_model){fscav_data_fit.snn_model.save('downloads://my-model')}};
 
 function previous_cv_clicked(){if(fscav_data.graph_index>0){--fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
 function next_cv_clicked(){if(fscav_data.graph_index<fscav_data.number_of_files-1){++fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
