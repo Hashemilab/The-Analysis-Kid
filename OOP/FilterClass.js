@@ -81,7 +81,7 @@ this.spectrum_layout.yaxis = {
 title:this.frequency_y.name+' ('+this.frequency_y.units+')'
 };
 Plotly.newPlot(div, graph_data, this.spectrum_layout, this.plot_settings.plot_configuration);
-}
+};
 
 get_frequency_array(length, frequency){
 var array = [];
@@ -193,5 +193,4 @@ color: 'red'
 }];
 Plotly.relayout(div, this.spectrum_layout);
 };
-
 };

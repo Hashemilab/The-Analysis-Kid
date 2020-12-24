@@ -1,4 +1,3 @@
-// Class to check and save data loaded into applications.
 function HL_LOAD_DATA(status_id){
 this.status_id= status_id;
 this.data_array = [];
@@ -47,8 +46,10 @@ return result[0];
 };
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
-var text = self.array_buffer_to_string(arrbuf).split('\n');
-return parse_array_to_float(text.filter(function(element){return element.length>0}).map(function(element){return element.split('\t')}))};
+var text = self.array_buffer_to_string(arrbuf).split('\n'), tmp = [];
+for(var i=0; i<text.length;++i){if(text[i].length>0){tmp[i] = text[i].split('\t')}};
+return parse_array_to_float(tmp);
+};
 // Method to reset the loaded data every time we read new files.
 this.reset_loaded_data = function(){
 self.data_array = [];
@@ -79,7 +80,7 @@ this.check_data_is_even = function(){
 var array = self.data_array[self.data_array.length-1];
 if(array[0].length % 2 !== 0){array.map(x => x.push(x[x.length - 1]))};
 if(array.length % 2 !== 0){array.push(array[array.length - 1])};
-}
+};
 
 this.export_data = function(){
 var ws_name, ws, wb = XLSX.utils.book_new();

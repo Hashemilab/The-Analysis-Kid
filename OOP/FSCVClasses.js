@@ -1,15 +1,13 @@
 // Class for uploaded FSCV Data.
-function HL_FSCV_DATA(data, units, frequency, cycling_frequency, name_of_file, plot_type, color_palette){
-// global variable to be accessed in callbacks.
-var self = this;
-//FSCV data properties.
+class HL_FSCV_DATA {
+constructor(data, units, frequency, cycling_frequency, name_of_file, plot_type, color_palette){
 this.frequency = frequency;
 this.cycling_frequency = cycling_frequency;
 this.name_of_file = name_of_file;
 this.current = new HL_FSCV_ARRAY(data, units, 'Current');
 this.cycling_time = new HL_FSCV_TIME(cycling_frequency, data[0].length, 's', 'Time');
 this.time = new HL_FSCV_TIME(frequency, data.length, 's', 'Time');
-
+this.snr = 0;
 //Plotting properties.
 this.plot_type = plot_type;
 this.palettes = new HL_FSCV_COLORPALETTE();
@@ -17,16 +15,18 @@ if (color_palette == 'Custom'){color_palette = this.palettes.custom};
 this.color_palette = color_palette;
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.plot_layout = this.plot_settings.plot_layout;
+};
 
 // Methods of the data.
-this.graph_color_plot = function(div){
+graph_color_plot(div){
 //Function to plot the main color plot.
 var graph_data = [{
 z:this.current.array,
 x:this.cycling_time.array,
 type:this.plot_type,
 colorscale:this.color_palette,
-colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'}
+colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'},
+zsmooth: false
 }];
 
 this.plot_layout = this.plot_settings.plot_layout;
@@ -68,39 +68,42 @@ this.plot_layout.yaxis = {
 title:'Samples'
 };
 };
-
-Plotly.newPlot(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
+Plotly.react(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
 _(div).on('plotly_click', function(data){main_graph_clicked(data)});
 };
 
-this.change_color_palette = function(new_color_palette, div){
+change_color_palette(new_color_palette, div){
 if (new_color_palette == 'Custom'){this.color_palette = this.palettes.custom}
 else {this.color_palette = new_color_palette;}
 this.graph_color_plot(div);
 };
 
-this.change_type_of_plot = function(new_plot_type, div){
+change_type_of_plot(new_plot_type, div){
 this.plot_type = new_plot_type;
 this.graph_color_plot(div);
 };
 
-this.invert_current_values = function(div){
+invert_current_values(div){
 for(var i = 0;i<this.current.array.length;++i){for(var j = 0;j<this.current.array[i].length;++j){this.current.array[i][j] = - this.current.array[i][j]}};
 this.graph_color_plot(div);
 };
-this.background_subtraction = function(div, start, end){
+background_subtraction(div, start, end){
 for (var i = 0; i<fscv_data.current.array.length;++i){
 var avg = average(fscv_data.current.array[i].slice(start, end));
 for (var j=0; j<fscv_data.current.array[0].length;++j){fscv_data.current.array[i][j] = fscv_data.current.array[i][j] - avg};
 };
 this.graph_color_plot(div);
 };
+get_snr(start_sample, end_sample, snr_id){
+this.snr = 10*Math.log10(index_of_max(absolute_array(flatten(this.current.array)))[0]/std(flatten(transpose(this.current.array.slice(start_sample, end_sample)))));
+_(snr_id).innerHTML = this.snr.toFixed(2)+' dB';
+};
 
-this.initialise_graph = function(div){
+initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
 
-this.show_limits = function(div, y_start_point, y_end_point, x_start_point, x_end_point){
+show_limits(div, y_start_point, y_end_point, x_start_point, x_end_point){
 this.plot_layout.shapes = [
 {
 type: 'rect',
@@ -120,11 +123,10 @@ Plotly.relayout(div, this.plot_layout);
 this.plot_layout.shapes = [];
 };
 
-
 };
 
-// Class for it Transient and iV plots.
-function HL_FSCV_1D_DATA(units, frequency, type){
+class HL_FSCV_1D_DATA{
+constructor(units, frequency, type){
 //Data properties.
 this.current = new HL_FSCV_ARRAY([], units, 'Current');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
@@ -134,16 +136,17 @@ this.type = type;
 this.counter = 0;
 //Plotting properties.
 this.plot_settings = new HL_PLOT_SETTINGS();
+}
 //Methods.
-this.add_trace = function(array, frequency, div, origin_file){
+add_trace(array, frequency, div, origin_file){
 this.current.array.push(array);
 this.time.array.push(makeArr(0,(array.length-1)/frequency, array.length));
 this.legend_array.push("("+String(this.counter+1)+")");
 this.origin_file_array.push(origin_file);
-this.plot_trace(type, div);
+this.plot_trace(this.type, div);
 this.counter++;
 };
-this.remove_trace = function(div){
+remove_trace(div){
 if (this.counter != 0){
 this.current.array.pop();
 this.time.array.pop();
@@ -154,7 +157,7 @@ this.counter--;
 };
 };
 
-this.plot_trace = function(type, div){
+plot_trace(type, div){
 var layout = this.plot_settings.plot_layout;
 layout.xaxis.title = this.time.name +" ("+this.time.units+")";
 layout.yaxis.title = this.current.name +" ("+this.current.units+")";
@@ -164,14 +167,16 @@ Plotly.addTraces(div, [{y: this.current.array[this.counter], x:this.time.array[t
 name:"("+String(this.counter+1)+")", text:this.origin_file_array[this.counter]}]);
 };
 
-this.delete_trace = function(div){
+delete_trace(div){
 Plotly.deleteTraces(div, -1);
 }
 
-this.initialise_graph = function(div){
+initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
+
 };
+
 // Class for concentration traces.
 class HL_FSCV_CONCENTRATION {
 constructor(units){

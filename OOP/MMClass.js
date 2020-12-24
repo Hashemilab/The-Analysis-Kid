@@ -242,11 +242,6 @@ Plotly.newPlot(div, [trace_1, trace_2], layout, this.plot_settings.plot_configur
 _(div).style.display = this.release_plot_state;
 };
 
-
-
-
-
-
 initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };

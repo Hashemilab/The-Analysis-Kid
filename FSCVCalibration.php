@@ -75,14 +75,16 @@ $(".se-pre-con").fadeOut("slow");
 <div class="row">
 <button id="invert_sign_button" onclick="invert_pushed()" data-toggle="tooltip" title="Invert the sign of the current values in the voltammograms">Invert</button>
 &nbsp;
-<button id="invert_sign_button" onclick="background_subtraction_button_pushed()" data-toggle="tooltip" title="Background subtraction of capacitative current">Background sub.</button>
+<button id="invert_sign_button" onclick="background_subtraction_button_pushed()" data-toggle="tooltip" title="Background subtraction of capacitative current">Back. sub.</button>
 &nbsp;
-<button id="invert_sign_button" onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
+<button onclick="config_button_pushed()" data-toggle="tooltip" title="Open configuration window.">Config.</button>
+&nbsp;
+<button id="reset_button" onclick="reset_pushed()"  data-toggle="tooltip" title="Reset the application">Reset</button>
 </div>
 <div class="row" style="margin-top:5px">
-<button id="surface" class="type_of_plot_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Type of graph: 3D surface">3D</button>
+<button id="surface" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: 3D surface">3D</button>
 &nbsp;
-<button id="heatmap" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: 2D heatmap">2D</button>
+<button id="heatmap" class="type_of_plot_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Type of graph: 2D heatmap">2D</button>
 &nbsp;
 <button id="contour" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: contour plot">Contour</button>
 </div>
@@ -282,6 +284,31 @@ Filtration Panel
 </div>
 </div>
 
+<div id="configuration_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="snr_start_sample" style="width:59%">Start (sample): </label>
+<input style="width:30%" type="number" id="snr_start_sample" value=0 data-toggle="tooltip" title="First cyclic voltammogram from where noise is estimated. "/>
+</div>
+<div class="col">
+<label for="snr_end_sample" style="width:59%">End (sample): </label>
+<input style="width:30%" type="number" id="snr_end_sample" value=10 data-toggle="tooltip" title="Last cyclic voltammogram from where the noise is estimated. "/>
+</div>
+</div>
+<div class = "row">
+<div class="col">
+<p style="text-align:center">SNR: <span id="snr_value"></span></p>
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="calculate_snr_button_pushed()" data-toggle="tooltip" title="Close window.">Calculate</button>
+<button style="width:15%;" onclick="config_close_button_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -376,6 +403,8 @@ slider_changed();
 };
 
 function invert_pushed(){
+fscv_data = new HL_FSCV_DATA(loaded_data.data_array[file_index-1],_('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_('cycling_frequency').value), loaded_data.names_of_files[file_index-1], plot_type, color_palette);
 fscv_data.invert_current_values("main_graph");
 };
 
@@ -409,7 +438,8 @@ fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').va
 fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
 parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value));
 _("show_filter_button").disabled = true;
-}
+};
+
 fscv_data.graph_color_plot("main_graph");
 };
 function graph_2dfft_pushed(){
@@ -466,6 +496,8 @@ parseFloat(_('background_end_sample').value/_('cycling_frequency').value));
 };
 
 function background_subtraction_apply_pushed(){
+fscv_data = new HL_FSCV_DATA(loaded_data.data_array[file_index-1],_('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_('cycling_frequency').value), loaded_data.names_of_files[file_index-1], plot_type, color_palette);
 fscv_data.background_subtraction("main_graph", parseInt(_('background_start_sample').value), parseInt(_('background_end_sample').value));
 };
 
@@ -476,11 +508,22 @@ fscv_concentration.plot_graph("ct_graph");
 
 function kinetic_calibration_button_pushed(){
 _('kinetic_calibration_modal_window').style.display = "block";
-}
-
+};
 
 function kinetic_calibration_close_pushed(){
 _('kinetic_calibration_modal_window').style.display = "none";
+};
+
+function config_button_pushed(){
+_('configuration_modal_window').style.display = "block";
+};
+
+function config_close_button_pushed(){
+_('configuration_modal_window').style.display = "none";
+};
+
+function calculate_snr_button_pushed(){
+fscv_data.get_snr(parseInt(_('snr_start_sample').value), parseInt(_('snr_end_sample').value), 'snr_value');
 }
 
 function kinetic_show_limits_pushed(){
@@ -528,7 +571,7 @@ else{loaded_data.export_data()};
 // Create loaded data object and declare varibles used in the dashboard.
 var loaded_data = new HL_LOAD_DATA("status");
 var file_index = 1;
-var plot_type = 'surface';
+var plot_type = 'heatmap';
 var color_palette = 'Custom';
 //Initialise blank data objects.
 var fscv_data = new HL_FSCV_DATA([[0]], _('current_units').value, parseFloat(_('frequency').value),
