@@ -1,0 +1,109 @@
+function hl_2dfft(data){
+let nx = data[0].length;
+let ny = data.length;
+let nx_pw2 = Math.pow(2, Math.ceil(Math.log2(nx)));
+let ny_pw2 = Math.pow(2, Math.ceil(Math.log2(ny)));
+let heap_real = allocFromArray(data.map(x => allocFromArray(x)));
+let heap_spectrum_real = allocFromArray(new Array(ny_pw2).map(x => allocFromArray(new Array(nx_pw2))));
+let heap_spectrum_imag = allocFromArray(new Array(ny_pw2).map(x => allocFromArray(new Array(nx_pw2))));
+_HL_2DFFT(heap_real.byteOffset, heap_real.byteOffset, heap_spectrum_real.byteOffset, heap_spectrum_real.byteOffset, nx, ny, nx_pw2, ny_pw2);
+}
+
+
+
+
+
+function test(){
+var real = new Float32Array(uniform_array(4096, 1));
+var imag = new Float32Array(uniform_array(4096, 0));
+var m = Math.log2(4096);
+// Get data byte size, allocate memory on Emscripten heap, and get pointer
+var nDataBytes = real.length * real.BYTES_PER_ELEMENT;
+var real_ptr = Module._malloc(nDataBytes), imag_ptr = Module._malloc(nDataBytes);
+// Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+var real_heap = new Uint8Array(Module.HEAPU8.buffer, real_ptr, nDataBytes);
+var imag_heap = new Uint8Array(Module.HEAPU8.buffer, imag_ptr, nDataBytes);
+real_heap.set(new Uint8Array(real.buffer));
+imag_heap.set(new Uint8Array(imag.buffer));
+// Call function and get result
+_FFT(1,m,real_heap.byteOffset, imag_heap.byteOffset);
+var result = new Float32Array(real_heap.buffer, real_heap.byteOffset, real.length);
+// Free memory
+Module._free(real_heap.byteOffset);
+Module._free(imag_heap.byteOffset);
+};
+
+function test2(){
+var real = uniform_array(3000, uniform_array(300, 1));
+var imag = uniform_array(3000, uniform_array(300, 0));
+var nx_pw2 = Math.pow(2, Math.ceil(Math.log2(300)));
+var ny_pw2 = Math.pow(2, Math.ceil(Math.log2(3000)));
+var real_spectrum = uniform_array(ny_pw2, uniform_array(nx_pw2, 0));
+var imag_spectrum = uniform_array(ny_pw2, uniform_array(nx_pw2, 0));
+// Create example data to test float_multiply_matrix
+var data_real = new Float32Array(flatten(real));
+var data_imag = new Float32Array(flatten(imag));
+var data_real_spectrum = new Float32Array(flatten(real_spectrum));
+var data_imag_spectrum = new Float32Array(flatten(imag_spectrum));
+
+// Get data byte size, allocate memory on Emscripten heap, and get pointer
+var nDataBytes = data_real.length * data_real.BYTES_PER_ELEMENT;
+var real_ptr = Module._malloc(nDataBytes);
+var imag_ptr = Module._malloc(nDataBytes);
+var nDataBytes_spectrum = data_real_spectrum.length * data_real_spectrum.BYTES_PER_ELEMENT;
+var real_spectrum_ptr = Module._malloc(nDataBytes_spectrum);
+var imag_spectrum_ptr = Module._malloc(nDataBytes_spectrum);
+// Copy data to Emscripten heap
+var real_heap = new Uint8Array(Module.HEAPU8.buffer, real_ptr, nDataBytes);
+var imag_heap = new Uint8Array(Module.HEAPU8.buffer, imag_ptr, nDataBytes);
+var real_spectrum_heap = new Uint8Array(Module.HEAPU8.buffer, real_spectrum_ptr, nDataBytes_spectrum);
+var imag_spectrum_heap = new Uint8Array(Module.HEAPU8.buffer, imag_spectrum_ptr, nDataBytes_spectrum);
+real_heap.set(new Uint8Array(data_real.buffer));
+imag_heap.set(new Uint8Array(data_imag.buffer));
+real_spectrum_heap.set(new Uint8Array(data_real_spectrum.buffer));
+imag_spectrum_heap.set(new Uint8Array(data_imag_spectrum.buffer));
+// Create array of pointers that reference each row in the data
+// Note the use of Uint32Array. The pointer is limited to 2147483648 bytes
+// or only 2GB of memory :(
+var real_pointers = new Uint32Array(real.length);
+var imag_pointers = new Uint32Array(imag.length);
+var real_spectrum_pointers = new Uint32Array(real_spectrum.length);
+var imag_spectrum_pointers = new Uint32Array(imag_spectrum.length);
+for (var i = 0; i < real_pointers.length; i++) {
+real_pointers[i] = real_ptr + i * data_real.BYTES_PER_ELEMENT * real[0].length;
+imag_pointers[i] = imag_ptr + i * imag_real.BYTES_PER_ELEMENT * imag[0].length;
+};
+
+for (var i = 0; i < real_spectrum_pointers.length; i++) {
+real_spectrum_pointers[i] = real_spectrum_ptr + i * data_real_spectrum.BYTES_PER_ELEMENT * real_spectrum[0].length;
+imag_spectrum_pointers[i] = imag_spectrum_ptr + i * imag_real_spectrum.BYTES_PER_ELEMENT * imag_spectrum[0].length;
+};
+
+// Allocate bytes needed for the array of pointers
+var nPointerBytes = real_pointers.length * real_pointers.BYTES_PER_ELEMENT;
+var real_pointer_ptr = Module._malloc(nPointerBytes);
+var imag_pointer_ptr = Module._malloc(nPointerBytes);
+var nPointerBytes_spectrum = real_spectrum_pointers.length * real_spectrum_pointers.BYTES_PER_ELEMENT;
+var real_pointer_ptr = Module._malloc(nPointerBytes_spectrum);
+var imag_pointer_ptr = Module._malloc(nPointerBytes_spectrum);
+// Copy array of pointers to Emscripten heap
+var real_pointer_heap = new Uint8Array(Module.HEAPU8.buffer, real_pointer_ptr, nPointerBytes);
+var imag_pointer_heap = new Uint8Array(Module.HEAPU8.buffer, imag_pointer_ptr, nPointerBytes);
+real_pointer_heap.set(new Uint8Array(real_pointers.buffer));
+imag_pointer_heap.set(new Uint8Array(imag_pointers.buffer));
+var real_pointer_spectrum_heap = new Uint8Array(Module.HEAPU8.buffer, real_pointer_spectrum_ptr, nPointerBytes_spectrum);
+var imag_pointer_spectrum_heap = new Uint8Array(Module.HEAPU8.buffer, imag_pointer_spectrum_ptr, nPointerBytes_spectrum);
+real_pointer_spectrum_heap.set(new Uint8Array(real_spectrum_pointers.buffer));
+imag_pointer_spectrum_heap.set(new Uint8Array(imag_spectrum_pointers.buffer));
+// Call the function by passing a number pointing to the byte location of
+// the array of pointers on the Emscripten heap.  Emscripten knows what to do!
+_2DFFT(real_pointer_heap.byteOffset, imag_pointer_heap.byteOffset, real_pointer_spectrum_heap.byteOffset, imag_pointer_spectrum_heap.byteOffset, 300, 3000, nx_pw2, ny_pw2);
+
+var result = new Float32Array(real_pointer_spectrum_heap.buffer, real_pointer_spectrum_heap.byteOffset, nx_pw2*ny_pw2);
+
+// Free memory
+Module._free(pointerHeap.byteOffset);
+Module._free(dataHeap.byteOffset);
+
+
+}

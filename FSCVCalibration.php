@@ -8,7 +8,7 @@
 <script src="JavaScriptPackages/jquery-3.5.1.min.js"></script>
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
-<script src="JavaScriptPackages/kissFFT.js"></script>
+<script src="JavaScriptPackages/kiss_fft.js"></script>
 <script src="JavaScriptPackages/tf.min.js"></script>
 <script src="JavaScriptPackages/xlsx.full.min.js"></script>
 <script src = "OOP/HLClasses.js"></script>
@@ -77,7 +77,7 @@ $(".se-pre-con").fadeOut("slow");
 &nbsp;
 <button id="invert_sign_button" onclick="background_subtraction_button_pushed()" data-toggle="tooltip" title="Background subtraction of capacitative current">Back. sub.</button>
 &nbsp;
-<button onclick="config_button_pushed()" data-toggle="tooltip" title="Open configuration window.">Config.</button>
+<button onclick="snr_button_pushed()" data-toggle="tooltip" title="Open signal-to-noise ratio window.">SNR</button>
 &nbsp;
 <button id="reset_button" onclick="reset_pushed()"  data-toggle="tooltip" title="Reset the application">Reset</button>
 </div>
@@ -147,6 +147,7 @@ Filtration Panel
 <label for="horizontal_fft_slider" style="width:35%"> X cutoff (%):</label>
 <input type="range" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Horizontal cutoff frequency defined as a percentage of the maximum frequency."/>
 <span id="horizontal_fft_slider_number" style="width:40%">50</span>
+<button onclick="config_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Open configuration of the 2D-FFT low-pass filtering.">Config.</button>
 <label for="vertical_fft_slider" style="width:35%"> Y cutoff (%):</label>
 <input type="range" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Vertical cutoff frequency defined as a percentage of the maximum frequency." />
 <span id="vertical_fft_slider_number" style="width:40%">50</span>
@@ -244,11 +245,11 @@ Filtration Panel
 </div>
 <div class="row">
 <div class="col">
-<label for="kinetic_start_integration" style="width:59%">Start (sample): </label>
+<label for="kinetic_start_integration" style="width:59%">Start (samples): </label>
 <input style="width:30%" type="number" id="kinetic_start_integration" value=0 data-toggle="tooltip" title="Cyclic voltammgram sample from where the integration starts "/>
 </div>
 <div class="col">
-<label for="kinetic_end_integration" style="width:59%">End (sample): </label>
+<label for="kinetic_end_integration" style="width:59%">End (samples): </label>
 <input style="width:30%" type="number" id="kinetic_end_integration" value=3000 data-toggle="tooltip" title="Cyclic voltammgram sample from where the integration ends " />
 </div>
 </div>
@@ -267,11 +268,11 @@ Filtration Panel
 <div class="modal-content">
 <div class="row">
 <div class="col">
-<label for="background_start_sample" style="width:59%">Start (sample): </label>
+<label for="background_start_sample" style="width:59%">Start (samples): </label>
 <input style="width:30%" type="number" id="background_start_sample" value=0 data-toggle="tooltip" title="First cyclic voltammogram from where the average is calculated "/>
 </div>
 <div class="col">
-<label for="background_end_sample" style="width:59%">End (sample): </label>
+<label for="background_end_sample" style="width:59%">End (samples): </label>
 <input style="width:30%" type="number" id="background_end_sample" value=10 data-toggle="tooltip" title="Last cyclic voltammogram from where the average is calculated "/>
 </div>
 </div>
@@ -284,15 +285,15 @@ Filtration Panel
 </div>
 </div>
 
-<div id="configuration_modal_window" class="modal">
+<div id="snr_modal_window" class="modal">
 <div class="modal-content">
 <div class="row">
 <div class="col">
-<label for="snr_start_sample" style="width:59%">Start (sample): </label>
+<label for="snr_start_sample" style="width:59%">Start (samples): </label>
 <input style="width:30%" type="number" id="snr_start_sample" value=0 data-toggle="tooltip" title="First cyclic voltammogram from where noise is estimated. "/>
 </div>
 <div class="col">
-<label for="snr_end_sample" style="width:59%">End (sample): </label>
+<label for="snr_end_sample" style="width:59%">End (samples): </label>
 <input style="width:30%" type="number" id="snr_end_sample" value=10 data-toggle="tooltip" title="Last cyclic voltammogram from where the noise is estimated. "/>
 </div>
 </div>
@@ -304,7 +305,28 @@ Filtration Panel
 <br>
 <p style="text-align:center">
 <button style="width:15%;" onclick="calculate_snr_button_pushed()" data-toggle="tooltip" title="Close window.">Calculate</button>
-<button style="width:15%;" onclick="config_close_button_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+<button style="width:15%;" onclick="snr_close_button_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+
+<div id="2dfft_config_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="2dfft_height_padding" style="width:59%">Height pad. (ratio): </label>
+<input style="width:30%" type="number" id="2dfft_height_padding" value=0.25 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total height before filtering. "/>
+</div>
+<div class="col">
+<label for="2dfft_width_padding" style="width:59%">Width pad. (ratio): </label>
+<input style="width:30%" type="number" id="2dfft_width_padding" value=0.25 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total width before filtering. "/>
+</div>
+</div>
+<div class = "row">
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="config_2dfft_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
 </p>
 </div>
 </div>
@@ -436,16 +458,16 @@ if (getComputedStyle(_("convolution_button"))['background-color'] == 'rgb(63, 81
 fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').value), parseInt(_('convolution_repetitions').value));
 } else {
 fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
-parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value));
+parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value),
+parseFloat(_('2dfft_height_padding').value), parseFloat(_('2dfft_width_padding').value));
 _("show_filter_button").disabled = true;
 };
-
 fscv_data.graph_color_plot("main_graph");
 };
 function graph_2dfft_pushed(){
 _("show_filter_button").disabled = false;
-fscv_filtering.get_2dfft(fscv_data, "main_graph", parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value));
-}
+fscv_filtering.get_2dfft(fscv_data, "main_graph", parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value), parseFloat(_('2dfft_height_padding').value), parseFloat(_('2dfft_width_padding').value));
+};
 function graph_filter_pushed(){
 fscv_filtering.graph_filter("main_graph", parseInt(_('horizontal_fft_slider').value),parseInt(_('vertical_fft_slider').value));
 };
@@ -514,12 +536,20 @@ function kinetic_calibration_close_pushed(){
 _('kinetic_calibration_modal_window').style.display = "none";
 };
 
-function config_button_pushed(){
-_('configuration_modal_window').style.display = "block";
+function snr_button_pushed(){
+_('snr_modal_window').style.display = "block";
 };
 
-function config_close_button_pushed(){
-_('configuration_modal_window').style.display = "none";
+function snr_close_button_pushed(){
+_('snr_modal_window').style.display = "none";
+};
+
+function config_2dfft_pushed(){
+_('2dfft_config_modal_window').style.display = "block";
+};
+
+function config_2dfft_close_pushed(){
+_('2dfft_config_modal_window').style.display = "none";
 };
 
 function calculate_snr_button_pushed(){

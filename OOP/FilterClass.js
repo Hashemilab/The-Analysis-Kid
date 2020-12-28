@@ -28,15 +28,15 @@ linear_input = linear_output;
 };
 };
 
-get_2dfft(fscv_data, div, frequency, cycling_frequency){
-if (this.spectrum_output.array.length == 0){this.wrap_and_get_spectrum(frequency, cycling_frequency)};
+get_2dfft(fscv_data, div, frequency, cycling_frequency, height_padding, width_padding){
+if (this.spectrum_output.array.length == 0){this.get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding)};
 this.spectrum_magnitude_linear.array = this.get_magnitude_array();
 this.spectrum_magnitude.array = this.get_matrix(this.spectrum_magnitude_linear.array, this.wrapped_height, this.wrapped_width);
 this.graph_spectrum(div);
 };
 
-apply_2dfft_filtration(fscv_data, div, frequency, cycling_frequency, cutoffx, cutoffy, order){
-if (this.spectrum_output.array.length == 0){this.wrap_and_get_spectrum(frequency, cycling_frequency)};
+apply_2dfft_filtration(fscv_data, div, frequency, cycling_frequency, cutoffx, cutoffy, order, height_padding, width_padding){
+if (this.spectrum_output.array.length == 0){this.get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding)};
 cutoffx = this.get_absolute_frequency(cutoffx, this.frequency_x.array);
 cutoffy = this.get_absolute_frequency(cutoffy, this.frequency_y.array);
 var filter = this.butter_2d_uncentered(this.wrapped_width, this.wrapped_height, frequency, cycling_frequency, cutoffx, cutoffy, order);
@@ -48,19 +48,15 @@ var linear_output = irfft2d(this.spectrum_output.array, this.wrapped_width, this
 fscv_data.current.array = this.get_unwrapped_data(split_array(Array.from(linear_output), this.wrapped_width));
 };
 
-wrap_and_get_spectrum(frequency, cycling_frequency){
-this.width = fscv_data.current.array[0].length; this.wrapped_width = this.width + parseInt(this.width/3);
-this.height = fscv_data.current.array.length; this.wrapped_height = this.height+ parseInt(this.height/3);
-this.wrapped_data.array = this.get_wrapped_data(fscv_data.current.array);
-this.get_spectrum_arrays(frequency, cycling_frequency);
-this.get_unzipped_complex_array(this.spectrum_output.array);
-};
-
-get_spectrum_arrays(frequency, cycling_frequency){
-var linear_input = new Float32Array(flatten(this.wrapped_data.array));
+get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding){
+this.width = fscv_data.current.array[0].length; this.height = fscv_data.current.array.length;
+this.wrapped_width = this.width + 2*parseInt(width_padding*this.width); this.wrapped_height = this.height + 2*parseInt(height_padding*this.height);
 this.frequency_x.array = this.get_frequency_array(this.wrapped_width, cycling_frequency);
 this.frequency_y.array = this.get_frequency_array(this.wrapped_height, frequency);
-this.spectrum_output.array = rfft2d(linear_input, this.wrapped_width, this.wrapped_height);
+let linear_input = new Float32Array(flatten(fscv_data.current.array));
+this.wrapped_data.array = wrap_data(linear_input, this.width, this.height, parseInt(this.width*width_padding), parseInt(this.height*height_padding));
+let spectrums = rfft2d(this.wrapped_data.array, this.wrapped_width, this.wrapped_height);
+this.spectrum_output.array = spectrums[0]; this.spectrum_real_linear.array = spectrums[1]; this.spectrum_imaginary_linear.array = spectrums[2];
 };
 
 graph_spectrum(div){
@@ -101,9 +97,6 @@ magnitude_array[i] = Math.log(1 + Math.sqrt(real_array[i] * real_array[i] + im_a
 return magnitude_array;
 };
 
-get_unzipped_complex_array(complex_array){
-var arrs = get_even_and_odd_indexes(complex_array); this.spectrum_real_linear.array = arrs[0]; this.spectrum_imaginary_linear.array = arrs[1];
-};
 get_zipped_complex_array(real_array, imaginary_array){
 return new Float32Array(zip(real_array, imaginary_array));
 };
@@ -127,17 +120,16 @@ get_absolute_frequency(cutoff, frequency_array){
 return (cutoff/100)*frequency_array[frequency_array.length - 1];
 };
 
-get_wrapped_data(data){
-var wrapped_data = deep_copy_2d_array(data), n_padding = parseInt((this.wrapped_width-this.width)/2), m_padding = parseInt((this.wrapped_height-this.height)/2);
-for (var i=0;i<data.length;++i){
-wrapped_data[i].push(reverse_array(wrapped_data[i].slice(wrapped_data[i].length - n_padding)));
-wrapped_data[i].unshift(reverse_array(wrapped_data[i].slice(0, n_padding)));
-};
-//Provisional
-wrapped_data.push(reverse_array(wrapped_data.slice(wrapped_data.length - m_padding)));
-wrapped_data.unshift(reverse_array(wrapped_data.slice(0, m_padding)));
-return wrapped_data;
-};
+// get_wrapped_data(data){
+// var wrapped_data = deep_copy_2d_array(data), n_padding = parseInt((this.wrapped_width-this.width)/2), m_padding = parseInt((this.wrapped_height-this.height)/2);
+// for (var i=0;i<data.length;++i){
+// wrapped_data[i].push(reverse_array(wrapped_data[i].slice(wrapped_data[i].length - n_padding)));
+// wrapped_data[i].unshift(reverse_array(wrapped_data[i].slice(0, n_padding)));
+// };
+// wrapped_data.push(reverse_array(wrapped_data.slice(wrapped_data.length - m_padding)));
+// wrapped_data.unshift(reverse_array(wrapped_data.slice(0, m_padding)));
+// return wrapped_data;
+// };
 
 get_unwrapped_data(data){
 var n_padding = parseInt((this.wrapped_width-this.width)/2), m_padding = parseInt((this.wrapped_height-this.height)/2);
