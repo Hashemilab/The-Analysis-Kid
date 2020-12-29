@@ -167,7 +167,7 @@ for(var i = 0; i < array.length; i += part) {
 tmp.push(array.slice(i, i + part));
 }
 return tmp;
-}
+};
 // Linearise an n-dimension array.
 function linearise(array, level){
 return array.flat(level);

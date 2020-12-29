@@ -68,7 +68,7 @@ this.plot_layout.yaxis = {
 title:'Samples'
 };
 };
-Plotly.react(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
+Plotly.newPlot(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
 _(div).on('plotly_click', function(data){main_graph_clicked(data)});
 };
 
