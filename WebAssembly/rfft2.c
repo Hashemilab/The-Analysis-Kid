@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "kiss_fftndr.h"
-
 void rfft2d(float *in, float *out, int m, int n) {
 int dims[] = {n, m};
 kiss_fftndr_cfg cfg;

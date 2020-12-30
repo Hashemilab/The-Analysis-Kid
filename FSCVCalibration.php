@@ -49,7 +49,7 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 <div class="row">
 <label for="frequency" style="width: 33%;">Freq. (Hz):</label>
-<label for="cycling_frequency" style="width: 33%;">Cyc. freq (Hz):</label>
+<label for="cycling_frequency" style="width: 33%;">Cyc. freq. (Hz):</label>
 <label for="current_units" style="width: 33%;">Units:</label>
 <input type="number" step="1" min=1 name="frequency" id="frequency" style="width: 33%;"  value=500000 data-toggle="tooltip" title="Sampling frequency of the acquisition" />
 <input type="number" step="1" min=1 name="cycling_frequency" id="cycling_frequency" style="width: 33%;" value=10 data-toggle="tooltip" title="Frequency at which the voltage cycle is applied"/>
@@ -315,11 +315,11 @@ Filtration Panel
 <div class="row">
 <div class="col">
 <label for="2dfft_height_padding" style="width:59%">Height pad. (ratio): </label>
-<input style="width:30%" type="number" id="2dfft_height_padding" value=0.25 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total height before filtering. "/>
+<input style="width:30%" type="number" id="2dfft_height_padding" value=0.20 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total height before filtering. "/>
 </div>
 <div class="col">
 <label for="2dfft_width_padding" style="width:59%">Width pad. (ratio): </label>
-<input style="width:30%" type="number" id="2dfft_width_padding" value=0.25 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total width before filtering. "/>
+<input style="width:30%" type="number" id="2dfft_width_padding" value=0.20 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total width before filtering. "/>
 </div>
 </div>
 <div class = "row">

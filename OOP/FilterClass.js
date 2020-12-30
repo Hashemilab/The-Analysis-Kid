@@ -18,14 +18,11 @@ this.frequency_y = new HL_FSCV_ARRAY([], 'Hz', 'Frequency');
 };
 
 apply_convolution(fscv_data, std, reps){
-var data = fscv_data.current.array;
-var linear_input = flatten(data);
-var linear_output = uniform_array(linear_input.length, 0);
+let data = fscv_data.current.array, linear_input = flatten(data), linear_output = new Array(linear_input.length);
 for (var i = 0; i<reps; ++i){
-conv_2d_gaussian(linear_input, linear_output, data[0].length, data.length, std);
-fscv_data.current.array = split_array(linear_output, data[0].length);
-linear_input = linear_output;
+conv_2d_gaussian(linear_input, linear_output, data[0].length, data.length, std); linear_input = linear_output;
 };
+fscv_data.current.array = split_array(linear_output, data[0].length);
 };
 
 get_2dfft(fscv_data, div, frequency, cycling_frequency, height_padding, width_padding){
@@ -156,4 +153,5 @@ let data = get_data_from_heap(heap_data, (m-m_padding*2)*(n-n_padding*2));
 free(heap_spectrum); free(heap_data); free(heap_wrapped_data);
 return data;
 };
+
 };
