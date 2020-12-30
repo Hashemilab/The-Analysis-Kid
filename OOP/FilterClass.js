@@ -7,6 +7,8 @@ this.width;
 this.height;
 this.wrapped_width;
 this.wrapped_height;
+this.width_even = true;
+this.height_even = true;
 this.spectrum_layout;
 this.spectrum_magnitude = new HL_FSCV_ARRAY([], 'dB'+c_units, 'Magnitude');
 this.spectrum_magnitude_linear = new HL_FSCV_ARRAY([], 'dB'+c_units, 'Linear Magnitude');
@@ -26,25 +28,28 @@ fscv_data.current.array = split_array(linear_output, data[0].length);
 };
 
 get_2dfft(fscv_data, div, frequency, cycling_frequency, height_padding, width_padding){
+this.width = fscv_data.current.array[0].length; this.height = fscv_data.current.array.length; this.get_data_even(fscv_data);
 if (this.spectrum_output.array.length == 0){this.get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding)};
 [this.spectrum_magnitude_linear.array, this.spectrum_magnitude.array] = this.magnitude_array(this.spectrum_real_linear.array, this.spectrum_imaginary_linear.array, this.wrapped_width, this.wrapped_height);
-this.spectrum_magnitude.array = split_array(this.spectrum_magnitude.array, this.wrapped_width);
+this.spectrum_magnitude.array = array_to_2d(this.spectrum_magnitude.array, this.wrapped_height, this.wrapped_width);
 this.graph_spectrum(div);
+this.restore_data(fscv_data);
 };
 
 apply_2dfft_filtration(fscv_data, div, frequency, cycling_frequency, cutoffx, cutoffy, order, height_padding, width_padding){
+this.width = fscv_data.current.array[0].length; this.height = fscv_data.current.array.length; this.get_data_even(fscv_data);
 if (this.spectrum_output.array.length == 0){this.get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding)};
 cutoffx = this.get_absolute_frequency(cutoffx, this.frequency_x.array);
 cutoffy = this.get_absolute_frequency(cutoffy, this.frequency_y.array);
 [this.spectrum_real_linear.array,  this.spectrum_imaginary_linear.array, this.spectrum_output.array] = this.butter_2d_filter(this.wrapped_width,
 this.wrapped_height, this.frequency_y.array, this.frequency_x.array, this.spectrum_real_linear.array,  this.spectrum_imaginary_linear.array,
 frequency, cycling_frequency, cutoffx, cutoffy, order);
-fscv_data.current.array = split_array(this.irfft2d(this.spectrum_output.array, this.wrapped_width, this.wrapped_height, (this.wrapped_width-this.width)/2,
-(this.wrapped_height-this.height)/2), this.width);
+var linear_array = this.irfft2d(this.spectrum_output.array, this.wrapped_width, this.wrapped_height, (this.wrapped_width-this.width)/2, (this.wrapped_height-this.height)/2);
+fscv_data.current.array = array_to_2d(linear_array, this.height, this.width);
+this.restore_data(fscv_data);
 };
 
 get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding){
-this.width = fscv_data.current.array[0].length; this.height = fscv_data.current.array.length;
 this.wrapped_width = this.width + 2*parseInt(width_padding*this.width); this.wrapped_height = this.height + 2*parseInt(height_padding*this.height);
 this.frequency_x.array = this.get_frequency_array(this.wrapped_width, cycling_frequency);
 this.frequency_y.array = this.get_frequency_array(this.wrapped_height, frequency);
@@ -81,6 +86,15 @@ return array;
 get_absolute_frequency(cutoff, frequency_array){
 return (cutoff/100)*frequency_array[frequency_array.length - 1];
 };
+
+get_data_even(fscv_data){
+if(this.width % 2 !== 0){fscv_data.current.array.map(x => x.push(x[x.length - 1])); ++this.width; this.width_even = false;};
+if(this.height % 2 !== 0){fscv_data.current.array.push(fscv_data.current.array[fscv_data.current.array.length - 1]); ++this.height; this.height_even = false;};
+};
+restore_data(fscv_data){
+if(!this.width_even){for(var i=0;i<this.height;++i){fscv_data.current.array[i].splice(-1,1)}; --this.width; this.width_even = true;}
+if(!this.height_even){fscv_data.current.array.splice(-1,1); --this.height; this.height_even = true;}
+}
 
 initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);

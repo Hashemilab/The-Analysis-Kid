@@ -4,6 +4,7 @@ constructor(frequency, units, c_units, peak_width, state){
 this.frequency = frequency;
 this.origin_file_array = [];
 this.current = new HL_FSCV_ARRAY([], units, 'Current');
+this.norm_current = new HL_FSCV_ARRAY([], units, 'Norm. current');
 this.time = new HL_FSCV_ARRAY([], 's', 'Time');
 this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration'); //Labels or predictions.
 // Parameters to calculate the charge, get the linear fit and the SNN model.
@@ -14,7 +15,7 @@ this.min_indexes = [];
 this.min_values = [];
 this.total_auc = [];
 this.line_auc = [];
-this.auc =[];
+this.auc = [];
 this.normalised_dataset = [];
 this.normalised_labels = [];
 this.linear_fit_parameters = [];
@@ -62,18 +63,16 @@ get_max_and_min_values(index){
 };
 
 get_auc(index){
-let norm_current = this.get_normalized_current_array(index);
-this.total_auc[index] = simpson_auc(norm_current.slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
+this.get_normalized_current_array(index);
+this.total_auc[index] = simpson_auc(this.norm_current.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]), this.frequency);
 var linear_parameters = linear_fit([this.time.array[index][this.min_indexes[index][0]], this.time.array[index][this.min_indexes[index][1]]],
-[norm_current[this.min_indexes[index][0]], norm_current[this.min_indexes[index][1]]]);
+[this.norm_current.array[index][this.min_indexes[index][0]], this.norm_current.array[index][this.min_indexes[index][1]]]);
 var line = this.time.array[index].slice(this.min_indexes[index][0], this.min_indexes[index][1]).map(x => linear_parameters[0]+linear_parameters[1]*x);
 this.line_auc[index] = simpson_auc(line,this.frequency);
 this.auc[index] = this.total_auc[index] - this.line_auc[index];
 };
 get_normalized_current_array(index){
-let norm_current = [];
-for(var j = 0; j<this.current.array[index].length; ++j){norm_current[j] = this.current.array[index][j] - this.min_values[index][0]};
-return norm_current;
+for(var j = 0; j<this.current.array[index].length; ++j){this.norm_current.array[index][j] = this.current.array[index][j] - this.min_values[index][0]};
 };
 
 change_points(pindex, type){
@@ -90,7 +89,7 @@ Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_
 
 invert_current_values(div){
 this.current.array[this.graph_index] = this.current.array[this.graph_index].map(x => -x);
-this.get_max_and_min_values(this.graph_index); this.get_normalized_current_array(this.graph_index); this.get_auc(this.graph_index);
+this.get_max_and_min_values(this.graph_index); this.get_auc(this.graph_index);
 this.plot_graph(div);
 };
 
@@ -139,7 +138,7 @@ const labels = tf.tensor(this.normalised_labels[0]);
 this.snn_model.fit(data, labels, {epochs: epochs, validationSplit:0.1, callbacks: tf.callbacks.earlyStopping({monitor: 'val_loss', patience: patience, minDelta: min_delta})}).then(info => {
 self.update_fitting_status(status_id);
 this.snn_fit_parameters[0] = [info.history.loss, info.history.val_loss];
-self.get_snn_fitting_metrics(div); console.log(info);
+self.get_snn_fitting_metrics(div);
 });
 }};
 

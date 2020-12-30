@@ -168,11 +168,17 @@ tmp.push(array.slice(i, i + part));
 }
 return tmp;
 };
+// Similar to split_array, but does not preserve the type of the sliced array.
+function array_to_2d(array, height, width){
+let tmp = [];
+for(var i=0;i<height;++i){tmp[i] = []; for(var j=0;j<width;++j){tmp[i][j] = array[i*width + j]}};
+return tmp;
+};
 // Linearise an n-dimension array.
 function linearise(array, level){
 return array.flat(level);
 }
-//Linarise a n-dimension array (faster).
+//Linarise a n-dimension array (faster but it linearises all dimensions).
 const flatten = function(arr, result = []) {
 for (let i = 0, length = arr.length; i < length; i++) {
 const value = arr[i];
@@ -209,6 +215,11 @@ var tmp = [];
 for (var i = 0; i < arr.length; i++){tmp[i] = arr[i].slice()};
 return tmp;
 };
+function copy_array(arr){
+let tmp = [];
+for (var i = 0; i < arr.length; i++){tmp[i] = arr[i]};
+return tmp;
+}
 // Function that generates array (similar to numpy.linspace).
 function makeArr(startValue, stopValue, cardinality) {
 var arr = [];
