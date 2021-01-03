@@ -72,6 +72,7 @@ this.line_auc[index] = simpson_auc(line,this.frequency);
 this.auc[index] = this.total_auc[index] - this.line_auc[index];
 };
 get_normalized_current_array(index){
+this.norm_current.array[index] = [];
 for(var j = 0; j<this.current.array[index].length; ++j){this.norm_current.array[index][j] = this.current.array[index][j] - this.min_values[index][0]};
 };
 
@@ -125,14 +126,26 @@ fscav_data.linear_fit_parameters = linear_fit_parameters;
 fscav_data.concentration.array = fscav_data.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
 };
 
-get_snn_fit(div, epochs, learning_rate, layer_size, patience, min_delta, dropout_rate, std_noise, status_id){if(this.state = 'fit'){
-//Define shallow neural network model.
+get_snn_fit(div, epochs, learning_rate, layer_size, patience, min_delta, dropout_rate, std_noise, status_id, snn_type){if(this.state = 'fit'){
 var self = this;
-this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array); //Parameters included in the training.
-this.snn_model = tf.sequential({layers: [tf.layers.gaussianNoise({stddev:std_noise, inputShape: [4]}), tf.layers.dense({units: layer_size, activation: 'relu'}),
-tf.layers.gaussianDropout({rate:dropout_rate}), tf.layers.dense({units: layer_size, activation: 'relu'}), tf.layers.dense({units: 1})]});
+this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array);
+if(snn_type === false){this.define_new_snn_model(std_noise, layer_size, dropout_rate); this.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id);}
+else{tf.loadLayersModel("TensorFlowModels/dnn_fscav.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id))};
+}};
+
+define_new_snn_model(std_noise, layer_size, dropout_rate){
+this.snn_model = tf.sequential({layers: [tf.layers.gaussianNoise({stddev:std_noise, inputShape: [4]}),
+tf.layers.dense({units: layer_size, activation: 'relu'}),tf.layers.gaussianDropout({rate:dropout_rate}), tf.layers.dense({units: layer_size, activation: 'relu'}),
+tf.layers.dense({units: 1})]});
+};
+
+get_loaded_model(model, std_noise, dropout_rate){
+this.snn_model = model;
+this.snn_model.layers[0].outboundNodes[0].outboundLayer.stddev = std_noise; // Change Gaussian STD of noise.
+this.snn_model.layers[2].outboundNodes[0].outboundLayer.rate = dropout_rate; //Change the dropout rate.
+};
+compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id){
 this.snn_model.compile({optimizer: tf.train.adam(learning_rate), loss: tf.losses.meanSquaredError, metrics: [tf.metrics.meanSquaredError]});
-// Fit the model.
 const data = tf.tensor(transpose(this.normalised_dataset[0]));
 const labels = tf.tensor(this.normalised_labels[0]);
 this.snn_model.fit(data, labels, {epochs: epochs, validationSplit:0.1, callbacks: tf.callbacks.earlyStopping({monitor: 'val_loss', patience: patience, minDelta: min_delta})}).then(info => {
@@ -140,7 +153,7 @@ self.update_fitting_status(status_id);
 this.snn_fit_parameters[0] = [info.history.loss, info.history.val_loss];
 self.get_snn_fitting_metrics(div);
 });
-}};
+};
 
 get_snn_fitting_metrics(div){if(this.state = 'fit'){
 // Function to calculate and plot the predictions of the snn with the train data. Important: good predictions do not mean it will perform well with other data.

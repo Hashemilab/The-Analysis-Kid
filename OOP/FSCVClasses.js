@@ -68,8 +68,10 @@ this.plot_layout.yaxis = {
 title:'Samples'
 };
 };
+console.time('plot');
 Plotly.newPlot(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
 _(div).on('plotly_click', function(data){main_graph_clicked(data)});
+console.timeEnd('plot');
 };
 
 change_color_palette(new_color_palette, div){

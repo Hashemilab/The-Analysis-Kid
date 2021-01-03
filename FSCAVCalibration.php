@@ -161,8 +161,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <div class="col">
 <label for="peak_width" style="width:59%">Model type:</label>
 <select id="model_type_selection" style="float: right;width:39%" data-toggle="tooltip" title="Model used to fit the calibration signals to the concentration labels">
-<option value="linear_fit">Linear fit</option>
-<option value="shallow_neural_networks">SNN</option>
+<option value="linear_fit" data-toggle="tooltip" title="Linear fit between calculated charge and concentration labels.">Linear fit</option>
+<option value="shallow_neural_networks" data-toggle="tooltip" title="Use of a shallow neural network (SNN). &#x0a;Fit the concentration labels to several parameters from FSCAV signals.">SNN</option>
 </select>
 <label for="export_tf_model_button" style="width:59%">TensorFlow model:</label>
 <button id="export_tf_model_button" onclick="export_tf_model()" data-toggle="tooltip" title="Close the window">Export model</button>
@@ -187,11 +187,17 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <input style="width:30%" type="number" step="0.01" min=0 id="min_delta" value=0.01 data-toggle="tooltip" title="Minimum required improvement of the loss for the SNN to keep training."/>
 <label for="dropout_rate" style="width:59%">Dropout rate:</label>
 <input style="width:30%" type="number" step="0.1" id="dropout_rate" value=0.2 min=0 max=1 data-toggle="tooltip" title="Dropout rate of units in the SNN during training.&#x0a;Allows to reduce overfitting, although it will likely require more iterations to converge."/>
+<label for="multielectrode" style="width:59%">Use pretraining:</label>
+<button class="multielectrode_selection" id = multielectrode style="width:30%" data-toggle="tooltip" title="When enabled, the SNN will be pretrained with post calibrations from previous electrodes.">Off</button> <input type="checkbox" hidden id="multielectrode_checkbox">
 </div>
 </div>
 <br>
 <p style="text-align:center">
 <button onclick="peak_configuration_close_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Close</button>
+</p>
+<p style="font-size:10px">
+Shallow neural networks (SNN) pretrained with post calibrations from other electrodes are trained with a learning rate of 0.001 and a layer size of 64 neurons.
+The layer size cannot be changed when selecting the SNN multielectrode fitting model. Changing it will have no effect over the SNN. Changing the learning rate will only affect future training with the imported signals.
 </p>
 </div>
 </div>
@@ -231,6 +237,19 @@ $('.max_min_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
 graph_selection_changed(this.id);
+});
+
+$(document).on("click", '.multielectrode_selection', function(){
+if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
+$(this).css('background-color','');
+$(this).css('color','');
+$(this).html('Off');
+} else{
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+$(this).html('On');
+};
+_("multielectrode_checkbox").checked = !_("multielectrode_checkbox").checked;
 });
 
 $(document).on("click", '.fit_predict_selection', function(){
@@ -304,14 +323,14 @@ fscav_data.plot_graph('cv_graph');
 
 function predict_button_pushed(){
 if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_parameters)}
-else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)};// slot for neural network model.
+else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)};
 };
 
 function fit_button_pushed(){
 _('fit_state_text').innerHTML = 'Fitting...';
 if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
-else{fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), parseInt(_('layer_size').value), parseInt(_('patience').value),
-parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text')};
+else if(_('model_type_selection').value =='shallow_neural_networks'){fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), parseInt(_('layer_size').value), parseInt(_('patience').value),
+parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text', _("multielectrode_checkbox").checked)}
 };
 
 function show_fitting_button_pushed(){
@@ -329,7 +348,9 @@ function previous_cv_clicked(){if(fscav_data.graph_index>0){--fscav_data.graph_i
 function next_cv_clicked(){if(fscav_data.graph_index<fscav_data.number_of_files-1){++fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
 
 function peak_configuration_button_pushed(){_('peak_configuration_modal_window').style.display = "block"};
-function peak_configuration_close_pushed(){_('peak_configuration_modal_window').style.display = "none";}
+function peak_configuration_close_pushed(){_('peak_configuration_modal_window').style.display = "none";};
+
+
 </script>
 
 <script>
