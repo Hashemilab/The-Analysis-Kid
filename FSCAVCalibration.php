@@ -349,8 +349,6 @@ function next_cv_clicked(){if(fscav_data.graph_index<fscav_data.number_of_files-
 
 function peak_configuration_button_pushed(){_('peak_configuration_modal_window').style.display = "block"};
 function peak_configuration_close_pushed(){_('peak_configuration_modal_window').style.display = "none";};
-
-
 </script>
 
 <script>

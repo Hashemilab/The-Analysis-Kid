@@ -117,9 +117,13 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 <div class="col">
 <h5>Export Panel</h5>
 <hr>
-<button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;"  data-toggle="tooltip" title="Export filtered color plots">Filtered data</button>
+<button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;"  data-toggle="tooltip" title="Export filtered color plots">Color plot</button>
 <button id="calibration_download_button" class="download_type_button" data-toggle="tooltip" title="Export calibrated data" >Calibration</button>
-<button style="margin-top:5px;" onclick="export_as_xlsx_pushed()" style="float:right;" data-toggle="tooltip" title="Download selected data as XLSX">Export as XLSX</button>
+<button style="margin-top:5px;" onclick="export_pushed()" style="float:right;" data-toggle="tooltip" title="Download selected data as XLSX">Export</button>
+<select id="export_format" style="float: right;" data-toggle="tooltip" title="Select format to export color plot. Calibrations are always exported to XLSX.">
+<option value="txt">TXT</option>
+<option value="xlsx">XLSX</option>
+</select>
 <hr>
 <button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" data-toggle="tooltip" title="Open Michaelis Menten application with the average trace obtained from the calibrations" >Open Reuptake Analysis</button>
 <select id="kinetic_select_signal_button" style="float: right;" data-toggle="tooltip" title="Select concentration trace to open kinetic analysis">
@@ -591,9 +595,9 @@ surface = surface.toFixed(2);
 _('electrode_surface').value = surface;
 }};
 
-function export_as_xlsx_pushed(){
+function export_pushed(){
 if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}
-else{loaded_data.export_data()};
+else{fscv_data.export_data(_('export_format').value)};
 }
 </script>
 

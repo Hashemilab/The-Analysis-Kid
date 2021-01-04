@@ -75,15 +75,4 @@ return result;
 };
 
 
-
-this.export_data = function(){
-var ws_name, ws, wb = XLSX.utils.book_new();
-for(var i=0;i<this.number_of_files;++i){
-ws_name = this.names_of_files[i];
-ws = XLSX.utils.aoa_to_sheet(this.data_array[i]);
-XLSX.utils.book_append_sheet(wb, ws, ws_name);
-}
-var filename = "Filtered_color_plots_hashemilab.xlsx";
-XLSX.writeFile(wb, filename);
-}
 };

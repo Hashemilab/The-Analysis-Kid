@@ -68,10 +68,8 @@ this.plot_layout.yaxis = {
 title:'Samples'
 };
 };
-console.time('plot');
 Plotly.newPlot(div, graph_data, this.plot_layout, this.plot_settings.plot_configuration);
 _(div).on('plotly_click', function(data){main_graph_clicked(data)});
-console.timeEnd('plot');
 };
 
 change_color_palette(new_color_palette, div){
@@ -125,8 +123,30 @@ Plotly.relayout(div, this.plot_layout);
 this.plot_layout.shapes = [];
 };
 
+export_data(type){
+if(type === "xlsx"){this.export_data_xlsx()}
+else{this.export_data_txt()};
 };
 
+export_data_xlsx(){
+let ws, wb = XLSX.utils.book_new();
+ws = XLSX.utils.aoa_to_sheet(this.current.array);
+XLSX.utils.book_append_sheet(wb, ws, 'Color plot');
+XLSX.writeFile(wb, this.name_of_file.split('.')[0]+".xlsx");
+};
+
+export_data_txt(){
+let text = '', i, j;
+for(i=0; i<this.current.array.length;++i){
+for(j=0; j<this.current.array[i].length;++j){
+text+=this.current.array[i][j]+'\t';
+};
+text+='\n';
+};
+download_text(text, this.name_of_file.split('.')[0]+'.txt');
+};
+
+};
 class HL_FSCV_1D_DATA{
 constructor(units, frequency, type){
 //Data properties.

@@ -2,6 +2,16 @@
 function _(el) {
 return document.getElementById(el);
 }
+//Download txt
+function download_text(text, name) {
+let link = document.createElement('a');
+link.href = window.URL.createObjectURL(new Blob([text], {type: 'text/plain'}));
+link.setAttribute('download', name);
+document.body.appendChild(link);
+link.dispatchEvent(new MouseEvent('click'));
+window.URL.revokeObjectURL(link.href);
+document.body.removeChild(link);
+};
 /** Create a heap array from the array ar. */
 function allocFromArray(ar) {
 let heapArray = alloc(ar.length * ar.BYTES_PER_ELEMENT);
