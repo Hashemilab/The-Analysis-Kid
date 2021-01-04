@@ -132,7 +132,7 @@ export_data_xlsx(){
 let ws, wb = XLSX.utils.book_new();
 ws = XLSX.utils.aoa_to_sheet(this.current.array);
 XLSX.utils.book_append_sheet(wb, ws, 'Color plot');
-XLSX.writeFile(wb, this.name_of_file.split('.')[0]+".xlsx");
+XLSX.writeFile(wb, this.name_of_file+".xlsx");
 };
 
 export_data_txt(){
@@ -143,7 +143,7 @@ text+=this.current.array[i][j]+'\t';
 };
 text+='\n';
 };
-download_text(text, this.name_of_file.split('.')[0]+'.txt');
+download_text(text, this.name_of_file+'.txt');
 };
 
 };
