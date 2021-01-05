@@ -49,7 +49,7 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 <div class="row">
 <label for="frequency" style="width: 33%;">Freq. (Hz):</label>
-<label for="cycling_frequency" style="width: 33%;">Cyc. freq. (Hz):</label>
+<label for="cycling_frequency" style="width: 33%;">Cyc freq. (Hz):</label>
 <label for="current_units" style="width: 33%;">Units:</label>
 <input type="number" step="1" min=1 name="frequency" id="frequency" style="width: 33%;"  value=500000 data-toggle="tooltip" title="Sampling frequency of the acquisition" />
 <input type="number" step="1" min=1 name="cycling_frequency" id="cycling_frequency" style="width: 33%;" value=10 data-toggle="tooltip" title="Frequency at which the voltage cycle is applied"/>
@@ -87,17 +87,25 @@ $(".se-pre-con").fadeOut("slow");
 <button id="heatmap" class="type_of_plot_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Type of graph: 2D heatmap">2D</button>
 &nbsp;
 <button id="contour" class="type_of_plot_selection" data-toggle="tooltip" title="Type of graph: contour plot">Contour</button>
+&nbsp;
+<select id="color_selection_button" style="float: right;" onchange="color_palette_changed()" data-toggle="tooltip" title="Select the color palette used for the color plot.">
+<option value="Custom">Custom</option>
+<option value="Parula">Parula</option>
+<option value="Jet">Jet</option>
+<option value="Hot">Hot</option>
+<option value="YlOrRd">YlOrRd</option>
+<option value="YlGnBu">YlGnBu</option>
+<option value="RdBu">RdBu</option>
+<option value="Picnic">Picnic</option>
+<option value="Greys">Greys</option>
+<option value="Greens">Greens</option>
+<option value="Electric">Electric</option>
+<option value="Earth">Earth</option>
+<option value="Bluered">Bluered</option>
+<option value="Blackbody">Blackbody</option>
+</select>
 </div>
 
-<div class="row" style="margin-top:5px">
-<button id="Custom" class="color_palette_selection" style="background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Color palette: custom">Custom</button>
-&nbsp;
-<button id="Portland" class="color_palette_selection" data-toggle="tooltip" title="Color palette: Portland">Portland</button>
-&nbsp;
-<button id="Jet" class="color_palette_selection" data-toggle="tooltip" title="Color palette: jet">Jet</button>
-&nbsp;
-<button id="Hot" class="color_palette_selection" data-toggle="tooltip" title="Color palette: hot">Hot</button>
-</div>
 <div class="row" style="margin-top:5px">
 <button id="graph_point_selection" class="graph_point_selection" data-toggle="tooltip" title="Select horizontal traces from the color plot &#x0a; by interactively clicking on the graph">
 Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></button>
@@ -215,9 +223,6 @@ Filtration Panel
 <button style="font-size:12px" onclick="delete_all_concentration_pushed()" data-toggle="tooltip" title="Delete all calibrations">Delete all</button>
 </div>
 </div>
-
-<br>
-
 <div>
 <p class="footdash">Application created by The Hashemi Lab, Imperial College London & University of South Carolina.</p>
 </div>
@@ -346,14 +351,12 @@ plot_type = this.id;
 fscv_data.change_type_of_plot(plot_type, "main_graph");
 });
 
-$(document).on("click", '.color_palette_selection', function(){
-$('.color_palette_selection').css('background-color','');
-$('.color_palette_selection').css('color','');
-$(this).css('background-color','#3f51b5');
-$(this).css('color','white');
-color_palette = this.id;
+
+
+function color_palette_changed(){
+color_palette = _('color_selection_button').value;
 fscv_data.change_color_palette(color_palette, "main_graph");
-});
+};
 
 $(document).on("click", '.graph_point_selection', function(){
 if ($(this).css("background-color") == 'rgb(63, 81, 181)'){

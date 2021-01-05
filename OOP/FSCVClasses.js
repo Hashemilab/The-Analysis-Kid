@@ -11,7 +11,8 @@ this.snr = 0;
 //Plotting properties.
 this.plot_type = plot_type;
 this.palettes = new HL_FSCV_COLORPALETTE();
-if (color_palette == 'Custom'){color_palette = this.palettes.custom};
+if (color_palette == 'Custom'){color_palette = this.palettes.custom}
+else if(color_palette =='Parula'){color_palette = this.palettes.parula};
 this.color_palette = color_palette;
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.plot_layout = this.plot_settings.plot_layout;
@@ -74,6 +75,7 @@ _(div).on('plotly_click', function(data){main_graph_clicked(data)});
 
 change_color_palette(new_color_palette, div){
 if (new_color_palette == 'Custom'){this.color_palette = this.palettes.custom}
+else if(new_color_palette =='Parula'){this.color_palette = this.palettes.parula}
 else {this.color_palette = new_color_palette;}
 this.graph_color_plot(div);
 };
