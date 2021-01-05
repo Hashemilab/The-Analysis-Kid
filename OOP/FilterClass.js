@@ -64,7 +64,7 @@ x:this.frequency_x.array,
 y:this.frequency_y.array,
 type:'heatmap',
 colorscale:'Greys',
-colorbar: {title:this.spectrum_magnitude.units},
+colorbar: {len:0.5, xpad:30, title:this.spectrum_magnitude.units},
 }];
 this.spectrum_layout = this.plot_settings.plot_layout;
 this.spectrum_layout.title.text = "<b>2D FFT Magnitude Spectrum</b>";
