@@ -228,7 +228,7 @@ this.graph_index = 0;
 calibrate_trace(div, index, fscv_transient, frequency, coefficient, units, name){
 this.graph_index = this.counter++;
 var array = scalar_product(fscv_transient.current.array[index-1], coefficient);
-this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.plotly_colours[index-1], name, units);
+this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.colours[index-1], name, units);
 };
 
 // EXPERIMENTAL METHODS FOR KINETIC CALIBRATION.
