@@ -160,6 +160,7 @@ this.type = type;
 this.counter = 0;
 //Plotting properties.
 this.plot_settings = new HL_PLOT_SETTINGS();
+this.palettes = new HL_FSCV_COLORPALETTE();
 }
 //Methods.
 add_trace(array, frequency, div, origin_file){
@@ -188,7 +189,7 @@ layout.yaxis.title = this.current.name +" ("+this.current.units+")";
 layout.title.text = "<b>"+this.type+"</b>";
 Plotly.relayout(div, layout);
 Plotly.addTraces(div, [{y: this.current.array[this.counter], x:this.time.array[this.counter],
-name:"("+String(this.counter+1)+")", text:this.origin_file_array[this.counter]}]);
+name:"("+String(this.counter+1)+")", text:this.origin_file_array[this.counter], line:{color: this.palettes.colors[this.counter%this.palettes.colors.length]}}]);
 };
 
 delete_trace(div){
@@ -228,7 +229,8 @@ this.graph_index = 0;
 calibrate_trace(div, index, fscv_transient, frequency, coefficient, units, name){
 this.graph_index = this.counter++;
 var array = scalar_product(fscv_transient.current.array[index-1], coefficient);
-this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.colours[index-1], name, units);
+this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1],
+this.palettes.colors[(index-1)%this.palettes.colors.length], name, units);
 };
 
 // EXPERIMENTAL METHODS FOR KINETIC CALIBRATION.
