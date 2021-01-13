@@ -151,6 +151,17 @@ dA:
 <input type="number" id="beta_2" step=0.01 min=0 max=1 style="width: 40%;" value=0 onchange="values_changed()" data-toggle="tooltip" title="Initial value of beta for concentrations above the threshold" />
 </div>
 </div>
+<hr style="width:100%;text-align:left;margin-left:0;">
+<div class="row">
+<div class="col">
+<label for="step_r" style="width: 40%;">Slider step R(t) :</label>
+<input type="number" step=0.01 min=0 id="step_r" style="width: 40%;" value=0.05 onchange="change_release_step_button_pushed()" data-toggle="tooltip" title="Time step of the R(t) slider" />
+</div>
+<div class="col">
+<label for="step_a" style="width: 40%;">Slider step A(t) :</label>
+<input type="number" id="step_a" step=0.01 min=0 style="width: 40%;" value=0.05 onchange="change_autoreceptors_step_button_pushed()" data-toggle="tooltip" title="Time step of the A(t) slider" />
+</div>
+</div>
 <br>
 <p style="text-align:center">
 <button style="width:15%;" onclick="alpha_close_button_pushed()">Close</button>
@@ -217,6 +228,14 @@ if(mm_concentration.autoreceptors_slider_values.length<5){mm_concentration.add_s
 };
 function remove_break_autoreceptors_button_pushed(){
 if(mm_concentration.autoreceptors_slider_values.length>2){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
+};
+
+function change_release_step_button_pushed(){
+mm_concentration.change_slider_step("release_rate_slider", "release_rate_slider", parseFloat(_('step_r').value));
+};
+
+function change_autoreceptors_step_button_pushed(){
+mm_concentration.change_slider_step("autoreceptors_slider", "autoreceptors_slider", parseFloat(_('step_a').value));
 };
 
 

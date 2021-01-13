@@ -75,6 +75,11 @@ this.reset_slider(div, type);
 this.remove_input_field(list_div);
 };
 
+change_slider_step(div, type, step){
+this[type].step = step;
+this.reset_slider(div, type);
+};
+
 reset_slider(div, type){
 _(div).noUiSlider.destroy();
 noUiSlider.create(_(div), this[type]);
