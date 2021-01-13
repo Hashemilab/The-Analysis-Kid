@@ -261,7 +261,7 @@ var ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
 // Sheet with kinetic parameters.
 ws_name = "Kinetic parameters";
-aoa = [['Alpha 1', 'Alpha theshold', 'Alpha 2', 'Beta 1', 'Beta threshold', 'Beta 2', 'Vmax1', 'Km1', 'Vmax2', 'Km2'], flatten([this.alpha_beta, this.parameters])];
+aoa = [['Alpha 1', 'Alpha 2', 'Alpha threshold', 'Beta 1', 'Beta 2', 'Beta threshold', 'Vmax1', 'Km1', 'Vmax2', 'Km2'], flatten([this.alpha_beta, this.parameters])];
 ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
 // Sheet with R and A breaks.

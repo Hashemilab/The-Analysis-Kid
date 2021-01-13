@@ -392,9 +392,9 @@ if(!opt){opt={}};
 if(!opt.maxIter){opt.maxIter=1000};
 if(!opt.step){
 opt.step = Parm0.map(function(p){return p/100});
-opt.step = opt.step.map(function(si){if(si==0){return 1}else{ return si}});
+opt.step = opt.step.map(function(si){if(si==0){return 1}else{return si}});
 };
-if(!opt.trainable){opt.trainable = uniform_array(Parm0.length,1)};
+if(!opt.trainable){opt.trainable = uniform_array(Parm0.length, 1)};
 if(!opt.objFun){opt.objFun=function(y,yp){return y.map(function(yi,i){return Math.pow((yi-yp[i]),2)}).reduce(function(a,b){return a+b})}}; //Sum squared errors.
 if(!opt.max_limits){opt.max_limits = uniform_array(Parm0.length, Infinity)};
 if(!opt.min_limits){opt.min_limits = uniform_array(Parm0.length, -Infinity)};
