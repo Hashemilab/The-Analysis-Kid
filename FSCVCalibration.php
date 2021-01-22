@@ -112,6 +112,11 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 &nbsp;
 <button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled  data-toggle="tooltip" title="Calibration of color plot accounting for mass diffusivity">Kinetic calibration</button>
 </div>
+
+<div class="row" style="margin-top:5px">
+<button id="graph_configuration" onclick="graph_configuration_button_pushed()" data-toggle="tooltip" title="Open graph configuration modal window">Graph config.</button>
+</div>
+
 </div>
 </div>
 </div>
@@ -264,12 +269,10 @@ Filtration Panel
 </div>
 <br>
 <p style="text-align:center">
-<button style="width:15%;" onclick="kinetic_calibration_pushed()" data-toggle="tooltip" title="Apply kinetic calibration ">Calibrate</button>
-<button style="width:20%;" onclick="kinetic_show_limits_pushed()" data-toggle="tooltip" title="Show integration limits in the graph ">Show limits</button>
-<button style="width:15%;" onclick="kinetic_calibration_close_pushed()" data-toggle="tooltip" title="Close window ">Close</button>
+<button style="width:15%;" onclick="kinetic_calibration_pushed()" data-toggle="tooltip" title="Apply kinetic calibration.">Calibrate</button>
+<button style="width:20%;" onclick="kinetic_show_limits_pushed()" data-toggle="tooltip" title="Show integration limits in the graph.">Show limits</button>
+<button style="width:15%;" onclick="kinetic_calibration_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
 </p>
-
-
 </div>
 </div>
 
@@ -340,6 +343,28 @@ Filtration Panel
 </div>
 </div>
 
+<div id="graph_config_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<p><b>Colorbar settings</b></p>
+<hr>
+<label for="max_color_limit" style="width:16%">Max value:</label>
+<input style="width:16%" type="number" id="max_color_limit" data-toggle="tooltip" title="Maximum limit of colorbar."/>
+<label for="mid_color_limit" style="width:16%">Mid value:</label>
+<input style="width:16%" type="number" id="mid_color_limit" data-toggle="tooltip" title="Middle value of colorbar."/>
+<label for="min_color_limit" style="width:16%">Min value:</label>
+<input style="width:16%" type="number" id="min_color_limit" data-toggle="tooltip" title="Minimum limit of colorbar."/>
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="apply_colorbar_limits_button_pushed()" data-toggle="tooltip" title="Close window.">Apply</button>
+<button style="width:15%;" onclick="graph_configuration_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -368,6 +393,8 @@ $(this).css('color','white');
 };
 _("graph_selection_checkbox").checked = !_("graph_selection_checkbox").checked;
 });
+
+
 
 $(document).on("click", '.filter_selection', function(){
 $('.filter_selection').css('background-color','');
@@ -559,9 +586,17 @@ function config_2dfft_close_pushed(){
 _('2dfft_config_modal_window').style.display = "none";
 };
 
+function graph_configuration_button_pushed(){
+_('graph_config_modal_window').style.display = "block";
+};
+
+function graph_configuration_close_pushed(){
+_('graph_config_modal_window').style.display = "none";
+};
+
 function calculate_snr_button_pushed(){
 fscv_data.get_snr(parseInt(_('snr_start_sample').value), parseInt(_('snr_end_sample').value), 'snr_value');
-}
+};
 
 function kinetic_show_limits_pushed(){
 if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
@@ -598,10 +633,14 @@ surface = surface.toFixed(2);
 _('electrode_surface').value = surface;
 }};
 
+function apply_colorbar_limits_button_pushed(){
+fscv_data.change_colorbar_limits("main_graph", parseFloat(_('max_color_limit').value), parseFloat(_('mid_color_limit').value), parseFloat(_('min_color_limit').value));
+};
+
 function export_pushed(){
 if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}
 else{fscv_data.export_data(_('export_format').value)};
-}
+};
 </script>
 
 <script>

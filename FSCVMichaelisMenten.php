@@ -111,7 +111,7 @@ dA:
 </div>
 </div>
 <div>
-<p class="footdash">Application created by The Hashemi Lab, Imperial College London.</p>
+<p class="footdash">Application created by The Hashemi Lab, Imperial College London & University of South Carolina.</p>
 </div>
 </div>
 

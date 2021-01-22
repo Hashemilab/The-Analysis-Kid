@@ -16,6 +16,7 @@ else if(color_palette =='Parula'){color_palette = this.palettes.parula};
 this.color_palette = color_palette;
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.plot_layout = this.plot_settings.plot_layout;
+this.color_limits = [];
 };
 
 // Methods of the data.
@@ -27,7 +28,10 @@ x:this.cycling_time.array,
 type:this.plot_type,
 colorscale:this.color_palette,
 colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'},
-zsmooth: false
+zsmooth: false,
+zmax: this.color_limits[0],
+zmid: this.color_limits[1],
+zmin: this.color_limits[2]
 }];
 
 this.plot_layout = this.plot_settings.plot_layout;
@@ -82,6 +86,11 @@ this.graph_color_plot(div);
 
 change_type_of_plot(new_plot_type, div){
 this.plot_type = new_plot_type;
+this.graph_color_plot(div);
+};
+
+change_colorbar_limits(div, max, mid, min){
+this.color_limits = [max, mid, min];
 this.graph_color_plot(div);
 };
 
