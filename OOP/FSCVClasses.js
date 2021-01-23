@@ -29,9 +29,6 @@ type:this.plot_type,
 colorscale:this.color_palette,
 colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'},
 zsmooth: false,
-zmax: this.color_limits[0],
-zmid: this.color_limits[1],
-zmin: this.color_limits[2]
 }];
 
 this.plot_layout = this.plot_settings.plot_layout;
@@ -89,9 +86,15 @@ this.plot_type = new_plot_type;
 this.graph_color_plot(div);
 };
 
-change_colorbar_limits(div, max, mid, min){
-this.color_limits = [max, mid, min];
+change_colorbar_limits(div, min, max){
+this.color_limits = [min, max];
+console.log(this.color_limits);
 this.graph_color_plot(div);
+};
+
+change_color_palette(){
+let lin_array = flatten(this.current.array), max_current = index_of_max(lin_array)[0], min_current = index_of_min(lin_array)[0];
+ 
 };
 
 invert_current_values(div){
