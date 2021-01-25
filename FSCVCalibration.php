@@ -112,10 +112,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 &nbsp;
 <button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled  data-toggle="tooltip" title="Calibration of color plot accounting for mass diffusivity">Kinetic calibration</button>
 </div>
-
-
-
 </div>
+
 </div>
 </div>
 <br>
@@ -136,7 +134,11 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 <option value="xlsx">XLSX</option>
 </select>
 <hr>
-<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" data-toggle="tooltip" title="Open Michaelis Menten application with the average trace obtained from the calibrations" >Open Reuptake Analysis</button>
+<button style="margin-top:5px;" onclick="open_kinetic_analysis_pushed()" data-toggle="tooltip" title="Open Michaelis Menten application with the selected trace obtained from the calibrations" >Open Reuptake Analysis</button>
+<select id="kinetic_select_type_button" style="float: right;" data-toggle="tooltip" title="Select concentration trace to open kinetic analysis">
+<option value="one_reuptake">One reuptake</option>
+<option value="two_reuptakes">Two reuptakes</option>
+</select>
 <select id="kinetic_select_signal_button" style="float: right;" data-toggle="tooltip" title="Select concentration trace to open kinetic analysis">
 <option value="average">Average</option>
 </select>
@@ -581,16 +583,18 @@ parseFloat(_('diffusion_coefficient').value), parseFloat(_('absorption_strength'
 
 function open_kinetic_analysis_pushed(){
 fscv_concentration.calculate_average_trace();
-let input_trace = new HL_FSCV_ARRAY(), time_array;
-var mm_window = window.open(encodeURI('FSCVMichaelisMenten.php'), "");
+let input_trace = new HL_FSCV_ARRAY(), time_array, type;
+if (_('kinetic_select_type_button').value == 'one_reuptake'){type = 'FSCVMichaelisMenten1.php'}
+else{type = 'FSCVMichaelisMenten2.php'};
+var mm_window = window.open(encodeURI(type), "");
 if (_('kinetic_select_signal_button').value == 'average'){input_trace = fscv_concentration.average_concentration, time_array = fscv_concentration.time.array[0]}
 else {
 input_trace.array = fscv_concentration.concentration.array[_('kinetic_select_signal_button').value];
 input_trace.units = fscv_concentration.concentration.units[_('kinetic_select_signal_button').value];
 input_trace.name = fscv_concentration.concentration.name; time_array = fscv_concentration.time.array[_('kinetic_select_signal_button').value];
-}
+};
 mm_window.input_trace = input_trace;
-mm_window.time_array = time_array
+mm_window.time_array = time_array;
 };
 
 function calculate_surface(){

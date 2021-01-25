@@ -14,10 +14,10 @@
 <script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
 <script src = "OOP/LOADClass.js"></script>
-<script src = "OOP/MMClass.js"></script>
+<script src = "OOP/MMClass2.js"></script>
 
 <head>
-<title>Michaelis Menten Analysis</title>
+<title>Kinetic Analysis</title>
 <link rel="shortcut icon" href="Images/cv.png"/>
 <link type="text/css" rel="stylesheet" href="Styling/styles.css"/>
 <link rel="stylesheet" href="Styling/bootstrap.min.css"/>
@@ -37,7 +37,7 @@ $(".se-pre-con").fadeOut("slow");
 
 <div id="wrapper" style="background-color: #eff4f7;">
 <div class="header" style="height:10vh;">
-<h1>Michaelis Menten Analysis</h1>
+<h1>Kinetic Analysis</h1>
 </div>
 <br>
 <div style = "margin:auto; width: 90%;">
@@ -51,13 +51,6 @@ $(".se-pre-con").fadeOut("slow");
 </div>
 <div class="row">
 <p id="status"> Upload the files.</p>
-</div>
-<div class="row">
-<div class="eq-c" style="border-style: solid;">
-<div class="fraction"> <span class="fup">d S(t)</span> <span class="bar">/</span> <span class="fdn">dt</span> </div>
- = R(t) · (1-A(t)) - &alpha; · <div class="fraction"> <span class="fup">V<sub>max1</sub> · S(t)</span> <span class="bar">/</span> <span class="fdn">K<sub>m1</sub> + S(t)</span> </div>
-- &beta; · <div class="fraction"> <span class="fup">V<sub>max2</sub> · S(t)</span> <span class="bar">/</span> <span class="fdn">K<sub>m2</sub> + S(t)</span> </div>
-</div>
 </div>
 <br>
 <div class="row">
@@ -89,12 +82,16 @@ dR:
 <div id="autoreceptors_list" data-toggle="tooltip" title="Slopes of the fraction of autoreceptors">
 dA:
 <input type="number" id="autoreceptors_slider_input_1" style="width:18%;" value=0 onchange="values_changed()" /><input type="number" id="autoreceptors_slider_input_2" style="width:18%;" value=0 onchange="values_changed()" /></div>
-
 <br>
+<div>
 <button onclick="config_open_button_pushed()" data-toggle="tooltip" title=" Open fitting configuration ">Config.</button>
 <button onclick="optimisation_button_pushed()" data-toggle="tooltip" title="Open configuration for the automatic optimization of parameters">Optimisation</button>
 <button onclick="export_as_xlsx_pushed()" data-toggle="tooltip" title="Export reuptake analysis as XLSX">Export as XLSX</button>
+<button onclick="info_pushed()" data-toggle="tooltip" title="Information on the reuptake kinetics.">Info</button>
+</div>
+<div style="margin-top:1.5%">
 <button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
+</div>
 </div>
 
 <div class="col-8">
@@ -164,7 +161,7 @@ dA:
 </div>
 <br>
 <p style="text-align:center">
-<button style="width:15%;" onclick="alpha_close_button_pushed()">Close</button>
+<button style="width:15%;" onclick="config_close_button_pushed()">Close</button>
 </p>
 </div>
 <br>
@@ -202,6 +199,29 @@ dA:
 <p style="text-align:center">
 <button style="width:15%;" onclick="optimisation_optimise_button_pushed()" data-toggle="tooltip" title="Apply optimization of the selected parameters">Optimise</button>
 <button style="width:15%;" onclick="optimisation_close_button_pushed()" data-toggle="tooltip" title="Close window">Close</button>
+</p>
+</div>
+</div>
+
+<div id="information_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<p style="margin:5px"> The equation used by the software is the following: </p>
+<div class="eq-c" style="border-style: solid;margin:auto;">
+<div class="fraction"> <span class="fup">d S(t)</span> <span class="bar">/</span> <span class="fdn">dt</span> </div>
+ = R(t) · (1-A(t)) - &alpha; · <div class="fraction"> <span class="fup">V<sub>max1</sub> · S(t)</span> <span class="bar">/</span> <span class="fdn">K<sub>m1</sub> + S(t)</span> </div>
+- &beta; · <div class="fraction"> <span class="fup">V<sub>max2</sub> · S(t)</span> <span class="bar">/</span> <span class="fdn">K<sub>m2</sub> + S(t)</span> </div>
+</div>
+<p style="margin:5px"> S(t) is the concentration of the neurotransmitter in the extracellular space, R(t) is the evoked release rate of the neurotransmitter,
+A(t) is the fraction of occupied autoreceptors of the neurotransmitter, &alpha; and &beta;
+are the weights of the two reuptake mechanisms, and V<sub>max</sub> and K<sub>m</sub> are common Michaelis Menten reuptake parameters.
+A(t) can be set to zero if the neurotransmitter autoreceptors are not taken into account. Additionally, setting &beta;
+to 0 before and after the concentration threshold will also deactivate the second reuptake mechanism. </p>
+<p style="margin:5px"> The imported concentration units will determine V<sub>max</sub>, K<sub>m</sub> and R(t) units. Time units are set to seconds.</p>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="info_close_pushed()" data-toggle="tooltip" title="Close window">Close</button>
 </p>
 </div>
 </div>
@@ -264,7 +284,7 @@ function config_open_button_pushed(){
 _('config_modal_window').style.display = "block";
 };
 
-function alpha_close_button_pushed(){
+function config_close_button_pushed(){
 _('config_modal_window').style.display = "none";
 };
 
@@ -291,6 +311,14 @@ function export_as_xlsx_pushed(){
 mm_concentration.export_kinetic_parameters();
 };
 
+function info_pushed() {
+_('information_modal_window').style.display = "block";
+};
+
+function info_close_pushed(){
+_('information_modal_window').style.display = "none";
+};
+
 function reset_pushed(){
 location.reload();
 };
@@ -299,7 +327,7 @@ location.reload();
 <script>
 //Initialise objects.
 var loaded_data = new HL_LOAD_DATA("status");
-var mm_concentration = new HL_MICHAELIS_MENTEN();
+var mm_concentration = new HL_MICHAELIS_MENTEN2();
 var input_trace, time_array;
 //Initialise graphs.
 mm_concentration.initialise_graph("ct_graph");

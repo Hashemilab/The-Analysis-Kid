@@ -12,8 +12,11 @@ switch ($_SERVER['REQUEST_URI']) {
   case '/FSCVCalibration.php':
   include 'FSCVCalibration.php';
   break;
-  case '/FSCVMichaelisMenten.php':
-  include 'FSCVMichaelisMenten.php';
+  case '/FSCVMichaelisMenten1.php':
+  include 'FSCVMichaelisMenten1.php';
+  break;
+  case '/FSCVMichaelisMenten2.php':
+  include 'FSCVMichaelisMenten2.php';
   break;
   case '/SubmitContactForm.php':
   include 'SubmitContactForm.php';

@@ -117,7 +117,12 @@ The use of the applications in any other browser might generate errors and it is
 The application has a user-friendly pipeline to allow visualization, filtration, calibration and analysis of several FSCV signals. Find out more in the <a href="#documentation">documentation</a>. </li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVWindow()"> Open application</a> </li>
 <li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> The Michaelis Menten reuptake analysis can be opened from the FSCV Analysis application. Alternatively, it can also be accessed from the link below by uploading the export file provided by the FSCV Analysis. Find out how to do this in the video tutorials.</li>
-<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVMichaelisMenten()"> Open reuptake analysis</a> </li>
+<li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVMichaelisMenten()"> Open reuptake analysis</a>
+<select id="reuptake_type" style="float: right;" data-toggle="tooltip" title="Select the number of reuptake mechanisms.">
+<option value="one_reuptake">One reuptake</option>
+<option value="two_reuptakes">Two reutakes</option>
+</select>
+</li>
 </ul>
 </div>
 <div class="w3-half w3-margin-bottom w3-center">
@@ -220,7 +225,8 @@ window.open(encodeURI('FSCVCalibration.php'), "");
 };
 // Callback for the FSCV application.
 function FSCVMichaelisMenten(){
-window.open(encodeURI('FSCVMichaelisMenten.php'), "");
+if(_('reuptake_type').value == "one_reuptake"){window.open(encodeURI('FSCVMichaelisMenten1.php'), "")}
+else{window.open(encodeURI('FSCVMichaelisMenten2.php'))};
 };
 </script>
 

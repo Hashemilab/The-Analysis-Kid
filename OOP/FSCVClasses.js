@@ -94,7 +94,7 @@ this.graph_color_plot(div);
 
 change_color_palette(){
 let lin_array = flatten(this.current.array), max_current = index_of_max(lin_array)[0], min_current = index_of_min(lin_array)[0];
- 
+
 };
 
 invert_current_values(div){
@@ -475,7 +475,7 @@ var tmp = []; tmp.push(this.names); tmp.push(this.origin_file_array); tmp.push(m
 tmp.push(this.area_under_curve.array); tmp.push(...reg_params);
 aoa=transpose(tmp); aoa.unshift(head);
 ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name);
-var filename = "Calibration_hashemilab.xlsx";
+var filename = "Calibration_TAK.xlsx";
 XLSX.writeFile(wb, filename);
 };
 };

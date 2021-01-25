@@ -1,4 +1,4 @@
-class HL_MICHAELIS_MENTEN{
+class HL_MICHAELIS_MENTEN2{
 constructor(){
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.concentration_plot_state = 'block';
