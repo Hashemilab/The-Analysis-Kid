@@ -146,7 +146,7 @@ return s;
 };
 
 get_alpha_beta_values(param_1, param_2, s_threshold, s){
-if(s>s_threshold){return param_1} else{return param_2};
+if(s>s_threshold){return param_2} else{return param_1};
 };
 
 optimisation_parameters(epochs, learning_rate, train_array, parameters_id, min_limits_array, max_limits_array){
