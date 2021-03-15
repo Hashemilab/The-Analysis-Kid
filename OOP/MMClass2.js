@@ -136,10 +136,10 @@ arr.push(tmp);
 return flatten(arr);
 };
 
-generate_modelled_concentration(Rt, At, [vmax1, km1, vmax2, km2], [alpha_1, alpha_2, alpha_threshold, bata_1, beta_2, beta_threshold]){
+generate_modelled_concentration(Rt, At, [vmax1, km1, vmax2, km2], [alpha_1, alpha_2, alpha_threshold, beta_1, beta_2, beta_threshold]){
 var s = [this.basal_concentration], alpha, beta;
 for(var i=0;i<Rt.length-1;++i){
-alpha = this.get_alpha_beta_values(alpha_1, alpha_2, alpha_threshold), beta = this.get_alpha_beta_values(beta_1, beta_2, beta_threshold);
+alpha = this.get_alpha_beta_values(alpha_1, alpha_2, alpha_threshold, s[i]), beta = this.get_alpha_beta_values(beta_1, beta_2, beta_threshold, s[i]);
 s[i+1] = s[i] + (1/this.frequency)*(Rt[i]*(1-At[i]/100) - (alpha)*(vmax1*s[i])/(km1+s[i]) - (beta)*(vmax2*s[i])/(km2+s[i]));
 };
 return s;
