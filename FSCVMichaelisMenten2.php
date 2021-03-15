@@ -269,7 +269,7 @@ parseFloat(_('beta_2').value), parseFloat(_('beta_threshold').value)], parseFloa
 function include_pushed(){
 //get data from uploaded file.
 let data_array = transpose(loaded_data.data_array[0]);
-let input_trace = new HL_FSCV_ARRAY(data_array[1].slice(1), '', 'Concentration');
+input_trace = new HL_FSCV_ARRAY(data_array[1].slice(1), '', 'Concentration');
 time_array = data_array[0].slice(1);
 add_data(input_trace, time_array);
 };
