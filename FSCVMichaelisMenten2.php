@@ -238,13 +238,13 @@ else  {$('#ct_graph').hide(); $('#release_graph').show(); mm_concentration.conce
 });
 
 function add_break_release_button_pushed(){
-if(mm_concentration.release_rate_slider_values.length<5){mm_concentration.add_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")}
+if(mm_concentration.release_rate_slider_values.length<10){mm_concentration.add_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")}
 };
 function remove_break_release_button_pushed(){
 if(mm_concentration.release_rate_slider_values.length>2){mm_concentration.remove_slider_break("release_rate_slider", "release_rate_list", "release_rate_slider")};
 };
 function add_break_autoreceptors_button_pushed(){
-if(mm_concentration.autoreceptors_slider_values.length<5){mm_concentration.add_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
+if(mm_concentration.autoreceptors_slider_values.length<10){mm_concentration.add_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
 };
 function remove_break_autoreceptors_button_pushed(){
 if(mm_concentration.autoreceptors_slider_values.length>2){mm_concentration.remove_slider_break("autoreceptors_slider", "autoreceptors_list", "autoreceptors_slider")};
