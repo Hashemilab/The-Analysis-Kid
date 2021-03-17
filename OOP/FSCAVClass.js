@@ -311,14 +311,14 @@ export_to_xlsx(fscav_data_predict){if(this.state = 'fit'){
 var wb = XLSX.utils.book_new(), aoa;
 // Export fitting parameters.
 if(this.current.array?.length){
-aoa = transpose([this.auc, this.line_auc, arrayColumn(this.min_indexes, 0), arrayColumn(this.min_indexes, 1), arrayColumn(this.max_indexes, 0), this.origin_file_array, this.concentration.array]);
+aoa = transpose([this.auc, this.line_auc, arrayColumn(this.min_values, 0), arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0), this.origin_file_array, this.concentration.array]);
 aoa.unshift(['Charge above line ('+this.current.units+'· s)', 'Charge below line ('+this.current.units+'· s)', 'Interval start (sample)',  'Interval end (sample)', 'Max point (sample)',
 'File', this.concentration.name +' ('+this.concentration.units+')']); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "FSCAV Parameters")};
 // Export prediction parameters.
 if(fscav_data_predict.current.array?.length){
-aoa = transpose([fscav_data_predict.auc, fscav_data_predict.line_auc, arrayColumn(fscav_data_predict.min_indexes, 0), arrayColumn(fscav_data_predict.min_indexes, 1),
-arrayColumn(fscav_data_predict.max_indexes, 0), fscav_data_predict.origin_file_array]); aoa.unshift(['Charge above line ('+fscav_data_predict.current.units+'· s)',
-'Charge below line ('+fscav_data_predict.current.units+'· s)', 'Interval start (sample)',  'Interval end (sample)', 'Max point (sample)','File']);
+aoa = transpose([fscav_data_predict.auc, fscav_data_predict.line_auc, arrayColumn(fscav_data_predict.min_values, 0), arrayColumn(fscav_data_predict.min_values, 1),
+arrayColumn(fscav_data_predict.max_values, 0), fscav_data_predict.origin_file_array]); aoa.unshift(['Charge above line ('+fscav_data_predict.current.units+'· s)',
+'Charge below line ('+fscav_data_predict.current.units+'· s)', 'Interval start (value)',  'Interval end (value)', 'Max point (value)','File']);
 XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Prediction Parameters')};
 // Export linear fit parameters.
 if(this.linear_fit_parameters?.length){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Slope','SE slope', 'Intercept', 'SE intercept', 'R^2', 'SEE'],
