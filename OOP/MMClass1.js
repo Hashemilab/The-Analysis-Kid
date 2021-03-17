@@ -156,7 +156,7 @@ ws_name = "Stimulation parameters";
 aoa = [['Start time (s)', 'Number of pulses', 'freq. (Hz)'], flatten([this.stim_params])]
 ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
-var filename = "Modelling_TAK.xlsx";
+var filename = "Modelling_AK.xlsx";
 XLSX.writeFile(wb, filename);
 };
 };

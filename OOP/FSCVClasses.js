@@ -475,7 +475,7 @@ var tmp = []; tmp.push(this.names); tmp.push(this.origin_file_array); tmp.push(m
 tmp.push(this.area_under_curve.array); tmp.push(...reg_params);
 aoa=transpose(tmp); aoa.unshift(head);
 ws = XLSX.utils.aoa_to_sheet(aoa); XLSX.utils.book_append_sheet(wb, ws, ws_name);
-var filename = "Calibration_TAK.xlsx";
+var filename = "Calibration_AK.xlsx";
 XLSX.writeFile(wb, filename);
 };
 };

@@ -332,7 +332,7 @@ aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([
 //Export model SNN predictions.
 if(this.snn_model && fscav_data_predict.current.array?.length){fscav_data_predict.get_prediction_from_snn(this.snn_model, this.normalised_dataset, this.normalised_labels, fscav_data_predict);
 aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'SNN Fit Predictions')};
-XLSX.writeFile(wb, 'FSCAV_calibration_TAK.xlsx');
+XLSX.writeFile(wb, 'FSCAV_calibration_AK.xlsx');
 };
 };
 
