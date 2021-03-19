@@ -270,7 +270,7 @@ aoa = [flatten(['R(t) time breaks',this.release_rate_slider.start]), flatten(['R
 flatten(['A(t) time breaks', this.autoreceptors_slider.start]), flatten(['A(t) slopes', this.autoreceptors_slider_values])];
 ws = XLSX.utils.aoa_to_sheet(aoa);
 XLSX.utils.book_append_sheet(wb, ws, ws_name);
-var filename = "Modelling_hashemilab.xlsx";
+var filename = "Modelling_AK.xlsx";
 XLSX.writeFile(wb, filename);
 };
 
