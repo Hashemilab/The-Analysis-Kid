@@ -647,7 +647,7 @@ _('graph_configuration_modal_window').style.display = "block";
 
 function close_graph_configuration_window(){
 _('graph_configuration_modal_window').style.display = "none";
-}
+};
 
 function apply_graph_configuration_changes(){
 fscv_data.change_colorbar_limits("main_graph", parseFloat(_("min_colour_value").value), parseFloat()_("max_colour_value").value);
