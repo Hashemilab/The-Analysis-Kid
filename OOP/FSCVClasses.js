@@ -29,6 +29,8 @@ type:this.plot_type,
 colorscale:this.color_palette,
 colorbar: {len:0.5, xpad:30, title:this.current.name+' ('+this.current.units+')'},
 zsmooth: false,
+zmin:this.color_limits[0],
+zmax:this.color_limits[1]
 }];
 
 this.plot_layout = this.plot_settings.plot_layout;

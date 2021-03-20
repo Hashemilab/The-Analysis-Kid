@@ -112,6 +112,9 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 &nbsp;
 <button id="kinetic_calibration_button" onclick="kinetic_calibration_button_pushed()" disabled  data-toggle="tooltip" title="Calibration of color plot accounting for mass diffusivity">Kinetic calibration</button>
 </div>
+<div class="row" style="margin-top:5px">
+<button id="graph_configuration" data-toggle="tooltip" title="Open graph configuration panel." onclick="open_graph_configuration_window()">Graph config.</button>
+</div>
 </div>
 
 </div>
@@ -328,6 +331,33 @@ Filtration Panel
 <div class="col">
 <label for="2dfft_height_padding" style="width:59%">Height pad. (ratio): </label>
 <input style="width:30%" type="number" id="2dfft_height_padding" value=0.20 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total height before filtering. "/>
+</div>
+<div class="col">
+<label for="2dfft_width_padding" style="width:59%">Width pad. (ratio): </label>
+<input style="width:30%" type="number" id="2dfft_width_padding" value=0.20 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total width before filtering. "/>
+</div>
+</div>
+<div class = "row">
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="config_2dfft_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+
+<div id="graph_configuration_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="graph_min_color" style="width:59%">Min colour: </label>
+<input style="width:30%" type="number" id="min_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
+<label for="graph_max_color" style="width:59%">Max colour: </label>
+<input style="width:30%" type="number" id="max_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+<p style="text-align:center">
+<button style="width:15%;" onclick="apply_graph_configuration_changes()" data-toggle="tooltip" title="Apply changes.">Apply</button>
+<button style="width:15%;" onclick="close_graph_configuration_window()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
 </div>
 <div class="col">
 <label for="2dfft_width_padding" style="width:59%">Width pad. (ratio): </label>
@@ -610,6 +640,19 @@ function export_pushed(){
 if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}
 else{fscv_data.export_data(_('export_format').value)};
 };
+
+function open_graph_configuration_window(){
+_('graph_configuration_modal_window').style.display = "block";
+};
+
+function close_graph_configuration_window(){
+_('graph_configuration_modal_window').style.display = "none";
+}
+
+function apply_graph_configuration_changes(){
+fscv_data.change_colorbar_limits("main_graph", parseFloat(_("min_colour_value").value), parseFloat()_("max_colour_value").value);
+};
+
 </script>
 
 <script>
