@@ -350,26 +350,17 @@ Filtration Panel
 <div class="modal-content">
 <div class="row">
 <div class="col">
-<label for="graph_min_color" style="width:59%">Min colour: </label>
-<input style="width:30%" type="number" id="min_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
-<label for="graph_max_color" style="width:59%">Max colour: </label>
-<input style="width:30%" type="number" id="max_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+<label for="graph_min_color" style="width:24%">Max colorbar: </label>
+<input style="width:24%" type="number" id="max_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
+<label for="graph_max_color" style="width:25%">Min colorbar: </label>
+<input style="width:24%" type="number" id="min_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+<br>
 <p style="text-align:center">
 <button style="width:15%;" onclick="apply_graph_configuration_changes()" data-toggle="tooltip" title="Apply changes.">Apply</button>
 <button style="width:15%;" onclick="close_graph_configuration_window()" data-toggle="tooltip" title="Close window.">Close</button>
 </p>
 </div>
-<div class="col">
-<label for="2dfft_width_padding" style="width:59%">Width pad. (ratio): </label>
-<input style="width:30%" type="number" id="2dfft_width_padding" value=0.20 min=0 max=1 data-toggle="tooltip" title="Ratio of padding respect to total width before filtering. "/>
 </div>
-</div>
-<div class = "row">
-</div>
-<br>
-<p style="text-align:center">
-<button style="width:15%;" onclick="config_2dfft_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
-</p>
 </div>
 </div>
 
@@ -650,7 +641,7 @@ _('graph_configuration_modal_window').style.display = "none";
 };
 
 function apply_graph_configuration_changes(){
-fscv_data.change_colorbar_limits("main_graph", parseFloat(_("min_colour_value").value), parseFloat()_("max_colour_value").value);
+fscv_data.change_colorbar_limits("main_graph",parseFloat(_("min_colour_value").value),parseFloat(_("max_colour_value").value));
 };
 
 </script>

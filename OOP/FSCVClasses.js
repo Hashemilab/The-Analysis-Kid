@@ -90,7 +90,6 @@ this.graph_color_plot(div);
 
 change_colorbar_limits(div, min, max){
 this.color_limits = [min, max];
-console.log(this.color_limits);
 this.graph_color_plot(div);
 };
 
