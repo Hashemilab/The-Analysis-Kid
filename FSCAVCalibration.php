@@ -48,7 +48,9 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 &nbsp;
 <button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
 &nbsp;
-<button onclick="peak_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak limits detection and type of model.">Config.</button>
+<button onclick="peak_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak detection.">Config.</button>
+&nbsp;
+<button onclick="integration_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of type of model and graphd.">Peak det.</button>
 </div>
 <div class="row" style="margin-top:5px">
 <button class="fit_predict_selection" id="fit_button_selection" style=";background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Switch to fitting panel">Fitting Panel</button>
@@ -150,8 +152,6 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <div class="modal-content">
 <div class="row">
 <div class="col">
-<label for="peak_width" style="width:59%">Peak prom. (samples):</label>
-<input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to assign local minima/maxima "/>
 <label for="linear_fit_plot_type" style="width:59%">Plot type:</label>
 <select id="linear_fit_plot_type" style="float: right;width:39%" data-toggle="tooltip" title="type of graph to be shown for the linear fit.">
 <option value="regression_plot_type">Regression</option>
@@ -198,6 +198,45 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <p style="font-size:10px">
 Shallow neural networks (SNN) pretrained with post calibrations from other electrodes are trained with a learning rate of 0.001 and a layer size of 64 neurons.
 The layer size cannot be changed when selecting the SNN multielectrode fitting model. Changing it will have no effect over the SNN. Changing the learning rate will only affect future training with the imported signals.
+</p>
+</div>
+</div>
+
+
+<div id="integration_configuration_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="peak_width" style="width:59%">Peak prom. (samples):</label>
+<input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to automatically find integration points. "/>
+</div>
+</div>
+<hr style="width:100%;text-align:left;margin-left:0;">
+<div class="row">
+<div class="col">
+<label for="interval_signal_type" style="width:59%">Signal type:</label>
+<select id="interval_signal_type" style="float: right;width:39%" data-toggle="tooltip" title="Signals to apply the manual integration points">
+<option value="fitting_signals" data-toggle="tooltip" title="Apply manual integrations points to fitting cyclic voltammograms.">Fitting</option>
+<option value="prediction_signals" data-toggle="tooltip" title="Apply manual integration points to prediction cyclic voltammograms.">Prediction</option>
+</select>
+
+<label for="first_interval_point" style="width:33%">Min 1 (sample):</label>
+<input style="width:33%" type="number" step="1" min=0 id="first_interval_point" value=60 data-toggle="tooltip" title="Sample value for first integration limit. "/>
+<button onclick="interval_point_changed(this)" id="first_interval_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to first interval limit.">Apply</button>
+
+<label for="max_point" style="width:33%">Max (sample):</label>
+<input style="width:33%" type="number" step="1" min=0 id="max_point" value=200 data-toggle="tooltip" title="Sample value for maximum amplitude point. "/>
+<button onclick="interval_point_changed(this)" id="max_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to maximum amplitude point">Apply</button>
+
+<label for="second_interval_point" style="width:33%">Min 2 (sample):</label>
+<input style="width:33%" type="number" step="1" min=0 id="second_interval_point" value=350 data-toggle="tooltip" title="Sample value for second integration limit. "/>
+<button onclick="interval_point_changed(this)" id="second_interval_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to second interval limit">Apply</button>
+
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button onclick="integration_configuration_close_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Close</button>
 </p>
 </div>
 </div>
@@ -347,8 +386,28 @@ function export_tf_model(){if(fscav_data_fit.snn_model){fscav_data_fit.snn_model
 function previous_cv_clicked(){if(fscav_data.graph_index>0){--fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
 function next_cv_clicked(){if(fscav_data.graph_index<fscav_data.number_of_files-1){++fscav_data.graph_index; fscav_data.plot_graph('cv_graph')}};
 
-function peak_configuration_button_pushed(){_('peak_configuration_modal_window').style.display = "block"};
+function peak_configuration_button_pushed(){_('peak_configuration_modal_window').style.display = "block";};
 function peak_configuration_close_pushed(){_('peak_configuration_modal_window').style.display = "none";};
+
+function integration_configuration_button_pushed(){_('integration_configuration_modal_window').style.display = "block";};
+function integration_configuration_close_pushed(){_('integration_configuration_modal_window').style.display = "none";};
+
+function interval_point_changed(obj){
+if(_('interval_signal_type').value =='fitting_signals' && fscav_data_fit.current.array?.length){
+manual_change_integration_point(obj, fscav_data_fit);
+}
+else if (_('interval_signal_type').value =='prediction_signals' && fscav_data_predict.current.array?.length){
+manual_change_integration_point(obj, fscav_data_predict);
+};
+};
+
+function manual_change_integration_point(obj, data){
+if(obj.id =="first_interval_point_button"){data.manual_change_points(_("first_interval_point").value, obj.id)}
+else if(obj.id=="max_point_button"){data.manual_change_points(_("max_point").value, obj.id)}
+else if(obj.id=="second_interval_point_button"){data.manual_change_points(_("second_interval_point").value, obj.id)};
+data.plot_graph("cv_graph");
+};
+
 </script>
 
 <script>

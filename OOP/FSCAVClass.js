@@ -84,6 +84,19 @@ else {this.max_indexes[this.graph_index][0] = pindex; this.max_values[this.graph
 this.get_auc(this.graph_index);
 };
 
+manual_change_points(value, type){
+if(type =="first_interval_point_button"){
+for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][0] = value; this.min_values[i][0] = this.current.array[i][value]; this.get_auc(i)};
+}
+else if(type=="max_point_button"){
+for(var i=0;i<this.current.array.length; ++i){this.max_indexes[i][0] = value; this.max_values[i][0] = this.current.array[i][value]; this.get_auc(i)};
+}
+else if(type=="second_interval_point_button"){
+for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][1] = value; this.min_values[i][1] = this.current.array[i][value]; this.get_auc(i)};
+};
+};
+
+
 initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
