@@ -3,6 +3,7 @@ this.status_id= status_id;
 this.data_array = [];
 this.number_of_files = 0;
 this.names_of_files = [];
+this.data_array2=[];
 // Assign the handle self to save the variables inside the callback.
 var self = this;
 // Callback to read the content of uploaded files. 'this' refers to the callback event.
@@ -72,6 +73,10 @@ if(i + addition > length){addition = length - i;}
 result += String.fromCharCode.apply(null, bufView.subarray(i,i+addition));
 }
 return result;
+};
+
+this.order_files_by_name = function(){
+[this.names_of_files, this.data_array] = sort_arrays([this.names_of_files, this.data_array]);
 };
 
 

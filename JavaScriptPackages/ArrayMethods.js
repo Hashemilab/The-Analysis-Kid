@@ -243,6 +243,7 @@ var tmp = uniform_array(h_max, uniform_array(h_max, ''));
 for(var i=0;i<tmp.length;++i){for(var j=0;j<tmp.length;++j){if(arr[i] != undefined && arr[i][j] != undefined){tmp[i][j] = arr[i][j]}}};
 return tmp;
 };
+
 //Calculate transpose.
 function transpose(a) {
 return Object.keys(a[0]).map(function(c) {
@@ -416,3 +417,24 @@ else{step[j]=-(0.5*step[j])};
 }}};
 return P0;
 };
+
+// Sort out two arrays based on one.
+
+function sort_arrays(arrays, comparator = (a, b) => (a < b) ? -1 : (a > b) ? 1 : 0) {
+let arrayKeys = Object.keys(arrays);
+let sortableArray = Object.values(arrays)[0];
+let indexes = Object.keys(sortableArray);
+let sortedIndexes = indexes.sort((a, b) => comparator(sortableArray[a], sortableArray[b]));
+
+let sortByIndexes = (array, sortedIndexes) => sortedIndexes.map(sortedIndex => array[sortedIndex]);
+
+if (Array.isArray(arrays)) {
+return arrayKeys.map(arrayIndex => sortByIndexes(arrays[arrayIndex], sortedIndexes));
+} else {
+let sortedArrays = {};
+arrayKeys.forEach((arrayKey) => {
+sortedArrays[arrayKey] = sortByIndexes(arrays[arrayKey], sortedIndexes);
+});
+return sortedArrays;
+}
+}
