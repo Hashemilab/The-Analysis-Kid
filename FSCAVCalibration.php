@@ -311,7 +311,7 @@ if(fscav_data.current.array?.length){fscav_data.plot_graph('cv_graph')} else{fsc
 
 function add_pushed_fit(){
 if(loaded_data_fit.data_array?.length){
-loaded_data.order_files_by_name();
+loaded_data_fit.order_files_by_name();
 fscav_data_fit.read_data_from_loaded_files(loaded_data_fit.data_array, loaded_data_fit.names_of_files, parseFloat(_('concentration_label').value));
 loaded_data_fit.reset_loaded_data();
 _('status_fit').innerHTML = 'Added succesfully.';
@@ -327,7 +327,7 @@ _('add_button_fit').disabled = true; _('finish_button_fit').disabled = true;
 
 function add_pushed_predict(){
 if(loaded_data_predict.data_array?.length){
-loaded_data.order_files_by_name();
+loaded_data_predict.order_files_by_name();
 fscav_data_predict.read_data_from_loaded_files(loaded_data_predict.data_array, loaded_data_predict.names_of_files, null);
 loaded_data_predict.reset_loaded_data();
 _('status_predict').innerHTML = 'Added succesfully.';
