@@ -31,8 +31,6 @@ this.number_of_files = 0;
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
-//Sort the loaded files before reading.
-data.order_files_by_name();  
 this.current.array.push(data.map(x => arrayColumn(x, 2)));
 this.time.array.push(data.map(x => makeArr(0,(x.length-1)/this.frequency, x.length)));
 this.origin_file_array.push(names_of_files);
