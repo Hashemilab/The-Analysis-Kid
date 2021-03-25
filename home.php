@@ -145,9 +145,9 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
 <h4 class=" w3-text-indigo"><b> File Examples </b></h4>
 <p><b>FSCV Analysis</b></p>
-<button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example."><a href="ExampleFiles/fscv_example.txt" download><i class="fas fa-file-alt"></i></a></button>
-<button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><a href="ExampleFiles/fscv_example.csv" download><i class="fas fa-file-csv"></i></a></button>
-<button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><a href="ExampleFiles/fscv_example.xlsx" download><i class="fas fa-file-excel"></i></a></button>
+<a href="ExampleFiles/fscv_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example."><i class="fas fa-file-alt"></i></button></a>
+<a href="ExampleFiles/fscv_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><i class="fas fa-file-csv"></i></button></a>
+<a href="ExampleFiles/fscv_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><i class="fas fa-file-excel"></i></button></a>
 <h4 class=" w3-text-indigo"><b> References </b></h4>
 <div style=" border:1px solid black;" id="references_window">
 <div style="margin-left:2%; margin-right:2%;text-align:justify;text-justify:inter-word;font-size:14px;">
