@@ -133,7 +133,7 @@ $(".se-pre-con").fadeOut("slow");
 
 <div class="eq-c" style="border-style: solid;margin:auto;">
 <div class="fraction"> <span class="fup">d S(t)</span> <span class="bar">/</span> <span class="fdn">dt</span> </div>
- =  <div class="fraction"> <span class="fup">f[S<sub>p</sub>] - V<sub>max</sub></span> <span class="bar">/</span> <span class="fdn">K<sub>m</sub>/S(t) + 1</span> </div></div>
+ = f[S<sub>p</sub>] - <div class="fraction"> <span class="fup">V<sub>max</sub></span> <span class="bar">/</span> <span class="fdn">K<sub>m</sub>/S(t) + 1</span> </div></div>
 </div>
 <p style="margin:5px"> f is the frequency of stimulation, [S<sub>p</sub>] is the release rate constant (amount of released neurotransmitter per stimulation), S(t) is the concentration
 of neurotransmitter in the extracellular space and V<sub>max</sub> and K<sub>m</sub> are common Michaelis Menten reuptake parameters.</p>
