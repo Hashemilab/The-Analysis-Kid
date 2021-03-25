@@ -93,11 +93,6 @@ this.color_limits = [min, max];
 this.graph_color_plot(div);
 };
 
-change_color_palette(){
-let lin_array = flatten(this.current.array), max_current = index_of_max(lin_array)[0], min_current = index_of_min(lin_array)[0];
-
-};
-
 invert_current_values(div){
 for(var i = 0;i<this.current.array.length;++i){for(var j = 0;j<this.current.array[i].length;++j){this.current.array[i][j] = - this.current.array[i][j]}};
 this.graph_color_plot(div);
