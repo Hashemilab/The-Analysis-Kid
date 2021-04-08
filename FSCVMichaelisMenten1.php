@@ -130,7 +130,6 @@ $(".se-pre-con").fadeOut("slow");
 <div class="modal-content">
 <div class="row">
 <p style="margin:5px; width:100%;"> The equation used by the software is the following: </p>
-
 <div class="eq-c" style="border-style: solid;margin:auto;">
 <div class="fraction"> <span class="fup">d S(t)</span> <span class="bar">/</span> <span class="fdn">dt</span> </div>
  = f[S<sub>p</sub>] - <div class="fraction"> <span class="fup">V<sub>max</sub></span> <span class="bar">/</span> <span class="fdn">K<sub>m</sub>/S(t) + 1</span> </div></div>

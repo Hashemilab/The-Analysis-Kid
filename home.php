@@ -86,7 +86,7 @@ $(".se-pre-con").fadeOut("slow");
 <h1 class="w3-xxxlarge w3-text-indigo"><b>About.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 <p style="text-align:justify;text-justify: inter-word;"> The Analysis Kid is a web application created by <a href="https://www.hashemilab.com/">The Hashemi Lab</a> with calibration and data analysis tools for fast-scan cyclic voltammetry (FSCV) signals of electroactive molecules.
-This is achieved by providing a series of open-source and user-friendly applications that allow visualization, filtration, calibration and analysis of neurochemical signals.
+This is achieved by providing a series of open-source and user-friendly applications that allow visualization, filtering, calibration and analysis of neurochemical signals.
 A brief description of the applications can be found below, as well as <a href="#documentation">documentation</a> to get started with the applications.
 <p style="text-align:justify;text-justify: inter-word;">The applications have been fully tested on desktop applications of Google Chrome v86, Microsoft Edge v87 and Mozilla Firefox v83.
 The use of the applications in any other browser might generate errors and it is not recommended. The web application is in continuous development and any suggestions or bug reports will be welcomed.  Do not hesitate to contact through the contact form, email, The Hashemi Lab twitter or any other social platform available.  </p>
@@ -114,7 +114,7 @@ The use of the applications in any other browser might generate errors and it is
 <ul class="w3-ul w3-light-grey">
 <li class="w3-indigo w3-xlarge w3-padding-32">FSCV Analysis</li>
 <li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> FSCV Analysis allows to upload one or more acquisitions in .txt, .csv or .xlsx format.
-The application has a user-friendly pipeline to allow visualization, filtration, calibration and analysis of several FSCV signals. Find out more in the <a href="#documentation">documentation</a>. </li>
+The application has a user-friendly pipeline to allow visualization, filtering, calibration and analysis of several FSCV signals. Find out more in the <a href="#documentation">documentation</a>. </li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVWindow()"> Open application</a> </li>
 <li class="w3-padding-16" style="text-align:justify;text-justify: inter-word;"> The Michaelis Menten reuptake analysis can be opened from the FSCV Analysis application. Alternatively, it can also be accessed from the link below by uploading the export file provided by the FSCV Analysis. Find out how to do this in the video tutorials.</li>
 <li class="w3-padding-16"> <a class="w3-button w3-indigo w3-padding-large w3-hover-black" onclick="FSCVMichaelisMenten()"> Open reuptake analysis</a>
@@ -140,7 +140,7 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
 <h4 class=" w3-text-indigo"><b> Video Tutorials </b></h4>
-<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCV Analysis</button>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/8wn4FAnMcAI" onclick="video_modal_window(this)">FSCV Analysis</button>
 <button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
 <h4 class=" w3-text-indigo"><b> File Examples </b></h4>
 <p><b>FSCV Analysis</b></p>
