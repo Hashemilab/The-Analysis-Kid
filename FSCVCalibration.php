@@ -90,6 +90,8 @@ $(".se-pre-con").fadeOut("slow");
 &nbsp;
 <select id="color_selection_button" style="float: right;" onchange="color_palette_changed()" data-toggle="tooltip" title="Select the color palette used for the color plot.">
 <option value="Custom">Custom</option>
+<option value="IBM">IBM</option>
+<option value="Wong">Wong</option>
 <option value="Parula">Parula</option>
 <option value="Jet">Jet</option>
 <option value="Hot">Hot</option>
@@ -100,7 +102,6 @@ $(".se-pre-con").fadeOut("slow");
 <option value="Greys">Greys</option>
 <option value="Greens">Greens</option>
 <option value="Electric">Electric</option>
-<option value="Earth">Earth</option>
 <option value="Bluered">Bluered</option>
 <option value="Blackbody">Blackbody</option>
 </select>

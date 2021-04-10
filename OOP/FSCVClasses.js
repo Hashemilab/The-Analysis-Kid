@@ -78,6 +78,8 @@ _(div).on('plotly_click', function(data){main_graph_clicked(data)});
 
 change_color_palette(new_color_palette, div){
 if (new_color_palette == 'Custom'){this.color_palette = this.palettes.custom}
+else if(new_color_palette =='IBM'){this.color_palette = this.palettes.ibm}
+else if(new_color_palette =='Wong'){this.color_palette = this.palettes.wong}
 else if(new_color_palette =='Parula'){this.color_palette = this.palettes.parula}
 else {this.color_palette = new_color_palette;}
 this.graph_color_plot(div);
