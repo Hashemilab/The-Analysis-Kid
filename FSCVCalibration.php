@@ -149,8 +149,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 
 <div class="col"> <div class="position:relative">
 <h5>
-Filtration Panel
-<button class="filter_selection text-right" id="2dfft_button" style="font-size:16px;float:right;" data-toggle="tooltip" title="Fourier transform Butterworth 2D low-pass filtration">2D FFT</button>
+Filtering Panel
+<button class="filter_selection text-right" id="2dfft_button" style="font-size:16px;float:right;" data-toggle="tooltip" title="Fourier transform Butterworth 2D low-pass filtering">2D FFT</button>
 <button class="filter_selection text-right" id="convolution_button" style="background-color:#3f51b5; color:white; font-size:16px; float:right;" data-toggle="tooltip" title="2D convolution smoothing">Conv.</button>
 </h5>
 <hr>
@@ -487,7 +487,7 @@ delete_trace_pushed();
 
 function apply_filtration_pushed(){
 if (getComputedStyle(_("convolution_button"))['background-color'] == 'rgb(63, 81, 181)'){
-//Convolution filtration.
+//Convolution filtering.
 fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').value), parseInt(_('convolution_repetitions').value));
 } else {
 fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
