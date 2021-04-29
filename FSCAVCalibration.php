@@ -106,6 +106,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 </div>
 <div class="row">
 <button id="predict_button" onclick="predict_button_pushed()" style="width: 17%;" data-toggle="tooltip" title="Predict concentration from uploaded signals. Notice that the fitting is required to provide predictions.">Predict</button>
+&nbsp;
+<button id="show_charge_button" onclick="show_charge_button_pushed()" style="width: 30%;" data-toggle="tooltip" title="Show calculated charge trace.">Show Charge</button>
 </div>
 </div>
 <div id="export_panel">
@@ -165,7 +167,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <option value="shallow_neural_networks" data-toggle="tooltip" title="Use of a shallow neural network (SNN). &#x0a;Fit the concentration labels to several parameters from FSCAV signals.">SNN</option>
 </select>
 <label for="export_tf_model_button" style="width:59%">TensorFlow model:</label>
-<button id="export_tf_model_button" onclick="export_tf_model()" data-toggle="tooltip" title="Close the window">Export model</button>
+<button id="export_tf_model_button" onclick="export_tf_model()" data-toggle="tooltip" title="Export the tensorflow NN model.">Export model</button>
 </div>
 </div>
 <hr style="width:100%;text-align:left;margin-left:0;">
@@ -187,8 +189,14 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <input style="width:30%" type="number" step="0.01" min=0 id="min_delta" value=0.01 data-toggle="tooltip" title="Minimum required improvement of the loss for the SNN to keep training."/>
 <label for="dropout_rate" style="width:59%">Dropout rate:</label>
 <input style="width:30%" type="number" step="0.1" id="dropout_rate" value=0.2 min=0 max=1 data-toggle="tooltip" title="Dropout rate of units in the SNN during training.&#x0a;Allows to reduce overfitting, although it will likely require more iterations to converge."/>
-<label for="multielectrode" style="width:59%">Use pretraining:</label>
-<button class="multielectrode_selection" id = multielectrode style="width:30%" data-toggle="tooltip" title="When enabled, the SNN will be pretrained with post calibrations from previous electrodes.">Off</button> <input type="checkbox" hidden id="multielectrode_checkbox">
+<label for="SNN_type_selection" style="width:59%">SNN type:</label>
+<select id="SNN_type_selection" style="float: right;width:39%" data-toggle="tooltip" title="Select the type of neural network to be used when fitting and estimating the data.">
+<option value="single_electrode" data-toggle="tooltip" title="SNN fitted to postcalibration from single electrode.">Single electrode</option>
+<option value="multiple_electrodes" data-toggle="tooltip" title="SNN fitted to postcalibration from single electrode after pretraining with postcalibration database.">Pretrained</option>
+<option value="whole_cv" data-toggle="tooltip" title="SNN does not require electrode postcalibration, only trained with postcalibration database.">Whole CV</option>
+</select>
+
+
 </div>
 </div>
 <br>
@@ -278,19 +286,6 @@ $(this).css('color','white');
 graph_selection_changed(this.id);
 });
 
-$(document).on("click", '.multielectrode_selection', function(){
-if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
-$(this).css('background-color','');
-$(this).css('color','');
-$(this).html('Off');
-} else{
-$(this).css('background-color','#3f51b5');
-$(this).css('color','white');
-$(this).html('On');
-};
-_("multielectrode_checkbox").checked = !_("multielectrode_checkbox").checked;
-});
-
 $(document).on("click", '.fit_predict_selection', function(){
 $('.fit_predict_selection').css('background-color','');
 $('.fit_predict_selection').css('color','');
@@ -364,14 +359,17 @@ fscav_data.plot_graph('cv_graph');
 
 function predict_button_pushed(){
 if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_parameters)}
-else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)};
+else if(_('model_type_selection').value =='shallow_neural_networks'){
+if(_('snn_type').value != 'whole_cv' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)}
+else if(_('snn_type').value == 'whole_cv'){fscav_data_predict.predict_from_snn_whole_cv_model('fit_graph')};
+};
 };
 
 function fit_button_pushed(){
 _('fit_state_text').innerHTML = 'Fitting...';
 if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
 else if(_('model_type_selection').value =='shallow_neural_networks'){fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), parseInt(_('layer_size').value), parseInt(_('patience').value),
-parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text', _("multielectrode_checkbox").checked)}
+parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text', _("SNN_type_selection").value)}
 };
 
 function show_fitting_button_pushed(){
@@ -379,9 +377,12 @@ if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_p
 else if(_('model_type_selection').value =='shallow_neural_networks' && fscav_data_fit.snn_model){fscav_data_fit.get_snn_fitting_metrics('fit_graph')};
 };
 
-function export_button_pushed(){
-fscav_data_fit.export_to_xlsx(fscav_data_predict);
+function show_charge_button_pushed(){
+if(fscav_data_predict.auc?.length){fscav_data_fit.export_to_xlsx(fscav_data_predict.show_predict_charge('fit_graph'));};
 };
+
+
+function export_button_pushed(){fscav_data_fit.export_to_xlsx(fscav_data_predict);};
 
 function export_tf_model(){if(fscav_data_fit.snn_model){fscav_data_fit.snn_model.save('downloads://my-model')}};
 

@@ -139,11 +139,16 @@ fscav_data.linear_fit_parameters = linear_fit_parameters;
 fscav_data.concentration.array = fscav_data.auc.map(x => linear_fit_parameters[0][0]+linear_fit_parameters[0][1]*x);
 };
 
+show_predict_charge(div){if(this.state = 'predict'){
+this.plot_scatter_and_line(div, makeArr(0,this.auc.length-1, this.auc.length-1), this.auc, 'Charge plot', this.origin_file_array,
+[], [], '', 'File number', "Charge ("+this.current.units+"·s)", '<b>Charge plot</b>', 'Estimated charge from voltammograms.');
+}};
+
 get_snn_fit(div, epochs, learning_rate, layer_size, patience, min_delta, dropout_rate, std_noise, status_id, snn_type){if(this.state = 'fit'){
 var self = this;
 this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array);
-if(snn_type === false){this.define_new_snn_model(std_noise, layer_size, dropout_rate); this.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id);}
-else{tf.loadLayersModel("TensorFlowModels/dnn_fscav.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id))};
+if(snn_type === 'single_electrode'){this.define_new_snn_model(std_noise, layer_size, dropout_rate); this.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id);}
+else if(snn_type == 'multiple_electrodes'){tf.loadLayersModel("TensorFlowModels/dnn_fscav.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id))};
 }};
 
 define_new_snn_model(std_noise, layer_size, dropout_rate){
@@ -178,8 +183,6 @@ makeArr(0,index_of_max(this.concentration.array)[0], 100), 'Ideal', 'True values
 'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'SNN Fit', '<b>RMSE: ' + this.snn_fit_parameters[1].toFixed(2) +' '+this.concentration.units+'</b>');
 }};
 
-
-
 predict_from_snn(div, snn_model, norm_data, norm_labels){if(this.state = 'predict'){
 this.get_prediction_from_snn(snn_model, norm_data, norm_labels, this);
 this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
@@ -191,6 +194,20 @@ get_prediction_from_snn(snn_model, norm_data, norm_labels, fscav_data){
 this.snn_model = snn_model;
 const data = tf.tensor(transpose(this.get_normalised_prediction_set([fscav_data.auc, fscav_data.line_auc, arrayColumn(fscav_data.min_values, 1), arrayColumn(fscav_data.max_values, 0)], norm_data[1], norm_data[2])));
 fscav_data.concentration.array = denormalize(Array.from(fscav_data.snn_model.predict(data).dataSync()), norm_labels[1], norm_labels[2]);
+};
+
+predict_from_snn_whole_cv_model(div, std_noise, dropout_rate){
+var self = this;
+tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.get_prediction_from_snn_whole_cv_model())
+
+
+
+};
+
+get_prediction_from_snn_whole_cv_model(){
+
+//CONITNUE HERE.
+
 };
 
 update_fitting_status(status_id){
@@ -348,5 +365,4 @@ aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([
 XLSX.writeFile(wb, 'FSCAV_calibration_AK.xlsx');
 };
 };
-
 };
