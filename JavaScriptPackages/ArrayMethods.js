@@ -169,7 +169,7 @@ return norm_arr;
 //Denormalize from mean 0 and std 1.
 function standard_denormalize(norm_arr, mean, std){
 var arr = [];
-for (var i=0;i<arr.length;++i){arr[i] = norm_arr[i]*std+mean};
+for (var i=0;i<norm_arr.length;++i){arr[i] = norm_arr[i]*std+mean};
 return arr;
 };
 

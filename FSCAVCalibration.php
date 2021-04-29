@@ -13,6 +13,7 @@
 <script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/FSCAVClass.js"></script>
 <script src = "OOP/LOADClass.js"></script>
+<script src="TensorFlowModels/ModelClass.js"></script>
 
 <head>
 <title>FSCAV Calibration</title>
@@ -189,8 +190,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <input style="width:30%" type="number" step="0.01" min=0 id="min_delta" value=0.01 data-toggle="tooltip" title="Minimum required improvement of the loss for the SNN to keep training."/>
 <label for="dropout_rate" style="width:59%">Dropout rate:</label>
 <input style="width:30%" type="number" step="0.1" id="dropout_rate" value=0.2 min=0 max=1 data-toggle="tooltip" title="Dropout rate of units in the SNN during training.&#x0a;Allows to reduce overfitting, although it will likely require more iterations to converge."/>
-<label for="SNN_type_selection" style="width:59%">SNN type:</label>
-<select id="SNN_type_selection" style="float: right;width:39%" data-toggle="tooltip" title="Select the type of neural network to be used when fitting and estimating the data.">
+<label for="snn_type_selection" style="width:59%">SNN type:</label>
+<select id="snn_type_selection" style="float: right;width:39%" data-toggle="tooltip" title="Select the type of neural network to be used when fitting and estimating the data.">
 <option value="single_electrode" data-toggle="tooltip" title="SNN fitted to postcalibration from single electrode.">Single electrode</option>
 <option value="multiple_electrodes" data-toggle="tooltip" title="SNN fitted to postcalibration from single electrode after pretraining with postcalibration database.">Pretrained</option>
 <option value="whole_cv" data-toggle="tooltip" title="SNN does not require electrode postcalibration, only trained with postcalibration database.">Whole CV</option>
@@ -360,8 +361,9 @@ fscav_data.plot_graph('cv_graph');
 function predict_button_pushed(){
 if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_parameters)}
 else if(_('model_type_selection').value =='shallow_neural_networks'){
-if(_('snn_type').value != 'whole_cv' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)}
-else if(_('snn_type').value == 'whole_cv'){fscav_data_predict.predict_from_snn_whole_cv_model('fit_graph', parseFloat(_('std_noise').value), parseFloat(_('dropout_rate').value))};
+if(_('snn_type_selection').value != 'whole_cv' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)}
+else if(_('snn_type_selection').value == 'whole_cv'){
+fscav_data_predict.predict_from_snn_whole_cv_model('fit_graph', parseFloat(_('std_noise').value), parseFloat(_('dropout_rate').value))};
 };
 };
 

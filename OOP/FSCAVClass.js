@@ -29,8 +29,7 @@ this.state = state;
 this.graph_index = 0;
 this.number_of_files = 0;
 // Whole CV parameters.
-this.model_average_feature = [];
-this.model_std_feature = [];
+this.whole_cv_model = new TF_CV_MODEL_CLASS();
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -188,7 +187,7 @@ makeArr(0,index_of_max(this.concentration.array)[0], 100), 'Ideal', 'True values
 
 predict_from_snn(div, snn_model, norm_data, norm_labels){if(this.state = 'predict'){
 this.get_prediction_from_snn(snn_model, norm_data, norm_labels, this);
-this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
+this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length), this.concentration.array, 'Predictions', this.origin_file_array,
 [], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
 }};
 
@@ -215,27 +214,36 @@ for(var i = 0; i<data.length; ++i){norm_data[i] = normalize(data[i], training_ma
 return norm_data;
 }};
 
-//Whole CV model. TESTING. //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 predict_from_snn_whole_cv_model(div, std_noise, dropout_rate){
 var self = this;
-tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.get_prediction_from_snn_whole_cv_model())
+tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.get_prediction_from_snn_whole_cv_model(div));
 };
 
-get_prediction_from_snn_whole_cv_model(){if(this.state = 'predict'){
+get_prediction_from_snn_whole_cv_model(div){if(this.state = 'predict'){
 this.get_normalised_whole_cv_dataset();
 const data = tf.tensor(this.normalised_dataset);
-fscav_data.concentration.array = standard_denormalize(Array.from(this.snn_model.predict(data).dataSync()), this.model_average_feature[i], this.std_feature[i]));
-this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
+
+
+let a = this.snn_model.predict(data).dataSync();
+
+let b = Array.from(a);
+
+this.concentration.array = standard_denormalize(b, this.whole_cv_model.mean_labels, this.whole_cv_model.std_labels);
+
+
+this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length), this.concentration.array, 'Predictions', this.origin_file_array,
 [], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
 }};
 
-get_normalise_whole_cv_dataset(){
+get_normalised_whole_cv_dataset(){
 let transposed_cvs = transpose(this.current.array);
+let norm_transposed_cvs = [];
 for (let i = 0; i<transposed_cvs.length;++i){
-this.normalised_dataset[i] = standard_normalize(transposed_cvs[i], this.model_average_feature[i], this.std_feature[i]);
-};};
-// TESTING. //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+norm_transposed_cvs[i] = standard_normalize(transposed_cvs[i], this.whole_cv_model.mean_features[i], this.whole_cv_model.std_features[i]);
+};
+this.normalised_dataset = transpose(norm_transposed_cvs);
+};
+
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
 layout.title.text = "<b>"+this.origin_file_array[this.graph_index]+"</b>";
@@ -370,8 +378,7 @@ if(this.snn_model){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['R
 if(this.linear_fit_parameters?.length && fscav_data_predict.current.array?.length){fscav_data_predict.get_prediction_from_linear_fit(this.linear_fit_parameters, fscav_data_predict);
 aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Linear Fit Predictions')};
 //Export model SNN predictions.
-if(this.snn_model && fscav_data_predict.current.array?.length){fscav_data_predict.get_prediction_from_snn(this.snn_model, this.normalised_dataset, this.normalised_labels, fscav_data_predict);
-aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'SNN Fit Predictions')};
+if(this.snn_model && fscav_data_predict.concentration.array?.length){aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'SNN Fit Predictions')};
 XLSX.writeFile(wb, 'FSCAV_calibration_AK.xlsx');
 };
 };
