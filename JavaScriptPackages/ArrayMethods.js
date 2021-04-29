@@ -160,6 +160,20 @@ var arr = [];
 for (var i=0;i<norm_arr.length;++i){arr[i] = norm_arr[i]*(max-min)+min};
 return arr;
 };
+//Normalize to mean 0 and std 0.
+function standard_normalize(arr, mean, std){
+var norm_arr = [];
+for (var i=0;i<arr.length;++i){norm_arr[i] = (arr[i]-mean)/std};
+return norm_arr;
+};
+//Denormalize from mean 0 and std 1.
+function standard_denormalize(norm_arr, mean, std){
+var arr = [];
+for (var i=0;i<arr.length;++i){arr[i] = norm_arr[i]*std+mean};
+return arr;
+};
+
+
 // Convert linear array to 2D array given the number of columns.
 function split_array(array, part) {
 var tmp = [];

@@ -28,6 +28,9 @@ this.fit_plot_state = 'none';
 this.state = state;
 this.graph_index = 0;
 this.number_of_files = 0;
+// Whole CV parameters.
+this.model_average_feature = [];
+this.model_std_feature = [];
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -196,20 +199,6 @@ const data = tf.tensor(transpose(this.get_normalised_prediction_set([fscav_data.
 fscav_data.concentration.array = denormalize(Array.from(fscav_data.snn_model.predict(data).dataSync()), norm_labels[1], norm_labels[2]);
 };
 
-predict_from_snn_whole_cv_model(div, std_noise, dropout_rate){
-var self = this;
-tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.get_prediction_from_snn_whole_cv_model())
-
-
-
-};
-
-get_prediction_from_snn_whole_cv_model(){
-
-//CONITNUE HERE.
-
-};
-
 update_fitting_status(status_id){
 _(status_id).innerHTML = "&#10004";
 };
@@ -226,6 +215,27 @@ for(var i = 0; i<data.length; ++i){norm_data[i] = normalize(data[i], training_ma
 return norm_data;
 }};
 
+//Whole CV model. TESTING. //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+predict_from_snn_whole_cv_model(div, std_noise, dropout_rate){
+var self = this;
+tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.get_prediction_from_snn_whole_cv_model())
+};
+
+get_prediction_from_snn_whole_cv_model(){if(this.state = 'predict'){
+this.get_normalised_whole_cv_dataset();
+const data = tf.tensor(this.normalised_dataset);
+fscav_data.concentration.array = standard_denormalize(Array.from(this.snn_model.predict(data).dataSync()), this.model_average_feature[i], this.std_feature[i]));
+this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length-1), this.concentration.array, 'Predictions', this.origin_file_array,
+[], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
+}};
+
+get_normalise_whole_cv_dataset(){
+let transposed_cvs = transpose(this.current.array);
+for (let i = 0; i<transposed_cvs.length;++i){
+this.normalised_dataset[i] = standard_normalize(transposed_cvs[i], this.model_average_feature[i], this.std_feature[i]);
+};};
+// TESTING. //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 plot_graph(div){
 var layout = this.plot_settings.plot_layout;
 layout.title.text = "<b>"+this.origin_file_array[this.graph_index]+"</b>";

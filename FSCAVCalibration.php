@@ -361,7 +361,7 @@ function predict_button_pushed(){
 if(_('model_type_selection').value =='linear_fit' && fscav_data_fit.linear_fit_parameters?.length){fscav_data_predict.predict_from_linear_fit('fit_graph', fscav_data_fit.linear_fit_parameters)}
 else if(_('model_type_selection').value =='shallow_neural_networks'){
 if(_('snn_type').value != 'whole_cv' && fscav_data_fit.snn_model){fscav_data_predict.predict_from_snn('fit_graph', fscav_data_fit.snn_model, fscav_data_fit.normalised_dataset, fscav_data_fit.normalised_labels)}
-else if(_('snn_type').value == 'whole_cv'){fscav_data_predict.predict_from_snn_whole_cv_model('fit_graph')};
+else if(_('snn_type').value == 'whole_cv'){fscav_data_predict.predict_from_snn_whole_cv_model('fit_graph', parseFloat(_('std_noise').value), parseFloat(_('dropout_rate').value))};
 };
 };
 
