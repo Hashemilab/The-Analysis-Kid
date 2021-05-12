@@ -22,7 +22,7 @@ this.frequency_y = new HL_FSCV_ARRAY([], 'Hz', 'Frequency');
 apply_convolution(fscv_data, std, reps){
 let data = fscv_data.current.array, linear_input = flatten(data), linear_output = new Array(linear_input.length);
 for (var i = 0; i<reps; ++i){
-simple_gauss_blur(linear_input, linear_output, data[0].length, data.length, std); linear_input = linear_output;
+conv_2d_gaussian(linear_input, linear_output, data[0].length, data.length, std); linear_input = linear_output;
 };
 fscv_data.current.array = split_array(linear_output, data[0].length);
 };
