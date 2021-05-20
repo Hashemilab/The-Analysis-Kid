@@ -144,23 +144,23 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
 <h4 class=" w3-text-indigo"><b> File Examples </b></h4>
 <p><b>FSCV Analysis</b></p>
-<b>Dopamine</b>
+<p><b>Dopamine: </b>
 <a href="ExampleFiles/fscv_da_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of dopamine."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_da_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of dopamine."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_da_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of dopamine."><i class="fas fa-file-excel"></i></button></a>
-
-<b>Serotonin</b>
+</p>
+<p><b>Serotonin: </b>
 <a href="ExampleFiles/fscv_5ht_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of serotonin."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_5ht_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of serotonin."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_5ht_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of serotonin."><i class="fas fa-file-excel"></i></button></a>
-
-<b>Histamine</b>
+</p>
+<p><b>Histamine: </b>
 <a href="ExampleFiles/fscv_ha_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of histamine."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_ha_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of histamine."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_ha_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of histamine."><i class="fas fa-file-excel"></i></button></a>
-
+</p>
 <p><b>FSCAV Analysis</b></p>
-<b>Serotonin</b>
+<b>Serotonin: </b>
 <a href="ExampleFiles/fscav_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscav_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscav_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><i class="fas fa-file-excel"></i></button></a>
