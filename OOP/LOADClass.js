@@ -46,9 +46,16 @@ return result[0];
 };
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
-var text = self.array_buffer_to_string(arrbuf).split('\n'), tmp = [];
-for(var i=0; i<text.length;++i){if(text[i].length>0){tmp[i] = text[i].split('\t')}};
-return parse_array_to_float(tmp);
+var text = self.array_buffer_to_string(arrbuf).split('\n'), tmp = [], tmp2;
+for(var i=0; i<text.length;++i){if(text[i].length>0){
+tmp[i] = text[i].split('\t');
+for(var j=0; j<tmp[i].length;++j){
+tmp2 = parseFloat(tmp[i][j]);
+if(isNaN(tmp2)){tmp[i].splice(j,1)}
+else {tmp[i][j] = tmp2};
+};
+}};
+return tmp;
 };
 // Method to reset the loaded data every time we read new files.
 this.reset_loaded_data = function(){
