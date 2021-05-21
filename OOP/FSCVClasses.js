@@ -90,10 +90,19 @@ this.plot_type = new_plot_type;
 this.graph_color_plot(div);
 };
 
-change_colorbar_limits(div, min, max){
+change_colorbar_limits(div, div_min, div_max, min, max, autoadjust){
+if (autoadjust){
+if (!isNaN(min) && isNaN(max)) {max = abs((2/3)*min)}
+else {min = -(3/2)*max};
+};
 this.color_limits = [min, max];
+//Write values to application.
+_(div_min).value = min.toFixed(2);
+_(div_max).value = max.toFixed(2);
 this.graph_color_plot(div);
 };
+
+
 
 invert_current_values(div){
 for(var i = 0;i<this.current.array.length;++i){for(var j = 0;j<this.current.array[i].length;++j){this.current.array[i][j] = - this.current.array[i][j]}};

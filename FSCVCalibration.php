@@ -352,9 +352,12 @@ Filtering Panel
 <div class="row">
 <div class="col">
 <label for="graph_min_color" style="width:24%">Max colorbar: </label>
-<input style="width:24%" type="number" id="max_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
+<input style="width:14%" type="number" id="max_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
 <label for="graph_max_color" style="width:25%">Min colorbar: </label>
-<input style="width:24%" type="number" id="min_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+<input style="width:14%" type="number" id="min_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+&nbsp;&nbsp;
+<button id="autoadjust_selection" class="autoadjust_selection" style="background-color:#3f51b5; color:white" data-toggle="tooltip" title="Automatically adjust the limits of the color plot palette.">
+Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox"></button>
 <button style="width:15%;" onclick="autoscale_color_palette_button_pushed()" data-toggle="tooltip" title="Autoscale the color palette.">Autoscale</button>
 <br>
 <p style="text-align:center">
@@ -396,6 +399,16 @@ _("graph_selection_checkbox").checked = !_("graph_selection_checkbox").checked;
 });
 
 
+$(document).on("click", '.autoadjust_selection', function(){
+if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
+$(this).css('background-color','');
+$(this).css('color','');
+} else{
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+};
+_("autoadjust_checkbox").checked = !_("autoadjust_checkbox").checked;
+});
 
 $(document).on("click", '.filter_selection', function(){
 $('.filter_selection').css('background-color','');
@@ -643,10 +656,10 @@ _('graph_configuration_modal_window').style.display = "none";
 };
 
 function apply_graph_configuration_changes(){
-fscv_data.change_colorbar_limits("main_graph",parseFloat(_("min_colour_value").value),parseFloat(_("max_colour_value").value));
+fscv_data.change_colorbar_limits("main_graph", "min_colour_value", "max_colour_value", parseFloat(_("min_colour_value").value),parseFloat(_("max_colour_value").value), _('autoadjust_checkbox').checked);
 };
 function autoscale_color_palette_button_pushed(){
-fscv_data.color_limits = []; 
+fscv_data.color_limits = [];
 fscv_data.graph_color_plot('main_graph');
 };
 
