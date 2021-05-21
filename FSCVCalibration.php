@@ -355,6 +355,7 @@ Filtering Panel
 <input style="width:24%" type="number" id="max_colour_value" data-toggle="tooltip" title="Minimum current value in the color plot"/>
 <label for="graph_max_color" style="width:25%">Min colorbar: </label>
 <input style="width:24%" type="number" id="min_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
+<button style="width:15%;" onclick="autoscale_color_palette_button_pushed()" data-toggle="tooltip" title="Autoscale the color palette.">Autoscale</button>
 <br>
 <p style="text-align:center">
 <button style="width:15%;" onclick="apply_graph_configuration_changes()" data-toggle="tooltip" title="Apply changes.">Apply</button>
@@ -643,6 +644,10 @@ _('graph_configuration_modal_window').style.display = "none";
 
 function apply_graph_configuration_changes(){
 fscv_data.change_colorbar_limits("main_graph",parseFloat(_("min_colour_value").value),parseFloat(_("max_colour_value").value));
+};
+function autoscale_color_palette_button_pushed(){
+fscv_data.color_limits = []; 
+fscv_data.graph_color_plot('main_graph');
 };
 
 </script>
