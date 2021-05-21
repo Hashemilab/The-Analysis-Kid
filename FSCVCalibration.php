@@ -357,7 +357,7 @@ Filtering Panel
 <input style="width:14%" type="number" id="min_colour_value" data-toggle="tooltip" title="Maximum current value in the color plot"/>
 &nbsp;&nbsp;
 <button id="autoadjust_selection" class="autoadjust_selection" style="background-color:#3f51b5; color:white" data-toggle="tooltip" title="Automatically adjust the limits of the color plot palette.">
-Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox"></button>
+Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox" checked></button>
 <button style="width:15%;" onclick="autoscale_color_palette_button_pushed()" data-toggle="tooltip" title="Autoscale the color palette.">Autoscale</button>
 <br>
 <p style="text-align:center">
@@ -659,10 +659,9 @@ function apply_graph_configuration_changes(){
 fscv_data.change_colorbar_limits("main_graph", "min_colour_value", "max_colour_value", parseFloat(_("min_colour_value").value),parseFloat(_("max_colour_value").value), _('autoadjust_checkbox').checked);
 };
 function autoscale_color_palette_button_pushed(){
-fscv_data.color_limits = [];
+fscv_data.get_colorbar_range("min_colour_value", "max_colour_value");
 fscv_data.graph_color_plot('main_graph');
 };
-
 </script>
 
 <script>

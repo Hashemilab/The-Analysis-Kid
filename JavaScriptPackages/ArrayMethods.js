@@ -10,6 +10,15 @@ var min = arr[0], index = 0;
 for (var i = 1; i < arr.length; i++) {if (arr[i] < min) {index = i; min = arr[i]}}
 return [min, index];
 };
+function index_of_max_and_min(arr){
+var max = arr[0], index_max = 0, min = arr[0], index_min = 0;
+for (var i = 1; i < arr.length; i++) {
+if (arr[i] < min) {index_min = i; min = arr[i]}
+if (arr[i] > max) {index_max = i; max = arr[i]}
+};
+return [min, index_min, max, index_max];
+};
+
 // Array of local minima considering n neighbours.
 function local_minima(arr, n){
 mins = []; mins_index = [];

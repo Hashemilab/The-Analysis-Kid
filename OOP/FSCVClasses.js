@@ -92,14 +92,21 @@ this.graph_color_plot(div);
 
 change_colorbar_limits(div, div_min, div_max, min, max, autoadjust){
 if (autoadjust){
-if (!isNaN(min) && isNaN(max)) {max = abs((2/3)*min)}
-else {min = -(3/2)*max};
+if (!isNaN(min) && isNaN(max)) {max = abs((3/2)*min)}
+else {min = -(2/3)*max};
 };
 this.color_limits = [min, max];
 //Write values to application.
-_(div_min).value = min.toFixed(2);
-_(div_max).value = max.toFixed(2);
+_(div_min).value = this.color_limits[0].toFixed(2);
+_(div_max).value = this.color_limits[1].toFixed(2);
 this.graph_color_plot(div);
+};
+
+get_colorbar_range(div_min, div_max){
+let tmp = index_of_max_and_min(flatten(this.current.array));
+this.color_limits = [tmp[0], tmp[2]];
+_(div_min).value = this.color_limits[0].toFixed(2);
+_(div_max).value = this.color_limits[1].toFixed(2);
 };
 
 
