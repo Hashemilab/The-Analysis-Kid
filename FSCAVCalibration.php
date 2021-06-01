@@ -371,7 +371,7 @@ function fit_button_pushed(){
 _('fit_state_text').innerHTML = 'Fitting...';
 if(_('model_type_selection').value =='linear_fit'){fscav_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
 else if(_('model_type_selection').value =='shallow_neural_networks'){fscav_data_fit.get_snn_fit('fit_graph', parseInt(_('epochs').value), parseFloat(_('learning_rate').value), parseInt(_('layer_size').value), parseInt(_('patience').value),
-parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text', _("SNN_type_selection").value)}
+parseFloat(_('min_delta').value), parseFloat(_('dropout_rate').value), parseFloat(_('std_noise').value), 'fit_state_text', _("snn_type_selection").value)}
 };
 
 function show_fitting_button_pushed(){
