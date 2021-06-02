@@ -375,7 +375,7 @@ this.linear_fit_parameters[1][0]]]), 'Fitting Parameters')};
 //Export SNN fit parameters
 if(this.snn_model){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['RMSE'], [this.snn_fit_parameters[1]]]), 'SNN Fit Parameters')};
 //Export model SNN predictions.
-if(fscav_data_predict.concentration.array?.length){aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'SNN Fit Predictions')};
+if(fscav_data_predict.concentration.array?.length){aoa = transpose([fscav_data_predict.concentration.array.slice()]); aoa.unshift([this.concentration.name + ' ('+this.concentration.units+')']);XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Predictions')};
 XLSX.writeFile(wb, 'FSCAV_calibration_AK.xlsx');
 };
 };
