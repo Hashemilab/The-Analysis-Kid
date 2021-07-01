@@ -139,68 +139,87 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <div class="w3-container" id="documentation" style="margin-top:75px">
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
-<!-- Testing-->
-<div class="w3-row-padding w3-grayscale">
-<div class="w3-col m4 w3-margin-bottom">
-<div class="w3-light-grey">
-<img src="/w3images/team2.jpg" alt="John" style="width:100%">
-<div class="w3-container">
-<h3>John Doe</h3>
-<p class="w3-opacity">CEO & Founder</p>
-<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-</div>
-</div>
-</div>
-<div class="w3-col m4 w3-margin-bottom">
-<div class="w3-light-grey">
-<img src="/w3images/team1.jpg" alt="Jane" style="width:100%">
-<div class="w3-container">
-<h3>Jane Doe</h3>
-<p class="w3-opacity">Designer</p>
-<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-</div>
-</div>
-</div>
-<div class="w3-col m4 w3-margin-bottom">
-<div class="w3-light-grey">
-<img src="/w3images/team3.jpg" alt="Mike" style="width:100%">
-<div class="w3-container">
-<h3>Mike Ross</h3>
-<p class="w3-opacity">Architect</p>
-<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Testing-->
+<br>
 
-
-<h4 class=" w3-text-indigo"><b> Video Tutorials </b></h4>
-<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/8wn4FAnMcAI" onclick="video_modal_window(this)">FSCV Analysis</button>
-<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
-<h4 class=" w3-text-indigo"><b> File Examples </b></h4>
-<h5 class=" w3-text-indigo"><b>FSCV Analysis</b></h5>
-<p><b>Dopamine: </b>
+<h4 class=" w3-text-indigo"><b> Example Files </b></h4>
+<div class="w3-row-padding">
+<div class="w3-col m4 w3-margin-bottom">
+<img src="Images/da.png" alt="DA" style="width:50%">
+<div class="w3-container">
+<h3><b>Dopamine (DA)</b></h3>
+<p class="w3-opacity">3,4-dihydroxyphenethylamine</p>
+<p><b>FSCV: </b></p>
+<p>
 <a href="ExampleFiles/fscv_da_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of dopamine."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_da_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of dopamine."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_da_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of dopamine."><i class="fas fa-file-excel"></i></button></a>
 </p>
-<p><b>Serotonin: </b>
+</div>
+</div>
+<div class="w3-col m4 w3-margin-bottom">
+<img src="Images/5ht.png" alt="5-HT" style="width:46%">
+<div class="w3-container">
+<h3><b>Serotonin (5-HT)</b></h3>
+<p class="w3-opacity">5-hydroxytryptamine</p>
+<p><b>FSCV: </b></p>
+<p>
 <a href="ExampleFiles/fscv_5ht_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of serotonin."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_5ht_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of serotonin."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_5ht_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of serotonin."><i class="fas fa-file-excel"></i></button></a>
 </p>
-<p><b>Histamine: </b>
+<p><b>FSCAV: </b></p>
+<p>
+<a href="ExampleFiles/fscav_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example."><i class="fas fa-file-alt"></i></button></a>
+<a href="ExampleFiles/fscav_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><i class="fas fa-file-csv"></i></button></a>
+<a href="ExampleFiles/fscav_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><i class="fas fa-file-excel"></i></button></a>
+</p>
+</p>
+</div>
+</div>
+<div class="w3-col m4 w3-margin-bottom">
+<img src="Images/ha.png" alt="HA" style="width:50%">
+<div class="w3-container">
+<h3><b>Histamine (HA)</b></h3>
+<p class="w3-opacity">2-(1H-imidazol-4-yl)ethanamine</p>
+<p><b>FSCV: </b></p>
+<p>
 <a href="ExampleFiles/fscv_ha_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example of histamine."><i class="fas fa-file-alt"></i></button></a>
 <a href="ExampleFiles/fscv_ha_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of histamine."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_ha_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of histamine."><i class="fas fa-file-excel"></i></button></a>
 </p>
-<h5 class=" w3-text-indigo"><b>FSCAV Analysis</b></h5>
-<b>Serotonin: </b>
-<a href="ExampleFiles/fscav_example.txt" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download FSCV txt file example."><i class="fas fa-file-alt"></i></button></a>
-<a href="ExampleFiles/fscav_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><i class="fas fa-file-csv"></i></button></a>
-<a href="ExampleFiles/fscav_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><i class="fas fa-file-excel"></i></button></a>
+</div>
+</div>
+</div>
 
+<br>
+<h4 class=" w3-text-indigo"><b> Publications and Video Tutorials </b></h4>
+<br>
+
+<div class="w3-row-padding">
+<div class="w3-col m4 w3-margin-bottom">
+<img src="Images/fscv_color.png" alt="FSCV colorplot" style="width:50%">
+<div class="w3-container">
+<h3><b>FSCV Analysis</b></h3>
+
+<p>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/8wn4FAnMcAI" onclick="video_modal_window(this)">Watch Video</button>
+</p>
+<p>
+<a href="https://pubs.acs.org/doi/10.1021/acsmeasuresciau.1c00003"><button class="w3-button w3-indigo w3-hover-black" >See Publication</button></a>
+</p>
+</div>
+</div>
+<div class="w3-col m4 w3-margin-bottom">
+<img src="Images/fscav_color.png" alt="FSCAV colorplot" style="width:50%">
+<div class="w3-container">
+<h3><b>FSCAV Analysis</b></h3>
+<p>
+<i>Coming soon</i>
+</p>
+
+</div>
+</div>
+</div>
 </div>
 
 
