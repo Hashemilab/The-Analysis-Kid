@@ -139,6 +139,42 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <div class="w3-container" id="documentation" style="margin-top:75px">
 <h1 class="w3-xxxlarge w3-text-indigo"><b>Documentation.</b></h1>
 <hr style="width:800px;border:3px solid #3f51b5" class="w3-round">
+<!-- Testing-->
+<div class="w3-row-padding w3-grayscale">
+<div class="w3-col m4 w3-margin-bottom">
+<div class="w3-light-grey">
+<img src="/w3images/team2.jpg" alt="John" style="width:100%">
+<div class="w3-container">
+<h3>John Doe</h3>
+<p class="w3-opacity">CEO & Founder</p>
+<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+</div>
+</div>
+</div>
+<div class="w3-col m4 w3-margin-bottom">
+<div class="w3-light-grey">
+<img src="/w3images/team1.jpg" alt="Jane" style="width:100%">
+<div class="w3-container">
+<h3>Jane Doe</h3>
+<p class="w3-opacity">Designer</p>
+<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+</div>
+</div>
+</div>
+<div class="w3-col m4 w3-margin-bottom">
+<div class="w3-light-grey">
+<img src="/w3images/team3.jpg" alt="Mike" style="width:100%">
+<div class="w3-container">
+<h3>Mike Ross</h3>
+<p class="w3-opacity">Architect</p>
+<p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Testing-->
+
+
 <h4 class=" w3-text-indigo"><b> Video Tutorials </b></h4>
 <button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCV Analysis" value = "https://www.youtube.com/embed/8wn4FAnMcAI" onclick="video_modal_window(this)">FSCV Analysis</button>
 <button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/tgbNymZ7vqY" onclick="video_modal_window(this)">FSCAV Analysis</button>
