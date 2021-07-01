@@ -165,36 +165,6 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <a href="ExampleFiles/fscav_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscav_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example."><i class="fas fa-file-excel"></i></button></a>
 
-<h4 class=" w3-text-indigo"><b> References </b></h4>
-<div style=" border:1px solid black;" id="references_window">
-<div style="margin-left:2%; margin-right:2%;text-align:justify;text-justify:inter-word;font-size:14px;">
-<p><cite>[1]	S. Samaranayake et al., “A voltammetric and mathematical analysis of histaminergic modulation of serotonin in the mouse hypothalamus,” J. Neurochem., pp. 374–383, Aug. 2016, doi: 10.1111/jnc.13659.
-</cite></p>
-
-<p><cite>[2]	C. W. Atcherley, N. D. Laude, K. L. Parent, and M. L. Heien, “Fast-scan controlled-adsorption voltammetry for the quantification of absolute concentrations and adsorption dynamics,” Langmuir, vol. 29, no. 48, pp. 14885–14892, Dec. 2013, doi: 10.1021/la402686s. </cite></p>
-
-<p><cite>[3]	V. Dumoulin and F. Visin, “A guide to convolution arithmetic for deep learning,” Mar. 2016. </cite></p>
-
-<p><cite>[4]	A. Quarteroni, R. Sacco, and F. Saleri, “Numerical Mathematics,” Springer, Lausanne, Switzerland, 2007. </cite></p>
-
-<p><cite>[5]	J. Tellinghuisen, “Statistical error propagation,” J. Phys. Chem. A, vol. 105, no. 15, pp. 3917–3921, Apr. 2001, doi: 10.1021/jp003484u. </cite></p>
-
-<p><cite>[6]	K. M. Wood, A. Zeqja, H. F. Nijhout, M. C. Reed, J. Best, and P. Hashemi, “Voltammetric and mathematical evidence for dual transport mediation of serotonin clearance in vivo,” J. Neurochem., vol. 130, no. 3, pp. 351–359, 2014, doi: 10.1111/jnc.12733. </cite></p>
-
-<p><cite>[7]	H. P. Gavin, “The Levenberg-Marquardt algorithm for nonlinear least squares curve-fitting problems,” 2019. </cite></p>
-
-<p><cite>[8]	C. W. Atcherley, N. D. Laude, E. B. Monroe, K. M. Wood, P. Hashemi, and M. L. Heien, “Improved Calibration of Voltammetric Sensors for Studying Pharmacological Effects on Dopamine Transporter Kinetics in Vivo,” ACS Chem. Neurosci., vol. 6, no. 9, pp. 1509–1516, Jul. 2014, doi: 10.1021/cn500020s.</cite></p>
-
-<p><cite>[9]	S. M. Riad, “The Deconvolution Problem: An Overview,” Proc.  IEEE, vol. 76, no. 1, pp. 82–85, 1986.</cite></p>
-
-<p><cite>[10] A. Abdalla et al., “In Vivo Ambient Serotonin Measurements at Carbon-Fiber Microelectrodes,” Anal. Chem., vol. 89, no. 18, pp. 9703–9711, Sep. 2017, doi: 10.1021/acs.analchem.7b01257. </cite></p>
-
-<p><cite>[11] A. Martin et al., “TensorFlow: Large-Scale Machine Learning on Heterogeneous Systems.” 2015. </cite></p>
-
-<p><cite>[12]	Plotly Technologies, “Collaborative data science.” Plotly Technologies Inc., Montreal, QC, 2015. </cite></p>
-</div>
-</div>
-<br>
 </div>
 
 
