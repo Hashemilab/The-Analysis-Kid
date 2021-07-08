@@ -222,15 +222,8 @@ tf.loadLayersModel("TensorFlowModels/dnn_fscav_whole_cv.json").then(model => sel
 get_prediction_from_snn_whole_cv_model(div){if(this.state = 'predict'){
 this.get_normalised_whole_cv_dataset();
 const data = tf.tensor(this.normalised_dataset);
-
-
 let a = this.snn_model.predict(data).dataSync();
-
-let b = Array.from(a);
-
-this.concentration.array = standard_denormalize(b, this.whole_cv_model.mean_labels, this.whole_cv_model.std_labels);
-
-
+this.concentration.array  = Array.from(a);
 this.plot_scatter_and_line(div, makeArr(0,this.concentration.array.length-1, this.concentration.array.length), this.concentration.array, 'Predictions', this.origin_file_array,
 [], [], '', 'File number', this.concentration.name +" ("+this.concentration.units+")", '<b>Predictions</b>', 'Predictions from SNN');
 }};
