@@ -49,9 +49,9 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 &nbsp;
 <button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
 &nbsp;
-<button onclick="peak_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak detection.">Config.</button>
+<button onclick="peak_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of calibration methods.">Config.</button>
 &nbsp;
-<button onclick="integration_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of type of model and graphd.">Peak det.</button>
+<button onclick="integration_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak detection.">Peak det.</button>
 </div>
 <div class="row" style="margin-top:5px">
 <button class="fit_predict_selection" id="fit_button_selection" style=";background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Switch to fitting panel">Fitting Panel</button>
@@ -216,13 +216,20 @@ The layer size cannot be changed when selecting the SNN multielectrode fitting m
 <div class="modal-content">
 <div class="row">
 <div class="col">
+<p><b> Automatic: </b></p>
 <label for="peak_width" style="width:59%">Peak prom. (samples):</label>
 <input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to automatically find integration points. "/>
+<label style="width:59%">Local minima:</label>
+<input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_minima_1" value=1 data-toggle="tooltip" title="Local minima (number) used as first integration point."/>
+<input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_minima_2" value=2 data-toggle="tooltip" title="Local minima (number) used as second integration point."/>
+<label style="width:59%">Local maxima:</label>
+<input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_maxima" value=1 data-toggle="tooltip" title="Local maxima used as maximum amplitude."/>
 </div>
 </div>
 <hr style="width:100%;text-align:left;margin-left:0;">
 <div class="row">
 <div class="col">
+<p><b> Manual: </b></p>
 <label for="interval_signal_type" style="width:59%">Signal type:</label>
 <select id="interval_signal_type" style="float: right;width:39%" data-toggle="tooltip" title="Signals to apply the manual integration points">
 <option value="fitting_signals" data-toggle="tooltip" title="Apply manual integrations points to fitting cyclic voltammograms.">Fitting</option>
@@ -316,7 +323,7 @@ _('status_fit').innerHTML = 'Added succesfully.';
 
 function finish_pushed_fit(){
 if(fscav_data_fit.current.array?.length){
-fscav_data_fit.data_loading_finished(parseFloat(_('peak_width').value)); switch_fscav_data_object('fit');
+fscav_data_fit.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1); switch_fscav_data_object('fit');
 _('add_button_fit').disabled = true; _('finish_button_fit').disabled = true;
 };
 };
@@ -332,13 +339,13 @@ _('status_predict').innerHTML = 'Added succesfully.';
 
 function finish_pushed_predict(){
 if(fscav_data_predict.current.array?.length){
-fscav_data_predict.data_loading_finished(parseFloat(_('peak_width').value)); switch_fscav_data_object('predict');
+fscav_data_predict.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1); switch_fscav_data_object('predict');
 _('add_button_predict').disabled = true; _('finish_button_predict').disabled = true;
 };
 };
 
 function recalculate_pushed(){
-fscav_data.calculate_limits_and_auc(parseFloat(_('peak_width').value));
+fscav_data.calculate_limits_and_auc(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1);
 fscav_data.plot_graph('cv_graph');
 };
 

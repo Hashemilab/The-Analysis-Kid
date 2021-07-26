@@ -9,6 +9,8 @@ this.time = new HL_FSCV_ARRAY([], 's', 'Time');
 this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration'); //Labels or predictions.
 // Parameters to calculate the charge, get the linear fit and the SNN model.
 this.local_neighbours = peak_width;
+this.local_min_index = [0, 1];
+this.local_max_index = 0;
 this.max_indexes = [];
 this.max_values = [];
 this.min_indexes = [];
@@ -49,19 +51,23 @@ this.concentration.array = linearise(this.concentration.array, 1);
 
 
 
-data_loading_finished(peak_width){
+data_loading_finished(peak_width,  min1, min2, max){
 this.linearise_data_arrays();
-this.calculate_limits_and_auc(peak_width);
+this.calculate_limits_and_auc(peak_width, min1, min2, max);
 };
 
-calculate_limits_and_auc(peak_width){
+calculate_limits_and_auc(peak_width, min1, min2, max){
 this.local_neighbours = peak_width;
+this.local_min_index = [min1, min2];
+this.local_max_index = max;
 for(var i=0;i<this.current.array.length; ++i){this.get_max_and_min_values(i); this.get_auc(i)};
 };
 
 get_max_and_min_values(index){
-[this.max_indexes[index], this.max_values[index]] = local_maxima(this.current.array[index], this.local_neighbours);
-[this.min_indexes[index], this.min_values[index]] = local_minima(this.current.array[index], this.local_neighbours);
+let local_max = local_maxima(this.current.array[index], this.local_neighbours);
+let local_min = local_minima(this.current.array[index], this.local_neighbours);
+[this.max_indexes[index], this.max_values[index]] = [local_max[0][this.local_max_index], local_max[1][this.local_max_index]];
+[this.min_indexes[index], this.min_values[index]] = [[local_min[0][this.local_min_index[0]], local_min[0][this.local_min_index[1]]], [local_min[1][this.local_min_index[0]], local_min[1][this.local_min_index[1]]]];
 };
 
 get_auc(index){
@@ -81,7 +87,7 @@ for(var j = 0; j<this.current.array[index].length; ++j){this.norm_current.array[
 change_points(pindex, type){
 if(type == "min1"){this.min_indexes[this.graph_index][0] = pindex; this.min_values[this.graph_index][0] = this.current.array[this.graph_index][pindex]}
 else if(type == "min2"){this.min_indexes[this.graph_index][1] = pindex; this.min_values[this.graph_index][1] = this.current.array[this.graph_index][pindex]}
-else {this.max_indexes[this.graph_index][0] = pindex; this.max_values[this.graph_index][0] = this.current.array[this.graph_index][pindex]};
+else {this.max_indexes[this.graph_index] = pindex; this.max_values[this.graph_index] = this.current.array[this.graph_index][pindex]};
 // Recalculate auc
 this.get_auc(this.graph_index);
 };
@@ -91,7 +97,7 @@ if(type =="first_interval_point_button"){
 for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][0] = value; this.min_values[i][0] = this.current.array[i][value]; this.get_auc(i)};
 }
 else if(type=="max_point_button"){
-for(var i=0;i<this.current.array.length; ++i){this.max_indexes[i][0] = value; this.max_values[i][0] = this.current.array[i][value]; this.get_auc(i)};
+for(var i=0;i<this.current.array.length; ++i){this.max_indexes[i] = value; this.max_values[i] = this.current.array[i][value]; this.get_auc(i)};
 }
 else if(type=="second_interval_point_button"){
 for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][1] = value; this.min_values[i][1] = this.current.array[i][value]; this.get_auc(i)};
@@ -276,8 +282,8 @@ showlegend: false,
 
 
 let scatter_data_max = {
-y:[this.current.array[this.graph_index][this.max_indexes[this.graph_index][0]]],
-x:[this.time.array[this.graph_index][this.max_indexes[this.graph_index][0]]],
+y:[this.current.array[this.graph_index][this.max_indexes[this.graph_index]]],
+x:[this.time.array[this.graph_index][this.max_indexes[this.graph_index]]],
 name: 'Points',
 type: 'scatter',
 showlegend: false,
