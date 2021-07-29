@@ -134,7 +134,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <button style="font-size:12px" onclick="next_cv_clicked()" data-toggle="tooltip" title="Graph next current trace"> > </button>
 </div>
 
-<div  id = "cv_point_selection" class="cv_graph" style="position:absolute;left:25%;margin-top:2.5%">
+<div id = "cv_point_selection" class="cv_graph" style="position:absolute;left:25%;margin-top:2.5%">
 <button class="max_min_selection" id="min1" style="font-size:12px;background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Toggle to select the minimum point in the graph">Min 1</button>
 <button class="max_min_selection" id="max" style="font-size:12px"  data-toggle="tooltip" title="Toggle to select the maximum point in the graph">Max</button>
 <button class="max_min_selection" id="min2" style="font-size:12px" data-toggle="tooltip" title="Toggle to select the minimum point in the graph">Min 2</button>
@@ -214,16 +214,35 @@ The layer size cannot be changed when selecting the SNN multielectrode fitting m
 
 <div id="integration_configuration_modal_window" class="modal">
 <div class="modal-content">
+
+<p>
+<b> Analyte: </b>
+&nbsp;
+<button class="analyte_type_integration" id="serotonin_button_selection" style=";background-color:#3f51b5; color:white;" data-toggle="tooltip" title="Use default algorithms and initial values for serotonin FSCAV CV.">5-HT</button>
+&nbsp;
+<button class="analyte_type_integration" id="dopamine_button_selection" data-toggle="tooltip" title="Use default algorithms and initial values for dopamine FSCAV CV.">DA</button>
+</p>
 <div class="row">
 <div class="col">
-<p><b> Automatic: </b></p>
+<p>
+<b> Automatic: </b>
+<button onclick="recalculate_pushed()" style="width:30% ;float: right;" data-toggle="tooltip" title="Apply values to automatic peak finding.">Apply</button>
+</p>
+
 <label for="peak_width" style="width:59%">Peak prom. (samples):</label>
 <input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to automatically find integration points. "/>
+<div id="serotonin_panel">
 <label style="width:59%">Local minima:</label>
 <input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_minima_1" value=1 data-toggle="tooltip" title="Local minima (number) used as first integration point."/>
 <input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_minima_2" value=2 data-toggle="tooltip" title="Local minima (number) used as second integration point."/>
 <label style="width:59%">Local maxima:</label>
 <input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="local_maxima" value=1 data-toggle="tooltip" title="Local maxima used as maximum amplitude."/>
+</div>
+<div id="dopamine_panel" style="display:none;">
+<label style="width:59%">Peak finding percentages:</label>
+<input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="percentage_1" value=20 data-toggle="tooltip" title="Lower limit in percentage of samples where faradaic peak can be found."/>
+<input style="width:15%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="percentage_2" value=50 data-toggle="tooltip" title="Upper limit in percentage of samples where faradaic peak can be found."/>
+</div>
 </div>
 </div>
 <hr style="width:100%;text-align:left;margin-left:0;">
@@ -236,16 +255,16 @@ The layer size cannot be changed when selecting the SNN multielectrode fitting m
 <option value="prediction_signals" data-toggle="tooltip" title="Apply manual integration points to prediction cyclic voltammograms.">Prediction</option>
 </select>
 
-<label for="first_interval_point" style="width:33%">Min 1 (sample):</label>
-<input style="width:33%" type="number" step="1" min=0 id="first_interval_point" value=60 data-toggle="tooltip" title="Sample value for first integration limit. "/>
+<label for="first_interval_point" style="width:33%">Min 1 (%):</label>
+<input style="width:33%" type="number" step="1" min=0 id="first_interval_point" value=5 data-toggle="tooltip" title="Sample percentage for first integration limit. "/>
 <button onclick="interval_point_changed(this)" id="first_interval_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to first interval limit.">Apply</button>
 
-<label for="max_point" style="width:33%">Max (sample):</label>
-<input style="width:33%" type="number" step="1" min=0 id="max_point" value=200 data-toggle="tooltip" title="Sample value for maximum amplitude point. "/>
+<label for="max_point" style="width:33%">Max (%):</label>
+<input style="width:33%" type="number" step="1" min=0 id="max_point" value=20 data-toggle="tooltip" title="Sample percentage for maximum amplitude point. "/>
 <button onclick="interval_point_changed(this)" id="max_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to maximum amplitude point">Apply</button>
 
-<label for="second_interval_point" style="width:33%">Min 2 (sample):</label>
-<input style="width:33%" type="number" step="1" min=0 id="second_interval_point" value=350 data-toggle="tooltip" title="Sample value for second integration limit. "/>
+<label for="second_interval_point" style="width:33%">Min 2 (%):</label>
+<input style="width:33%" type="number" step="1" min=0 id="second_interval_point" value=30 data-toggle="tooltip" title="Sample percentage for second integration limit. "/>
 <button onclick="interval_point_changed(this)" id="second_interval_point_button" style="width:15%;float: right;" data-toggle="tooltip" title="Apply value to second interval limit">Apply</button>
 
 </div>
@@ -299,8 +318,17 @@ $('.fit_predict_selection').css('background-color','');
 $('.fit_predict_selection').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
-if (this.id == "fit_button_selection"){$('#fitting_panel').show(); $('#prediction_panel').hide(); switch_fscav_data_object('fit')}
-else{$('#prediction_panel').show(); $('#fitting_panel').hide(); switch_fscav_data_object('predict')};
+if (this.id == "fit_button_selection"){$('#fitting_panel').show(); $('#prediction_panel').hide();switch_fscav_data_object('fit')}
+else{$('#prediction_panel').show(); $('#fitting_panel').hide();switch_fscav_data_object('predict')};
+});
+
+$(document).on("click", '.analyte_type_integration', function(){
+$('.analyte_type_integration').css('background-color','');
+$('.analyte_type_integration').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+if (this.id == "serotonin_button_selection"){$('#serotonin_panel').show(); $('#dopamine_panel').hide(); change_default_integration_values('serotonin');}
+else{$('#dopamine_panel').show(); $('#serotonin_panel').hide(); change_default_integration_values('dopamine');};
 });
 
 function graph_selection_changed(id){
@@ -323,7 +351,7 @@ _('status_fit').innerHTML = 'Added succesfully.';
 
 function finish_pushed_fit(){
 if(fscav_data_fit.current.array?.length){
-fscav_data_fit.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1); switch_fscav_data_object('fit');
+fscav_data_fit.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1, parseFloat(_('percentage_1').value), parseFloat(_('percentage_2').value)); switch_fscav_data_object('fit');
 _('add_button_fit').disabled = true; _('finish_button_fit').disabled = true;
 };
 };
@@ -339,13 +367,13 @@ _('status_predict').innerHTML = 'Added succesfully.';
 
 function finish_pushed_predict(){
 if(fscav_data_predict.current.array?.length){
-fscav_data_predict.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1); switch_fscav_data_object('predict');
+fscav_data_predict.data_loading_finished(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1, parseFloat(_('percentage_1').value), parseFloat(_('percentage_2').value)); switch_fscav_data_object('predict');
 _('add_button_predict').disabled = true; _('finish_button_predict').disabled = true;
 };
 };
 
 function recalculate_pushed(){
-fscav_data.calculate_limits_and_auc(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1);
+fscav_data.calculate_limits_and_auc(parseFloat(_('peak_width').value), parseInt(_('local_minima_1').value)-1,  parseInt(_('local_minima_2').value)-1,  parseInt(_('local_maxima').value)-1, parseFloat(_('percentage_1').value), parseFloat(_('percentage_2').value));
 fscav_data.plot_graph('cv_graph');
 };
 
@@ -418,6 +446,12 @@ if(obj.id =="first_interval_point_button"){data.manual_change_points(_("first_in
 else if(obj.id=="max_point_button"){data.manual_change_points(_("max_point").value, obj.id)}
 else if(obj.id=="second_interval_point_button"){data.manual_change_points(_("second_interval_point").value, obj.id)};
 data.plot_graph("cv_graph");
+};
+
+function change_default_integration_values(type){
+fscav_data_fit.analyte = type, fscav_data_predict.analyte = type;
+if(type=='serotonin'){_('first_interval_point').value = 5; _('second_interval_point').value = 30; _('max_point').value = 20; _('peak_width').value = 20;}
+else{_('first_interval_point').value = 20; _('second_interval_point').value = 45; _('max_point').value = 30; _('peak_width').value = 5;};
 };
 
 </script>

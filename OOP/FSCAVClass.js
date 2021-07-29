@@ -11,6 +11,8 @@ this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration'); //Labels o
 this.local_neighbours = peak_width;
 this.local_min_index = [0, 1];
 this.local_max_index = 0;
+this.percentages_interval = [0.2, 0.5];
+this.analyte = 'serotonin';
 this.max_indexes = [];
 this.max_values = [];
 this.min_indexes = [];
@@ -51,24 +53,39 @@ this.concentration.array = linearise(this.concentration.array, 1);
 
 
 
-data_loading_finished(peak_width,  min1, min2, max){
+data_loading_finished(peak_width,  min1, min2, max,  percentage_1, percentage_2){
 this.linearise_data_arrays();
-this.calculate_limits_and_auc(peak_width, min1, min2, max);
+this.calculate_limits_and_auc(peak_width, min1, min2, max,  percentage_1, percentage_2);
 };
 
-calculate_limits_and_auc(peak_width, min1, min2, max){
+calculate_limits_and_auc(peak_width, min1, min2, max, percentage_1, percentage_2){
 this.local_neighbours = peak_width;
 this.local_min_index = [min1, min2];
 this.local_max_index = max;
-for(var i=0;i<this.current.array.length; ++i){this.get_max_and_min_values(i); this.get_auc(i)};
+this.percentages_interval = [percentage_1/100, percentage_2/100];
+if (this.analyte == 'serotonin'){for(var i=0;i<this.current.array.length; ++i){this.get_max_and_min_values_serotonin(i); this.get_auc(i)};}
+else {for(var i=0;i<this.current.array.length; ++i){this.get_max_and_min_values_dopamine(i); this.get_auc(i)};}
 };
 
-get_max_and_min_values(index){
+get_max_and_min_values_serotonin(index){
 let local_max = local_maxima(this.current.array[index], this.local_neighbours);
 let local_min = local_minima(this.current.array[index], this.local_neighbours);
 [this.max_indexes[index], this.max_values[index]] = [local_max[0][this.local_max_index], local_max[1][this.local_max_index]];
 [this.min_indexes[index], this.min_values[index]] = [[local_min[0][this.local_min_index[0]], local_min[0][this.local_min_index[1]]], [local_min[1][this.local_min_index[0]], local_min[1][this.local_min_index[1]]]];
 };
+
+get_max_and_min_values_dopamine(index){
+//Get oxidation trace.
+let oxidation_trace = this.current.array[index].slice(parseInt(this.percentages_interval[0]*this.current.array[index].length), parseInt(this.percentages_interval[1]*this.current.array[index].length));
+let oxidation_diff = diff_arr(this.current.array[index], 1).slice(parseInt(this.percentages_interval[0]*this.current.array[index].length), parseInt(this.percentages_interval[1]*this.current.array[index].length));
+let local_max = local_maxima(oxidation_trace, this.local_neighbours);
+let local_min1 = local_minima(oxidation_diff, this.local_neighbours);
+let local_min2 = local_minima(oxidation_trace, this.local_neighbours);
+[this.max_indexes[index], this.max_values[index]] = [local_max[0][0]+parseInt(this.percentages_interval[0]*this.current.array[index].length), local_max[1][0]];
+[this.min_indexes[index], this.min_values[index]] = [[local_min1[0][0]+parseInt(this.percentages_interval[0]*this.current.array[index].length), local_min2[0][local_min2[0].length-1]+parseInt(this.percentages_interval[0]*this.current.array[index].length)], [this.current.array[index][local_min1[0][0]+parseInt(this.percentages_interval[0]*this.current.array[index].length)], local_min2[1][local_min2[0].length-1]]];
+};
+
+
 
 get_auc(index){
 this.get_normalized_current_array(index);
@@ -92,15 +109,15 @@ else {this.max_indexes[this.graph_index] = pindex; this.max_values[this.graph_in
 this.get_auc(this.graph_index);
 };
 
-manual_change_points(value, type){
+manual_change_points(value, type){ //Value is given in percentage.
 if(type =="first_interval_point_button"){
-for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][0] = value; this.min_values[i][0] = this.current.array[i][value]; this.get_auc(i)};
+for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][0] = parseInt(value*this.current.array[i].length/100); this.min_values[i][0] = this.current.array[i][parseInt(value*this.current.array[i].length/100)]; this.get_auc(i)};
 }
 else if(type=="max_point_button"){
-for(var i=0;i<this.current.array.length; ++i){this.max_indexes[i] = value; this.max_values[i] = this.current.array[i][value]; this.get_auc(i)};
+for(var i=0;i<this.current.array.length; ++i){this.max_indexes[i] = parseInt(value*this.current.array[i].length/100); this.max_values[i] = this.current.array[i][parseInt(value*this.current.array[i].length/100)]; this.get_auc(i)};
 }
 else if(type=="second_interval_point_button"){
-for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][1] = value; this.min_values[i][1] = this.current.array[i][value]; this.get_auc(i)};
+for(var i=0;i<this.current.array.length; ++i){this.min_indexes[i][1] = parseInt(value*this.current.array[i].length/100); this.min_values[i][1] = this.current.array[i][parseInt(value*this.current.array[i].length/100)]; this.get_auc(i)};
 };
 };
 
