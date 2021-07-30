@@ -100,6 +100,22 @@ var b = ((n*sum_xy)-(sum_x*sum_y))/((n*sum_xx)-sum_x*sum_x);
 var r2 = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
 return [a,b, r2];
 };
+
+function quadratic_fit(arr_x, arr_y, order){
+let x_matrix = [], x_temp = [], y_matrix = transpose([arr_y]), x_matrix_t = [], dot1, dot_inv, dot2;
+for (j=0;j<arr_x.length;j++){
+x_temp = [];
+for(i=0;i<=order;i++){x_temp.push(Math.pow(arr_x[j],i));};
+x_matrix.push(x_temp);
+};
+x_matrix_t = transpose(x_matrix);
+dot1 = multiply_matrices(x_matrix_t, x_matrix);
+dot_inv = inverse(dot1);
+dot2 = multiply_matrices(x_matrix_t, y_matrix);
+return multiply_matrices(dot_inv, dot2);
+};
+
+
 // Errors of regression: standard error of estimate, slope and intercept.
 function linear_estimation_errors(pred_y, real_y, x){
 var mean_x = average(x), sum_dx=0, sum_xx=0, sq_residuals = 0, se_regression, se_slope, se_intercept, n=x.length;
@@ -225,6 +241,37 @@ var tmp=[];
 for(var i=0; i<arr1.length;++i){tmp[i]=arr1[i]*arr2[i];}
 return tmp;
 };
+
+
+//Inverse of square matrix.
+function inverse(t){
+var n = [t.length, t[0].length], r = Math.abs, i = n[0], s = n[1], o = deep_copy_2d_array(t), u, a, f = identity(i), l, c, h, p, d, t;
+for (p = 0; p < s; ++p) {
+var v = -1,
+m = -1;
+for (h = p; h !== i; ++h) (d = r(o[h][p])), d > m && ((v = h), (m = d));
+(a = o[v]), (o[v] = o[p]), (o[p] = a), (c = f[v]), (f[v] = f[p]), (f[p] = c), (t = a[p]);
+for (d = p; d !== s; ++d) a[d] /= t;
+for (d = s - 1; d !== -1; --d) c[d] /= t;
+for (h = i - 1; h !== -1; --h)
+if (h !== p) {
+(u = o[h]), (l = f[h]), (t = u[p]);
+for (d = p + 1; d !== s; ++d) u[d] -= a[d] * t;
+for (d = s - 1; d > 0; --d) (l[d] -= c[d] * t), --d, (l[d] -= c[d] * t);
+d === 0 && (l[0] -= c[0] * t);
+}}
+return f;
+};
+
+//Identity matrix.
+function identity(n) {
+var i, j, arr = [], matrix= [];
+for (i=0; i < n; i++){for (j=0; j < n; j++){
+if (i === j){arr[j] = 1} else{arr[j] = 0}}
+matrix[i] = arr, arr = [];}
+return matrix;
+};
+
 // Scalar product of one-dimensional array.
 function scalar_product(arr, scalar){
 tmp=[];
@@ -482,4 +529,12 @@ sortedArrays[arrayKey] = sortByIndexes(arrays[arrayKey], sortedIndexes);
 });
 return sortedArrays;
 }
+}
+
+//Matrix multiplication
+const multiply_matrices = (a, b) => {
+let x = a.length, z = a[0].length, y = b[0].length, productRow = Array.apply(null, new Array(y)).map(Number.prototype.valueOf, 0), product = new Array(x);
+for (let p = 0; p < x; p++) {product[p] = productRow.slice();}
+for (let i = 0; i < x; i++) {for (let j = 0; j < y; j++) {for (let k = 0; k < z; k++) {product[i][j] += a[i][k] * b[k][j];}}}
+return product;
 }
