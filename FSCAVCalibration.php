@@ -43,7 +43,7 @@ $(".se-pre-con").fadeOut("slow");
 <div class="row">
 <button onclick="invert_pushed()" data-toggle="tooltip" title="Invert the sign of the current values in the voltammogram">Invert</button>
 &nbsp;
-<button id="graph_point_selection" class="graph_point_selection" data-toggle="tooltip" title="Select horizontal traces from the color plot &#x0a; by interactively clicking on the graph">
+<button id="graph_point_selection" class="graph_point_selection" data-toggle="tooltip" title="Allows to change calibration points in the graph.">
 Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 </button>
 &nbsp;

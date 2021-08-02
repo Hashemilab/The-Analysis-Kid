@@ -493,3 +493,225 @@ var filename = "Calibration_AK.xlsx";
 XLSX.writeFile(wb, filename);
 };
 };
+
+class HL_FSCV_DATA_CALIBRATION {
+constructor(frequency, units, c_units, peak_width, state){
+this.frequency = frequency;
+this.origin_file_array = [];
+this.current = new HL_FSCV_ARRAY([], units, 'Current');
+this.time = new HL_FSCV_ARRAY([], 's', 'Time');
+this.concentration = new HL_FSCV_ARRAY([], c_units, 'Concentration'); //Labels or predictions.
+this.local_neighbours = peak_width;
+this.local_max_index = 0;
+this.max_indexes = [];
+this.max_values = [];
+this.plot_settings = new HL_PLOT_SETTINGS();
+this.cv_plot_state = 'block';
+this.fit_plot_state = 'none';
+this.state = state;
+this.graph_index = 0;
+this.number_of_files = 0;
+this.linear_fit_parameters = [];
+};
+
+read_data_from_loaded_files(data, names_of_files, concentration_label){
+this.current.array.push(data.map(x => arrayColumn(x, 2)));
+this.time.array.push(data.map(x => makeArr(0,(x.length-1)/this.frequency, x.length)));
+this.origin_file_array.push(names_of_files);
+this.number_of_files+=data.length;
+this.concentration.array.push(uniform_array(data.length, concentration_label));
+};
+
+linearise_data_arrays(){
+this.current.array = linearise(this.current.array, 1);
+this.time.array = linearise(this.time.array, 1);
+this.origin_file_array = linearise(this.origin_file_array, 1);
+this.concentration.array = linearise(this.concentration.array, 1);
+};
+
+data_loading_finished(peak_width){
+this.linearise_data_arrays();
+this.detect_max_peak(peak_width);
+};
+
+detect_max_peak(peak_width){
+this.local_neighbours = peak_width;
+for(var i=0;i<this.current.array.length; ++i){this.get_max_point(i);}
+};
+
+get_max_point(index){
+let local_max = local_maxima(this.current.array[index], this.local_neighbours);
+[this.max_indexes[index], this.max_values[index]] = [local_max[0][this.local_max_index], local_max[1][this.local_max_index]];
+};
+
+get_linear_fit(div, status_id, type){
+this.linear_fit_parameters[0] = linear_fit(this.max_values, this.concentration.array);
+this.linear_fit_parameters[1] = linear_estimation_errors(this.max_values.map(x =>this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), this.concentration.array, this.max_values);
+this.get_linear_fit_metrics(div, type);
+this.update_fitting_status(status_id);
+};
+
+get_quadratic_fit(div, status_id, type){
+let fit = quadratic_fit(this.max_values, this.concentration.array, 2);
+this.linear_fit_parameters[0] = [fit[0][0], fit[1][0], fit[2][0]];
+this.linear_fit_parameters[1] = estimation_errors(this.max_values.map(x =>this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x+this.linear_fit_parameters[0][2]*x*x), this.concentration.array);
+this.get_quadratic_metrics(div, type);
+this.update_fitting_status(status_id);
+};
+
+get_linear_fit_metrics(div, type){
+if(type =='regression_plot_type'){
+let x_line_fit = makeArr(index_of_min(this.max_values)[0], index_of_max(this.max_values)[0], 100);
+this.plot_scatter_and_line(div, this.max_values, this.concentration.array, 'Experimental', 'Experimental', x_line_fit, x_line_fit.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x),
+'Fit', "Current ("+this.current.units+")",  this.concentration.name +" ("+this.concentration.units+")", '<b>Linear Fit</b>', '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+
+' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q<br>'+'R<sup>2</sup> = '+this.linear_fit_parameters[0][2].toFixed(2)+'</b>');
+} else{
+this.plot_scatter_and_line(div, this.concentration.array, this.max_values.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), 'Experimental', this.origin_file_array,
+makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_max(this.concentration.array)[0], 100), "Ideal", 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
+'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'Linear Fit', '<b>SEE: ' + this.linear_fit_parameters[1][0].toFixed(2) +' '+this.concentration.units+'</b>');
+};
+};
+
+
+
+get_quadratic_metrics(div, type){
+if(type =='regression_plot_type'){
+let x_line_fit = makeArr(index_of_min(this.max_values)[0], index_of_max(this.max_values)[0], 100);
+this.plot_scatter_and_line(div, this.max_values, this.concentration.array, 'Experimental', 'Experimental', x_line_fit, x_line_fit.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x+this.linear_fit_parameters[0][2]*x*x),
+'Fit', "Current ("+this.current.units+")",  this.concentration.name +" ("+this.concentration.units+")", '<b>Quadratic Fit</b>', '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+
+' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q +'+this.linear_fit_parameters[0][2].toFixed(2)+' · Q^2<br>'+'R<sup>2</sup> = '+this.linear_fit_parameters[1][1].toFixed(2)+'</b>');
+} else{
+this.plot_scatter_and_line(div, this.concentration.array, this.max_values.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x+this.linear_fit_parameters[0][2]*x*x), 'Experimental', this.origin_file_array,
+makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_max(this.concentration.array)[0], 100), "Ideal", 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
+'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'Quadratic Fit', '<b>SEE: ' + this.linear_fit_parameters[1][0].toFixed(2) +' '+this.concentration.units+'</b>');
+};
+};
+
+update_fitting_status(status_id){
+_(status_id).innerHTML = "&#10004";
+};
+
+invert_current_values(div){
+this.current.array[this.graph_index] = this.current.array[this.graph_index].map(x => -x);
+this.detect_max_peak();
+this.plot_graph(div);
+};
+
+change_points(pindex){
+this.max_indexes[this.graph_index] = pindex; this.max_values[this.graph_index] = this.current.array[this.graph_index][pindex];
+};
+
+initialise_graph(div){
+Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
+};
+
+plot_scatter_and_line(div, x, y, scatter_name, scatter_text, x_line, y_line, line_name, x_label, y_label, title, annotations){
+var layout = this.plot_settings.plot_layout;
+layout.title.text = "<b>"+title+"</b>";
+layout.xaxis = {title:x_label};
+layout.yaxis = {title:y_label};
+layout.annotations = [{
+xref: 'paper',
+yref: 'paper',
+x: 0.98,
+xanchor: 'right',
+y: 0.1,
+yanchor: 'bottom',
+text: annotations,
+showarrow: false
+}];
+
+let scatter = {
+y:y,
+x:x,
+name: scatter_name,
+type: 'scatter',
+showlegend: false,
+mode: 'markers',
+marker: {color: 'black'},
+text:scatter_text
+};
+
+let trace = {
+y: y_line,
+x: x_line,
+text:line_name,
+showlegend: false,
+};
+
+_(div).style.display = "block";
+Plotly.newPlot(div, [trace], layout, this.plot_settings.plot_configuration);
+Plotly.addTraces(div, [scatter]);
+_(div).style.display = this.fit_plot_state;
+};
+
+plot_graph(div){
+var layout = this.plot_settings.plot_layout;
+layout.title.text = "<b>"+this.origin_file_array[this.graph_index]+"</b>";
+layout.xaxis = {title:this.time.name +" ("+this.time.units+")"};
+layout.yaxis = {title:this.current.name +" ("+this.current.units+")"};
+
+layout.annotations = [{
+xref: 'paper',
+yref: 'paper',
+x: 0.98,
+xanchor: 'right',
+y: 0.9,
+yanchor: 'bottom',
+text: '<b>Fitting signals<br>'+this.concentration.name+': '+this.concentration.array[this.graph_index]+' '+this.concentration.units+'</b>',
+showarrow: false
+}];
+
+var trace = {
+y: this.current.array[this.graph_index],
+x:this.time.array[this.graph_index],
+text:this.origin_file_array[this.graph_index],
+showlegend: false,
+};
+
+
+let scatter_data_max = {
+y:[this.current.array[this.graph_index][this.max_indexes[this.graph_index]]],
+x:[this.time.array[this.graph_index][this.max_indexes[this.graph_index]]],
+name: 'Points',
+type: 'scatter',
+showlegend: false,
+mode: 'markers',
+marker: {color: 'black'},
+text:'Max'
+};
+
+_(div).style.display = "block";
+Plotly.newPlot(div, [trace], layout, this.plot_settings.plot_configuration);
+Plotly.addTraces(div, [scatter_data_max]);
+// Assign callback when click to local function graph_click();
+_(div).on('plotly_click', function(data){graph_clicked(data)});
+_(div).style.display = this.cv_plot_state;
+};
+
+export_to_xlsx(){
+// Export parameters calculated from the CVs.
+var wb = XLSX.utils.book_new(), aoa;
+// Export fitting parameters.
+if(this.current.array?.length){
+aoa = transpose([arrayColumn(this.max_values, 0), this.origin_file_array, this.concentration.array]);
+aoa.unshift([ 'Max point (sample)', 'File', this.concentration.name +' ('+this.concentration.units+')']);
+XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "FSCV Parameters")};
+// Export linear fit parameters.
+if(this.linear_fit_parameters?.length){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Slope','SE slope', 'Intercept', 'SE intercept', 'R^2', 'SEE'],
+[this.linear_fit_parameters[0][1], this.linear_fit_parameters[1][1], this.linear_fit_parameters[0][0], this.linear_fit_parameters[1][2], this.linear_fit_parameters[0][2],
+this.linear_fit_parameters[1][0]]]), 'Fitting Parameters')};
+XLSX.writeFile(wb, 'FSCV_calibration_AK.xlsx');
+};
+
+
+
+
+
+
+
+
+
+
+
+}

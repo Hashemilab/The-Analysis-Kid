@@ -115,7 +115,6 @@ dot2 = multiply_matrices(x_matrix_t, y_matrix);
 return multiply_matrices(dot_inv, dot2);
 };
 
-
 // Errors of regression: standard error of estimate, slope and intercept.
 function linear_estimation_errors(pred_y, real_y, x){
 var mean_x = average(x), sum_dx=0, sum_xx=0, sq_residuals = 0, se_regression, se_slope, se_intercept, n=x.length;

@@ -115,6 +115,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 </div>
 <div class="row" style="margin-top:5px">
 <button id="graph_configuration" data-toggle="tooltip" title="Open graph configuration panel." onclick="open_graph_configuration_window()">Graph config.</button>
+&nbsp;
+<button id="standard_calibration_button" onclick="standard_calibration_button_pushed()"  data-toggle="tooltip" title="Application to obtain a">Standard calibration</button>
 </div>
 </div>
 
@@ -662,6 +664,11 @@ function autoscale_color_palette_button_pushed(){
 fscv_data.get_colorbar_range("min_colour_value", "max_colour_value");
 fscv_data.graph_color_plot('main_graph');
 };
+
+function standard_calibration_button_pushed(){
+var calib_window = window.open(encodeURI('FSCVStandardCalibration.php'), "");
+};
+
 </script>
 
 <script>
