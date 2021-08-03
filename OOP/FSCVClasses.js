@@ -250,13 +250,22 @@ this.color_array = [];
 this.type = 'c-t Curve';
 this.counter = 0;
 this.graph_index = 0;
+this.plsr_model = null;
 }
 
-calibrate_trace(div, index, fscv_transient, frequency, coefficient, units, name){
+calibrate_trace(div, index, fscv_transient, frequency, coefficients, units, name, type){
 this.graph_index = this.counter++;
-var array = scalar_product(fscv_transient.current.array[index-1], coefficient);
-this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1],
-this.palettes.colors[(index-1)%this.palettes.colors.length], name, units);
+var array;
+if (type == 'linear_fit'){array = fscv_transient.current.array[index-1].map(x => coefficients[0]+coefficients[1]*x)}
+else {array = fscv_transient.current.array[index-1].map(x => coefficients[0]+coefficients[1]*x+coefficients[2]*x*x)};
+this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.colors[(index-1)%this.palettes.colors.length], name, units);
+};
+
+calibrate_trace_plsr(div, fscv_data, prediction_ouput_number, frequency, units, name){
+this.graph_index = this.counter++;
+let plsr_x = new ML.Matrix(transpose(fscv_data.current.array));
+let array = this.plsr_model.predict(plsr_x).data.map(x=>x[prediction_output_number]);
+this.add_concentration_to_array(div, array, frequency, fscv_data.name_of_file, this.palettes.colors[this.counter%this.palettes.colors.length], name, units);
 };
 
 // EXPERIMENTAL METHODS FOR KINETIC CALIBRATION.
@@ -495,7 +504,7 @@ XLSX.writeFile(wb, filename);
 };
 
 class HL_FSCV_DATA_CALIBRATION {
-constructor(frequency, units, c_units, peak_width, state){
+constructor(frequency, units, c_units, peak_width){
 this.frequency = frequency;
 this.origin_file_array = [];
 this.current = new HL_FSCV_ARRAY([], units, 'Current');
@@ -508,10 +517,14 @@ this.max_values = [];
 this.plot_settings = new HL_PLOT_SETTINGS();
 this.cv_plot_state = 'block';
 this.fit_plot_state = 'none';
-this.state = state;
 this.graph_index = 0;
 this.number_of_files = 0;
 this.linear_fit_parameters = [];
+//PLSR variables.
+this.plsr_options = null;
+this.plsr_model = null;
+this.plsr_x = null;
+this.plsr_y = null;
 };
 
 read_data_from_loaded_files(data, names_of_files, concentration_label){
@@ -521,6 +534,16 @@ this.origin_file_array.push(names_of_files);
 this.number_of_files+=data.length;
 this.concentration.array.push(uniform_array(data.length, concentration_label));
 };
+
+read_data_from_plsr_file(data, name_of_files, peak_width){
+this.current.array = transpose(data[0][0]);
+this.time.array = this.current.array.map(x => makeArr(0,(x.length-1)/this.frequency, x.length));
+this.origin_file_array = uniform_array(this.current.array.length, name_of_files[0]);
+this.number_of_files = this.current.array.length;
+this.concentration.array = data[0][1];
+this.detect_max_peak(peak_width);
+};
+
 
 linearise_data_arrays(){
 this.current.array = linearise(this.current.array, 1);
@@ -559,6 +582,16 @@ this.get_quadratic_metrics(div, type);
 this.update_fitting_status(status_id);
 };
 
+get_plsr_fit(div, status_id, tolerance, number_of_components, prediction_output_number){
+let options = {latentVectors: number_of_components, tolerance: tolerance};
+this.plsr_model = new ML.PLS(options);
+this.plsr_x = new ML.Matrix(this.current.array);
+this.plsr_y = new ML.Matrix(this.concentration.array);
+this.plsr_model.train(this.plsr_x, this.plsr_y);
+this.get_plsr_metrics(div, prediction_output_number);
+this.update_fitting_status(status_id);
+};
+
 get_linear_fit_metrics(div, type){
 if(type =='regression_plot_type'){
 let x_line_fit = makeArr(index_of_min(this.max_values)[0], index_of_max(this.max_values)[0], 100);
@@ -572,8 +605,6 @@ makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_ma
 };
 };
 
-
-
 get_quadratic_metrics(div, type){
 if(type =='regression_plot_type'){
 let x_line_fit = makeArr(index_of_min(this.max_values)[0], index_of_max(this.max_values)[0], 100);
@@ -585,6 +616,16 @@ this.plot_scatter_and_line(div, this.concentration.array, this.max_values.map(x 
 makeArr(0,index_of_max(this.concentration.array)[0], 100), makeArr(0,index_of_max(this.concentration.array)[0], 100), "Ideal", 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
 'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'Quadratic Fit', '<b>SEE: ' + this.linear_fit_parameters[1][0].toFixed(2) +' '+this.concentration.units+'</b>');
 };
+};
+
+get_plsr_metrics(div, prediction_output_number){
+let predicted_y = this.plsr_model.predict(this.plsr_x).data.map(x=>x[prediction_output_number]);
+let y_real = this.concentration.array.map(x=>x[prediction_output_number]);
+this.linear_fit_parameters[0] = null;
+this.linear_fit_parameters[1] = [Math.sqrt(mse(y_real, predicted_y))];
+this.plot_scatter_and_line(div, y_real, predicted_y, 'Experimental', this.origin_file_array,
+makeArr(0,index_of_max(y_real)[0], 100), makeArr(0,index_of_max(y_real)[0], 100), "Ideal", 'True values: '+this.concentration.name+' ('+this.concentration.units+')',
+'Predicted values: '+this.concentration.name+' ('+this.concentration.units+')', 'PLSR Fit', '<b>RMSE: ' + this.linear_fit_parameters[1][0].toFixed(2) +' '+this.concentration.units+'<br> Exp. variance: '+this.plsr_model.R2X.toFixed(2)+' </b>');
 };
 
 update_fitting_status(status_id){
@@ -689,29 +730,29 @@ _(div).on('plotly_click', function(data){graph_clicked(data)});
 _(div).style.display = this.cv_plot_state;
 };
 
-export_to_xlsx(){
+export_plsr_model(link_element){if (this.plsr_model != null){
+let plsr_model_json_string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.plsr_model.toJSON()));
+_(link_element).setAttribute("href", plsr_model_json_string);
+_(link_element).setAttribute("download", "plsr_model.json");
+_(link_element).click();
+}};
+
+export_to_xlsx(model_type){
 // Export parameters calculated from the CVs.
 var wb = XLSX.utils.book_new(), aoa;
 // Export fitting parameters.
 if(this.current.array?.length){
-aoa = transpose([arrayColumn(this.max_values, 0), this.origin_file_array, this.concentration.array]);
+aoa = transpose([this.max_values, this.origin_file_array, this.concentration.array]);
 aoa.unshift([ 'Max point (sample)', 'File', this.concentration.name +' ('+this.concentration.units+')']);
 XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "FSCV Parameters")};
-// Export linear fit parameters.
-if(this.linear_fit_parameters?.length){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Slope','SE slope', 'Intercept', 'SE intercept', 'R^2', 'SEE'],
+// Export fit parameters.
+if (model_type == 'linear_fit'){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Slope','SE slope', 'Intercept', 'SE intercept', 'R^2', 'SEE'],
 [this.linear_fit_parameters[0][1], this.linear_fit_parameters[1][1], this.linear_fit_parameters[0][0], this.linear_fit_parameters[1][2], this.linear_fit_parameters[0][2],
-this.linear_fit_parameters[1][0]]]), 'Fitting Parameters')};
+this.linear_fit_parameters[1][0]]]), 'Linear fitting parameters')}
+else if (model_type == 'quadratic_fit'){XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['0th order','1st order', '2nd order', 'R^2', 'SEE'],
+[this.linear_fit_parameters[0][0], this.linear_fit_parameters[0][1], this.linear_fit_parameters[0][2], this.linear_fit_parameters[1][1], this.linear_fit_parameters[1][0]]]), 'Linear fitting parameters')}
+else {XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['RMSE','Exp. variance', 'Components'],
+[this.linear_fit_parameters[1][0], this.plsr_model.R2X, this.plsr_model.latentVectors]]), 'PLSR fitting parameters')}
 XLSX.writeFile(wb, 'FSCV_calibration_AK.xlsx');
 };
-
-
-
-
-
-
-
-
-
-
-
 }

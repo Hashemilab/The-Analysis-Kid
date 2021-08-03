@@ -42,8 +42,10 @@ workbook.SheetNames.forEach(function (sheetName) {
 roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {header: 1});
 if (roa.length) {result[i] = roa; i=i+1;}
 });
-return result[0];
+if(result.length>1){return result}
+else{return result[0];};
 };
+
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
 var text = self.array_buffer_to_string(arrbuf).split('\n'), tmp = [], tmp2;

@@ -9,6 +9,7 @@
 <script src="JavaScriptPackages/DashboardMethods.js"></script>
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/xlsx.full.min.js"></script>
+<script src="JavaScriptPackages/ml.min.js"></script>
 <script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/LOADClass.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
@@ -80,9 +81,43 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <span id="fit_state_text"></span>
 </div>
 </div>
+<div id="plsr_panel", style="display:none;">
+<br>
+<h5>PLSR Panel</h5>
+<hr>
+<div class="row">
+<input type="file" id="FSCVfiles_plsr" accept=".xls,.xlsx,.csv,.txt" style="width:70%;"  multiple data-toggle="tooltip" title="Add files to the application from a local path"> </input>
+<button id="finish_button_plsr" onclick="finish_pushed_plsr()" style="width: 17%;" data-toggle="tooltip" title="Finish loading files and include them into the application">Finish</button>
+</div>
+<div class="row">
+<p id="status_plsr"> Upload the file.</p>
+</div>
+<div class="row">
+<label for="frequency_plsr" style="width: 24%;">Freq. (Hz):</label>
+<label for="current_units_plsr" style="width: 24%;">Curr. units:</label>
+<label for="concentration_units_plsr" style="width: 24%;">Conc. units:</label>
+<label for="components_plsr" style="width: 24%;">Components:</label>
+<input type="number" step="1" min=1 name="frequency_plsr" id="frequency" style="width: 24%;"  value=500000 data-toggle="tooltip" title="Sampling frequency of the acquisition" />
+<input type="text" id="current_units_plsr" style="width:24%;" value="nA" data-toggle="tooltip" title="Current units of uploaded data"/>
+<input type="text"  id="concentration_units_plsr" style="width: 24%;" value='nM' data-toggle="tooltip" title="Concentration units of uploaded data."/>
+<input type="text"  id="components_plsr" style="width: 24%;" min=0 value=15 data-toggle="tooltip" title="Number of components of PLSR model."/>
+</div>
+<br>
+<div class="row">
+<button onclick="fit_button_pushed_plsr()" data-toggle="tooltip" title="Fit the signal parameters to the concentration labels.">Fit</button>&nbsp;
+<button id="show_fitting_button" onclick="show_fitting_button_pushed_plsr()" data-toggle="tooltip" title="Regraph the calculated fitting.">Show fit</button>
+</div>
+<div class="row" style="margin-top:5px">
+<span id="fit_state_text_plsr"></span>
+</div>
+</div>
+
 <div id="export_panel">
 <div class="row" style="margin-top:5px">
 <button onclick="export_button_pushed()"  data-toggle="tooltip" title="Export data as XLSX.">Export to XLSX</button>
+&nbsp;
+<button onclick="export_plsr_model_pushed()"  data-toggle="tooltip" title="Export PLSR model.">Export PLSR model</button>
+<a id="download_plsr_json" style="display:none"></a>
 </div>
 </div>
 </div>
@@ -119,9 +154,10 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 
 <div class="col">
 <label for="model_type" style="width:59%">Model type:</label>
-<select id="model_type_selection" style="float: right;width:39%" data-toggle="tooltip" title="Model used to fit the calibration signals to the concentration labels">
+<select id="model_type_selection" onchange="model_type_changed()" style="float: right;width:39%" data-toggle="tooltip" title="Model used to fit the calibration signals to the concentration labels">
 <option value="linear_fit" data-toggle="tooltip" title="Linear fit between calculated charge and concentration labels.">Linear fit</option>
 <option value="quadratic_fit" data-toggle="tooltip" title="Quadratic between calculated charge and concentration labels.">Quadratic fit</option>
+<option value="plsr_fit" data-toggle="tooltip" title="Quadratic between calculated charge and concentration labels.">PLSR</option>
 </select>
 </div>
 <hr style="width:100%;text-align:left;margin-left:0;">
@@ -129,7 +165,15 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <label for="peak_width" style="width:59%">Peak prom. (samples):</label>
 <input style="width:30%" type="number" onchange = "recalculate_pushed()" step="1" min=0 id="peak_width" value=20 data-toggle="tooltip" title="Peak prominence: number of neighbour samples &#x0a;considered to automatically find integration points. "/>
 </div>
+<hr style="width:100%;text-align:left;margin-left:0;">
+<div class="col">
+<label for="plsr_tolerance" style="width:59%">Tolerance:</label>
+<input style="width:30%" type="number" step="0.01" min=0 id="plsr_tolerance" value=0.0001 data-toggle="tooltip" title="Tolerance of PLSR model fitting. "/>
+<label for="plsr_prediction_variable" style="width:59%">Prediction variable for graph:</label>
+<input style="width:30%" type="number" step="1" min=1 id="plsr_prediction_variable" value=1 data-toggle="tooltip" title="Variable for prediction graph. "/>
 </div>
+</div>
+
 <br>
 <p style="text-align:center">
 <button onclick="peak_detection_configuration_close_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Close</button>
@@ -182,6 +226,13 @@ _('add_button_fit').disabled = true; _('finish_button_fit').disabled = true;
 fscv_data_fit.plot_graph('cv_graph');
 };
 };
+function finish_pushed_plsr(){
+fscv_data_fit.read_data_from_plsr_file(loaded_data_plsr.data_array, loaded_data_plsr.names_of_files, parseInt(_('peak_width').value));
+loaded_data_plsr.reset_loaded_data();
+_('status_plsr').innerHTML = 'Added succesfully.';
+ _('finish_button_plsr').disabled = true;
+ fscv_data_fit.plot_graph('cv_graph');
+};
 
 function reset_pushed(){
 location.reload();
@@ -202,14 +253,30 @@ fscv_data_fit.plot_graph('cv_graph');
 function fit_button_pushed(){
 _('fit_state_text').innerHTML = 'Fitting...';
 if(_('model_type_selection').value =='linear_fit'){fscv_data_fit.get_linear_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
-else{fscv_data_fit.get_quadratic_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
+else if(_('model_type_selection').value =='quadratic_fit'){fscv_data_fit.get_quadratic_fit('fit_graph', 'fit_state_text', _('linear_fit_plot_type').value)}
+};
+
+function fit_button_pushed_plsr(){
+_('fit_state_text_plsr').innerHTML = 'Fitting...';
+fscv_data_fit.get_plsr_fit('fit_graph', 'fit_state_text_plsr', parseFloat(_('plsr_tolerance').value), parseInt(_('components_plsr').value), parseInt(_('plsr_prediction_variable').value-1));
 };
 
 function show_fitting_button_pushed(){
-if(_('model_type_selection').value =='linear_fit' && fscv_data_fit.linear_fit_parameters?.length){fscv_data_fit.get_linear_fit_metrics('fit_graph', _('linear_fit_plot_type').value)};
+if(_('model_type_selection').value =='linear_fit' && fscv_data_fit.linear_fit_parameters?.length){fscv_data_fit.get_linear_fit_metrics('fit_graph', _('linear_fit_plot_type').value)}
+else if(_('model_type_selection').value =='quadratic_fit' && fscv_data_fit.linear_fit_parameters?.length){fscv_data_fit.get_quadratic_metrics('fit_graph', _('linear_fit_plot_type').value)};
 };
 
-function export_button_pushed(){fscv_data_fit.export_to_xlsx()};
+function show_fitting_button_pushed_plsr(){
+if(_('model_type_selection').value =='plsr_fit'){fscv_data_fit.get_linear_fit_metrics('fit_graph', parseInt(_('prediction_output_number').value-1))};
+};
+
+function export_button_pushed(){fscv_data_fit.export_to_xlsx(_('model_type_selection').value)};
+
+function export_plsr_model_pushed(){
+if(_('model_type_selection').value =='plsr_fit'){
+fscv_data_fit.export_plsr_model("download_plsr_json");
+}
+};
 
 function previous_cv_clicked(){if(fscv_data_fit.graph_index>0){--fscv_data_fit.graph_index; fscv_data_fit.plot_graph('cv_graph')}};
 function next_cv_clicked(){if(fscv_data_fit.graph_index<fscv_data_fit.number_of_files-1){++fscv_data_fit.graph_index; fscv_data_fit.plot_graph('cv_graph')}};
@@ -227,14 +294,22 @@ fscv_data_fit.detect_max_peak(peak_width);
 fscv_data_fit.plot_graph('cv_graph');
 };
 
+function model_type_changed(){
+if(_("model_type_selection").value == 'plsr_fit'){_('fitting_panel').style.display = "none"; _('plsr_panel').style.display = "block";}
+else{_('fitting_panel').style.display = "block"; _('plsr_panel').style.display = "none";console.log('runs')};
+};
+
 </script>
 
 <script>
 // Initialise variables.
 var loaded_data_fit = new HL_LOAD_DATA("status_fit");
-var fscv_data_fit = new HL_FSCV_DATA_CALIBRATION(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value, 'fit');
+var loaded_data_plsr = new HL_LOAD_DATA("status_plsr");
+var fscv_data_fit = new HL_FSCV_DATA_CALIBRATION(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value);
+
 // Assign callback to read the data from the inputs.
 _("FSCVfiles_fit").addEventListener('change', loaded_data_fit.read_files);
+_("FSCVfiles_plsr").addEventListener('change', loaded_data_plsr.read_files);
 //Initialise graphs.
 fscv_data_fit.initialise_graph('cv_graph');
 fscv_data_fit.initialise_graph('fit_graph');

@@ -10,6 +10,7 @@
 <script src="JavaScriptPackages/ArrayMethods.js"></script>
 <script src="JavaScriptPackages/kiss_fft.js"></script>
 <script src="JavaScriptPackages/tf.min.js"></script>
+<script src="JavaScriptPackages/ml.min.js"></script>
 <script src="JavaScriptPackages/xlsx.full.min.js"></script>
 <script src = "OOP/HLClasses.js"></script>
 <script src = "OOP/FSCVClasses.js"></script>
@@ -116,7 +117,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 <div class="row" style="margin-top:5px">
 <button id="graph_configuration" data-toggle="tooltip" title="Open graph configuration panel." onclick="open_graph_configuration_window()">Graph config.</button>
 &nbsp;
-<button id="standard_calibration_button" onclick="standard_calibration_button_pushed()"  data-toggle="tooltip" title="Application to obtain a">Standard calibration</button>
+<button id="standard_calibration_button" onclick="standard_calibration_button_pushed()"  data-toggle="tooltip" title="Application to obtain a calibration curve.">Standard calibration</button>
 </div>
 </div>
 
@@ -184,8 +185,8 @@ Filtering Panel
 <div class="col">
 <h5>Calibration Panel</h5>
 <hr>
-<label for="calibration_coefficient" style="width:35%"> Coefficient:</label>
-<input type="number" step="1" id="calibration_coefficient" style="width:25%" value=11 min=1 max=100 data-toggle="tooltip" title="Calibration coefficient of the neurotransmitter." />
+<label for="calibration_coefficient" style="width:35%"> Conv. factors:</label>
+<button onclick="open_options_calibration_pushed()" id="calibrate_button"  data-toggle="tooltip" title="Calibrate the selected trace">Open options</button>
 <button onclick="calibrate_button_pushed()" id="calibrate_button" style="float: right;" data-toggle="tooltip" title="Calibrate the selected trace">Calibrate</button>
 <label for="concentration_units" style="width:35%"> Units:</label>
 <input type="text" step="1" id="concentration_units" style="width:25%" value="nM" data-toggle="tooltip" title="Concentration units of the calibration coefficient"/>
@@ -371,6 +372,51 @@ Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox" checked></butto
 </div>
 </div>
 
+<div id="calibration_factors_options" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<p style="text-align:center">
+<button style="width:15%;" class="calibration_type_selection" id="linear_fit_selection" data-toggle="tooltip" title="Calibration performed with linear regression coefficients.">Linear fit</button>
+<button style="width:15%;" class="calibration_type_selection" id="quadratic_fit_selection" data-toggle="tooltip" title="Calibration performed with quadratic regression coefficients.">Quadratic fit</button>
+<button style="width:15%;" class="calibration_type_selection" id="plsr_fit_selection" data-toggle="tooltip" title="Calibration performed with PLSR model.">PLSR</button>
+</p>
+<div id="linear_fit_section" style="display:block;">
+<label for="lr_slope" style="width:49%">Slope: </label>
+<label for="lr_intercept" style="width:49%">Intercept: </label>
+<input style="width:49%" type="number" id="lr_slope" value=11 data-toggle="tooltip" title="Slope of the linear regression calibration curve."/>
+<input style="width:49%" type="number" id="lr_intercept" value=0 data-toggle="tooltip" title="Intercept of the linear regression calibration curve."/>
+</div>
+<div id="quadratic_fit_section" style="display:none;">
+<label for="qr_0th_order" style="width:32%">0th order: </label>
+<label for="qr_1st_order" style="width:32%">1st order: </label>
+<label for="qr_2nd_order" style="width:32%">2nd order: </label>
+<input style="width:32%" type="number" id="qr_0th_order" value=0 data-toggle="tooltip" title="0th order of the quadratic regression calibration curve."/>
+<input style="width:32%" type="number" id="qr_1st_order" value=0 data-toggle="tooltip" title="1st order of the quadratic regression calibration curve."/>
+<input style="width:32%" type="number" id="qr_2nd_order" value=0 data-toggle="tooltip" title="2nd order of the quadratic regression calibration curve."/>
+</div>
+<div id="plsr_fit_section" style="display:none;">
+<label for="json_model_input" style="width:32%">Load JSON model: </label>
+<input type="file" class = 'plsr_json_model' id="plsr_json_model" accept=".json" style="width:70%;"  multiple data-toggle="tooltip" title="Load JSON PLSR model."> </input>
+<button id="add_button_fit" onclick="load_plsr_model()" style="width: 11%;" data-toggle="tooltip" title="Add loaded files into the application">Load</button>
+<br>
+<label for="plsr_prediction_variable" style="width:59%">Prediction variable for graph:</label>
+<input style="width:30%" type="number" step="1" min=1 id="plsr_prediction_variable" value=1 data-toggle="tooltip" title="Variable number to be used as prediction for concentration."/>
+<br>
+<p style="font-size: 14px;text-align:center">Using a PLSR model, the whole displayed colorplot will be used to obtain the concentration vs. time trace of the analyte.</p>
+</div>
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="open_options_calibration_close_pushed()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
 <script>
 //Buttons callbacks.
 $(document).on("click", '.type_of_plot_selection', function(){
@@ -380,6 +426,16 @@ $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
 plot_type = this.id;
 fscv_data.change_type_of_plot(plot_type, "main_graph");
+});
+
+$(document).on("click", '.calibration_type_selection', function(){
+$('.calibration_type_selection').css('background-color','');
+$('.calibration_type_selection').css('color','');
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+if(this.id == "linear_fit_selection"){_("linear_fit_section").style.display = 'block', _("quadratic_fit_section").style.display = 'none', _("plsr_fit_section").style.display = 'none', calibration_model = 'linear_fit';}
+else if (this.id == "quadratic_fit_selection"){_("linear_fit_section").style.display = 'none', _("quadratic_fit_section").style.display = 'block', _("plsr_fit_section").style.display = 'none', calibration_model = 'quadratic_fit';}
+else {_("linear_fit_section").style.display = 'none', _("quadratic_fit_section").style.display = 'none', _("plsr_fit_section").style.display = 'block', calibration_model = 'plsr_fit';};
 });
 
 
@@ -446,6 +502,13 @@ $('.download_type_button').css('background-color','');
 $('.download_type_button').css('color','');
 $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
+});
+
+$(document).on('change', '.plsr_json_model', function(event) {
+var reader = new FileReader();
+reader.onload = function(event) {
+json_plsr_object = JSON.parse(event.target.result);
+}
 });
 
 function previous_pushed(){
@@ -523,14 +586,30 @@ fscv_filtering.graph_filter("main_graph", parseInt(_('horizontal_fft_slider').va
 };
 function apply_changes_pushed(){
 loaded_data.data_array[file_index-1] = fscv_data.current.array;
-}
+};
+
 function calibrate_button_pushed(){
+if(calibration_model == 'linear_fit'){
 if( _('select_signal_button').value != ""){
 $('#kinetic_select_signal_button').append($('<option>', {value:fscv_concentration.counter, text:_('calibration_name').value+'('+String(fscv_concentration.counter+1)+')'}));
 fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, parseFloat(_('cycling_frequency').value),
-parseFloat(_('calibration_coefficient').value), _('concentration_units').value, _('calibration_name').value);
+[parseFloat(_('lr_intercept').value), parseFloat(_('lr_slope').value)], _('concentration_units').value, _('calibration_name').value, calibration_model);
+};}
+else if (calibration_model == 'quadratic_fit'){
+if( _('select_signal_button').value != ""){
+$('#kinetic_select_signal_button').append($('<option>', {value:fscv_concentration.counter, text:_('calibration_name').value+'('+String(fscv_concentration.counter+1)+')'}));
+fscv_concentration.calibrate_trace("ct_graph", _('select_signal_button').value, fscv_transient, parseFloat(_('cycling_frequency').value),[parseFloat(_('qr_0th_order').value),
+parseFloat(_('qr_1st_order').value), parseFloat(_('qr_2nd_order').value)], _('concentration_units').value, _('calibration_name').value, calibration_model);
+};}
+else if (calibration_model =='plsr_fit' && fscv_concentration.plsr_model != null){
+$('#kinetic_select_signal_button').append($('<option>', {value:fscv_concentration.counter, text:_('calibration_name').value+'('+String(fscv_concentration.counter+1)+')'}));
+fscv_concentration.calibrate_trace_plsr("ct_graph", fscv_data, parseInt(_('plsr_prediction_variable').value-1), parseFloat(_('cycling_frequency').value), _('concentration_units').value, _('calibration_name').value);
 };
 };
+
+
+
+
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
 };
@@ -559,7 +638,15 @@ _('background_subtraction_modal_window').style.display = "block";
 };
 function background_subtraction_close_pushed(){
 _('background_subtraction_modal_window').style.display = "none";
-}
+};
+
+function open_options_calibration_pushed(){
+_('calibration_factors_options').style.display = "block";
+};
+
+function open_options_calibration_close_pushed(){
+_('calibration_factors_options').style.display = "none";
+};
 
 function background_subtraction_show_pushed(){
 if (plot_type == 'surface'){fscv_data.change_type_of_plot("heatmap", "main_graph")};
@@ -669,14 +756,20 @@ function standard_calibration_button_pushed(){
 var calib_window = window.open(encodeURI('FSCVStandardCalibration.php'), "");
 };
 
+function load_plsr_model(){
+fscv_concentration.plsr_model = new ML.PLS(true, json_plsr_object);
+};
+
 </script>
 
 <script>
 // Create loaded data object and declare varibles used in the dashboard.
 var loaded_data = new HL_LOAD_DATA("status");
 var file_index = 1;
+var json_plsr_object = null;
 var plot_type = 'heatmap';
 var color_palette = 'Custom';
+var calibration_model = 'linear_fit';
 //Initialise blank data objects.
 var fscv_data = new HL_FSCV_DATA([[0]], _('current_units').value, parseFloat(_('frequency').value),
 parseFloat(_('cycling_frequency').value), 'Blank', plot_type, color_palette);
@@ -693,6 +786,8 @@ fscv_iv.initialise_graph("iv_graph");
 fscv_concentration.initialise_graph("ct_graph");
 // Hide iv_graph
 _('iv_graph').style.display="none";
+//Select linear regression.
+_('linear_fit_selection').style=";background-color:#3f51b5; color:white;";
 </script>
 
 </body>
