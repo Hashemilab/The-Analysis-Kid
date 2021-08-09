@@ -397,9 +397,9 @@ Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox" checked></butto
 </div>
 <div id="plsr_fit_section" style="display:none;">
 <label for="json_model_input" style="width:32%">Load JSON model: </label>
-<input type="file" class = 'plsr_json_model' id="plsr_json_model" accept=".json" style="width:70%;"  multiple data-toggle="tooltip" title="Load JSON PLSR model."> </input>
+<input type="file" class = 'plsr_json_model' id="json_model_input" accept=".json" style="width:70%;"  multiple data-toggle="tooltip" title="Load JSON PLSR model."> </input>
 <button id="add_button_fit" onclick="load_plsr_model()" style="width: 11%;" data-toggle="tooltip" title="Add loaded files into the application">Load</button>
-<br>
+<p> </p>
 <label for="plsr_prediction_variable" style="width:59%">Prediction variable for graph:</label>
 <input style="width:30%" type="number" step="1" min=1 id="plsr_prediction_variable" value=1 data-toggle="tooltip" title="Variable number to be used as prediction for concentration."/>
 <br>
@@ -504,10 +504,12 @@ $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
 });
 
-$(document).on('change', '.plsr_json_model', function(event) {
+$(document).on("change", '.plsr_json_model', function(event) {
 var reader = new FileReader();
+console.log(event.target.result);
 reader.onload = function(event) {
 json_plsr_object = JSON.parse(event.target.result);
+console.log(json_plsr_object);
 }
 });
 
