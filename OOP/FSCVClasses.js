@@ -261,11 +261,15 @@ else {array = fscv_transient.current.array[index-1].map(x => coefficients[0]+coe
 this.add_concentration_to_array(div, array, frequency, fscv_transient.origin_file_array[index-1], this.palettes.colors[(index-1)%this.palettes.colors.length], name, units);
 };
 
-calibrate_trace_plsr(div, fscv_data, prediction_ouput_number, frequency, units, name){
+calibrate_trace_plsr(div, fscv_data, prediction_output_number, frequency, units, name){
 this.graph_index = this.counter++;
 let plsr_x = new ML.Matrix(transpose(fscv_data.current.array));
 let array = this.plsr_model.predict(plsr_x).data.map(x=>x[prediction_output_number]);
 this.add_concentration_to_array(div, array, frequency, fscv_data.name_of_file, this.palettes.colors[this.counter%this.palettes.colors.length], name, units);
+};
+load_plsr_json(json_object, status){
+this.plsr_model = new ML.PLS(true, json_object);
+_(status).innerHTML = 'Loaded successfully.';
 };
 
 // EXPERIMENTAL METHODS FOR KINETIC CALIBRATION.

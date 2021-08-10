@@ -398,6 +398,7 @@ Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox" checked></butto
 <div id="plsr_fit_section" style="display:none;">
 <label for="json_model_input" style="width:32%">Load JSON model: </label>
 <input type="file" class = 'plsr_json_model' id="json_model_input" accept=".json" style="width:70%;"  multiple data-toggle="tooltip" title="Load JSON PLSR model."> </input>
+<p id="status_plsr"> Upload model.</p>
 <button id="add_button_fit" onclick="load_plsr_model()" style="width: 11%;" data-toggle="tooltip" title="Add loaded files into the application">Load</button>
 <p> </p>
 <label for="plsr_prediction_variable" style="width:59%">Prediction variable for graph:</label>
@@ -504,14 +505,9 @@ $(this).css('background-color','#3f51b5');
 $(this).css('color','white');
 });
 
-$(document).on("change", '.plsr_json_model', function(event) {
-var reader = new FileReader();
-console.log(event.target.result);
-reader.onload = function(event) {
-json_plsr_object = JSON.parse(event.target.result);
-console.log(json_plsr_object);
-}
-});
+
+
+
 
 function previous_pushed(){
 _('file_slider').stepDown();
@@ -759,7 +755,7 @@ var calib_window = window.open(encodeURI('FSCVStandardCalibration.php'), "");
 };
 
 function load_plsr_model(){
-fscv_concentration.plsr_model = new ML.PLS(true, json_plsr_object);
+fscv_concentration.load_plsr_json(loaded_plsr_model.data_array[0], 'status_plsr');
 };
 
 </script>
@@ -767,8 +763,9 @@ fscv_concentration.plsr_model = new ML.PLS(true, json_plsr_object);
 <script>
 // Create loaded data object and declare varibles used in the dashboard.
 var loaded_data = new HL_LOAD_DATA("status");
+var loaded_plsr_model = new HL_LOAD_DATA("status_plsr");
 var file_index = 1;
-var json_plsr_object = null;
+
 var plot_type = 'heatmap';
 var color_palette = 'Custom';
 var calibration_model = 'linear_fit';
@@ -781,6 +778,7 @@ var fscv_concentration = new HL_FSCV_CONCENTRATION(_('concentration_units').valu
 var fscv_filtering = new HL_FILTERING(_('current_units').value);
 // Assign callback to read the data from the input.
 _("FSCVfiles").addEventListener('change', loaded_data.read_files);
+_("json_model_input").addEventListener('change', loaded_plsr_model.read_files);
 // Initialise blank plot on main graph, transient graph, iV graph and concentration.
 fscv_data.initialise_graph("main_graph");
 fscv_transient.initialise_graph("transient_graph");

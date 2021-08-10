@@ -25,6 +25,8 @@ if (file_ext == 'csv' || file_ext=='xlsx' || file_ext=='xls') {
 self.data_array.push(self.excel_reader(arrbuf));
 } else if (file_ext == 'txt'){
 self.data_array.push(self.txt_reader(arrbuf));
+} else if (file_ext == 'json'){
+self.data_array.push(self.json_reader(arrbuf));
 } else {return};
 self.names_of_files.push(file.name);
 ++self.number_of_files;
@@ -58,6 +60,10 @@ else {tmp[i][j] = tmp2};
 };
 }};
 return tmp;
+};
+
+this.json_reader = function(arrbuf) {
+return JSON.parse(self.array_buffer_to_string(arrbuf));
 };
 // Method to reset the loaded data every time we read new files.
 this.reset_loaded_data = function(){
