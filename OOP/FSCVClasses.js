@@ -151,9 +151,10 @@ Plotly.relayout(div, this.plot_layout);
 this.plot_layout.shapes = [];
 };
 
-export_data(type){
+
+export_data(type, precision){
 if(type === "xlsx"){this.export_data_xlsx()}
-else{this.export_data_txt()};
+else{this.export_data_txt(precision)};
 };
 
 export_data_xlsx(){
@@ -163,11 +164,11 @@ XLSX.utils.book_append_sheet(wb, ws, 'Color plot');
 XLSX.writeFile(wb, this.name_of_file+".xlsx");
 };
 
-export_data_txt(){
+export_data_txt(precision){
 let text = '', i, j;
 for(i=0; i<this.current.array.length;++i){
 for(j=0; j<this.current.array[i].length;++j){
-text+=this.current.array[i][j]+'\t';
+text+=this.current.array[i][j].toFixed(precision)+'\t';
 };
 text+='\n';
 };

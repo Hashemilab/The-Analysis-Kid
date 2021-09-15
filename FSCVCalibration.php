@@ -136,6 +136,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox"></but
 <button id="filtered_download_button" class="download_type_button" style="background-color:#3f51b5; color:white;"  data-toggle="tooltip" title="Export filtered color plots">Color plot</button>
 <button id="calibration_download_button" class="download_type_button" data-toggle="tooltip" title="Export calibrated data" >Calibration</button>
 <button style="margin-top:5px;" onclick="export_pushed()" style="float:right;" data-toggle="tooltip" title="Download selected data as XLSX">Export</button>
+<button style="margin-top:5px;" onclick="open_export_configuration()" style="float:right;" data-toggle="tooltip" title="Open export configuration.">Config.</button>
 <select id="export_format" style="float: right;" data-toggle="tooltip" title="Select format to export color plot. Calibrations are always exported to XLSX.">
 <option value="txt">TXT</option>
 <option value="xlsx">XLSX</option>
@@ -415,7 +416,21 @@ Autoadjust<input type="checkbox" hidden id="autoadjust_checkbox" checked></butto
 </div>
 </div>
 
+<div id="export_configuration_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class="col">
+<label for="arithmetic_precision" style="width:59%">Arithmetic precision:</label>
+<input style="width:30%" type="number" step="1" min=0 id="arithmetic_precision" value=4 data-toggle="tooltip" title="Number of decimal places in exported text files. A higher number will increase the size of the file."/>
 
+<br>
+<p style="text-align:center">
+<button style="width:15%;" onclick="close_export_configuration()" data-toggle="tooltip" title="Close window.">Close</button>
+</p>
+</div>
+</div>
+</div>
+</div>
 
 
 <script>
@@ -605,9 +620,6 @@ fscv_concentration.calibrate_trace_plsr("ct_graph", fscv_data, parseInt(_('plsr_
 };
 };
 
-
-
-
 function previous_concentration_clicked(){
 if(fscv_concentration.graph_index !== 0){--fscv_concentration.graph_index; fscv_concentration.plot_graph("ct_graph")};
 };
@@ -661,7 +673,7 @@ fscv_data.background_subtraction("main_graph", parseInt(_('background_start_samp
 function nonlinear_fit_button_pushed(){
 fscv_concentration.get_nonlinear_exponential_fit();
 fscv_concentration.plot_graph("ct_graph");
-}
+};
 
 function kinetic_calibration_button_pushed(){
 _('kinetic_calibration_modal_window').style.display = "block";
@@ -731,7 +743,7 @@ _('electrode_surface').value = surface;
 
 function export_pushed(){
 if (getComputedStyle(_("calibration_download_button"))['background-color'] == 'rgb(63, 81, 181)'){fscv_concentration.export_calibration()}
-else{fscv_data.export_data(_('export_format').value)};
+else{fscv_data.export_data(_('export_format').value, parseInt(_('arithmetic_precision').value))};
 };
 
 function open_graph_configuration_window(){
@@ -740,6 +752,14 @@ _('graph_configuration_modal_window').style.display = "block";
 
 function close_graph_configuration_window(){
 _('graph_configuration_modal_window').style.display = "none";
+};
+
+function open_export_configuration(){
+_('export_configuration_modal_window').style.display = "block";
+};
+
+function close_export_configuration(){
+_('export_configuration_modal_window').style.display = "none";
 };
 
 function apply_graph_configuration_changes(){
