@@ -48,6 +48,8 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <button onclick="reset_pushed()" data-toggle="tooltip" title="Reset the application">Reset</button>
 &nbsp;
 <button onclick="peak_detection_configuration_button_pushed()" data-toggle="tooltip" title="Configuration of peak detection and model used.">Config.</button>
+&nbsp;
+<button onclick="fia_analysis_pushed()" data-toggle="tooltip" title="Extract cyclic voltammograms from a single injection.">FIA Modelling</button>
 </div>
 <div id="fitting_panel">
 <br>
@@ -86,7 +88,7 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 <h5>PLSR Panel</h5>
 <hr>
 <div class="row">
-<input type="file" id="FSCVfiles_plsr" accept=".xls,.xlsx,.csv,.txt" style="width:70%;"  multiple data-toggle="tooltip" title="Add files to the application from a local path"> </input>
+<input type="file" id="FSCVfiles_plsr" accept=".xls,.xlsx,.csv,.txt" style="width:70%;" data-toggle="tooltip" title="Add files to the application from a local path"> </input>
 <button id="finish_button_plsr" onclick="finish_pushed_plsr()" style="width: 17%;" data-toggle="tooltip" title="Finish loading files and include them into the application">Finish</button>
 </div>
 <div class="row">
@@ -181,6 +183,53 @@ Graph selection<input type="checkbox" hidden id="graph_selection_checkbox">
 </div>
 </div>
 
+
+
+
+
+
+<div id="fia_modelling_modal_window" class="modal">
+<div class="modal-content">
+<div class="row">
+<div class = "center" style = "float:left; width:49%;">
+<div id="injection_colorplot" class = "center"></div>
+</div>
+
+<div class = "center" style = "float:right; width:49%;">
+<div id="injection_graph" class = "center"></div>
+</div>
+</div>
+<hr style="width:100%;text-align:left;margin-left:0;">
+<div class="row">
+<div class = "col">
+<input type="file" id="injection_file" accept=".xls,.xlsx,.csv,.txt" style="width:70%;" data-toggle="tooltip" title="Add injection colorplot."> </input>
+<button id="add_injection_colorplot" onclick="add_injection_colorplot()" style="width: 20%;" data-toggle="tooltip" title="Add injection file into the application.">Add</button>
+<p id="status_fia_injection"> Upload the file.</p>
+<label for="cycling_frequency" style="width: 20%;">Cyc freq. (Hz):</label>
+<input type="number" step="1" min=1 name="cycling_frequency" id="cycling_frequency" style="width: 20%;" value=10 data-toggle="tooltip" title="Frequency at which the voltage cycle is applied"/>
+<button id="invert_sign_button" onclick="invert_pushed()" data-toggle="tooltip" title="Invert the sign of the current values in the voltammograms">Invert</button>
+</div>
+<div class = "col">
+<label for="fia_first_sample" style="width:50%">Start-End samples:</label>
+<input style="width:15%" type="number" step="1" min=0 id="fia_first_sample" onchange="fia_injection_limits_changed()" value=75 data-toggle="tooltip" title="Cv sample of start of injection."/>
+<input style="width:15%" type="number" step="1" min=0 id="fia_last_sample" onchange="fia_injection_limits_changed()" value = 200 data-toggle="tooltip" title="CV sample of end of injection."/>
+<label for="fia_concentration" style="width:50%">Conc. injection:</label>
+<input style="width:30%" type="number" step="1" min=0 id="fia_concentration" value=100 data-toggle="tooltip" title="Concentration of the uploaded injection file."/>
+<button id="invert_sign_button" onclick="optimise_injection_fitting()" data-toggle="tooltip" title="Optimise the fitting">Optimise</button>
+</div>
+</div>
+<br>
+<p style="text-align:center">
+<button onclick="fia_modelling_add_data()" style="width:15%;" data-toggle="tooltip" title="Add injection CVs and modelled labels to application.">Import</button>
+<button onclick="fia_modelling_close_pushed()" style="width:15%;" data-toggle="tooltip" title="Close the window">Close</button>
+</p>
+</div>
+</div>
+
+
+
+
+
 <script>
 // Calbacks
 $(document).on("click", '.graph_selection', function(){
@@ -198,6 +247,7 @@ fscv_data_fit.cv_plot_state = 'none'; fscv_data_fit.fit_plot_state = 'block';
 };
 });
 
+
 $(document).on("click", '.graph_point_selection', function(){
 if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
 $(this).css('background-color','');
@@ -209,11 +259,21 @@ $(this).css('color','white');
 _("graph_selection_checkbox").checked = !_("graph_selection_checkbox").checked;
 });
 
+$(document).on("click", '.auto_fia_selection', function(){
+if ($(this).css("background-color") == 'rgb(63, 81, 181)'){
+$(this).css('background-color','');
+$(this).css('color','');
+} else{
+$(this).css('background-color','#3f51b5');
+$(this).css('color','white');
+};
+_("fia_auto_checkbox").checked = !_("fia_auto_checkbox").checked;
+});
 
 function add_pushed_fit(){
 if(loaded_data_fit.data_array?.length){
 loaded_data_fit.order_files_by_name();
-fscv_data_fit.read_data_from_loaded_files(loaded_data_fit.data_array, loaded_data_fit.names_of_files, parseFloat(_('concentration_label').value));
+fscv_data_fit.read_data_from_loaded_files(loaded_data_fit.data_array, loaded_data_fit.names_of_files, uniform_array(loaded_data_fit.data_array.length,  parseFloat(_('concentration_label').value)));
 loaded_data_fit.reset_loaded_data();
 _('status_fit').innerHTML = 'Added succesfully.';
 };
@@ -299,20 +359,80 @@ if(_("model_type_selection").value == 'plsr_fit'){_('fitting_panel').style.displ
 else{_('fitting_panel').style.display = "block"; _('plsr_panel').style.display = "none";console.log('runs')};
 };
 
+function fia_analysis_pushed() {_('fia_modelling_modal_window').style.display = "block";};
+function fia_modelling_close_pushed() {_('fia_modelling_modal_window').style.display = "none";};
+
+function add_injection_colorplot() {
+//Reset the graphs and objects.
+fscv_data_injection = new HL_FSCV_DATA(loaded_data_fia_injection.data_array[0],_('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_("cycling_frequency").value), loaded_data_fia_injection.names_of_files[0], 'heatmap', 'Custom');
+fscv_data_injection_transient = new HL_FSCV_1D_DATA_INJECTION(_('current_units').value, parseFloat(_('cycling_frequency').value), "i-t Curve");
+fscv_data_injection_extract = new HL_FSCV_1D_DATA_INJECTION(_('current_units').value, parseFloat(_('cycling_frequency').value), "i-t Curve");
+fscv_data_injection.initialise_graph('injection_colorplot');
+fscv_data_injection_transient.initialise_graph('injection_graph');
+//Graph new data.
+fscv_data_injection.graph_color_plot("injection_colorplot");
+fscv_data_injection.show_limits("injection_colorplot", parseInt(fscv_data_injection.current.array.length/2), parseInt(fscv_data_injection.current.array.length/2), 0, parseFloat(fscv_data_injection.cycling_time.array[fscv_data_injection.cycling_time.array.length-1]));
+fscv_data_injection_transient.add_trace(fscv_data_injection.current.array[parseInt(fscv_data_injection.current.array.length/2)], parseFloat(_('cycling_frequency').value), parseFloat(_('fia_concentration').value),  [parseInt(_("fia_first_sample").value), parseInt(_("fia_last_sample").value)], "injection_graph");
+};
+
+function main_graph_clicked(evtObj){
+if (evtObj.points.length != 0){
+let pindex = evtObj.points[0].pointNumber;
+fscv_data_injection.show_limits("injection_colorplot", pindex[0], pindex[0], 0, parseFloat(fscv_data_injection.cycling_time.array[fscv_data_injection.cycling_time.array.length-1]));
+fscv_data_injection_transient.add_trace(fscv_data_injection.current.array[pindex[0]], parseFloat(_('cycling_frequency').value), parseFloat(_('fia_concentration').value), [parseInt(_("fia_first_sample").value), parseInt(_("fia_last_sample").value)], "injection_graph");
+}};
+
+function fia_injection_limits_changed(){fscv_data_injection_transient.change_extract_limits(parseInt(_("fia_first_sample").value), parseInt(_("fia_last_sample").value), parseFloat(_('fia_concentration').value), "injection_graph");};
+
+function optimise_injection_fitting(){fscv_data_injection_transient.optimise_fitting(parseFloat(_('fia_concentration').value),"i-t Curve", "injection_graph");};
+
+function invert_pushed(){
+for(var i = 0;i<loaded_data_fia_injection.data_array[0].length;++i){for(var j = 0;j<loaded_data_fia_injection.data_array[0][i].length;++j){loaded_data_fia_injection.data_array[0][i][j] = - loaded_data_fia_injection.data_array[0][i][j]}};
+add_injection_colorplot();
+};
+
+function fia_modelling_add_data(){
+if(_('model_type_selection').value =='plsr_fit'){
+fscv_data_fit.read_data_from_fia_modelling_plsr(fscv_data_injection.current.array, [fscv_data_injection_transient.limits[0], fscv_data_injection_transient.limits[1]], fscv_data_injection.name_of_file, fscv_data_injection_transient.modelled_concentration.array);
+loaded_data_plsr.reset_loaded_data();
+_('status_plsr').innerHTML = 'Added succesfully.';
+_('finish_button_plsr').disabled = true;
+fscv_data_fit.plot_graph('cv_graph');
+}
+else{
+fscv_data_fit.read_data_from_fia_modelling(fscv_data_injection.current.array, [fscv_data_injection_transient.limits[0], fscv_data_injection_transient.limits[1]], fscv_data_injection.name_of_file, fscv_data_injection_transient.modelled_concentration.array);
+loaded_data_fit.reset_loaded_data();
+_('status_fit').innerHTML = 'Added succesfully.';
+};
+};
+
 </script>
 
 <script>
 // Initialise variables.
 var loaded_data_fit = new HL_LOAD_DATA("status_fit");
 var loaded_data_plsr = new HL_LOAD_DATA("status_plsr");
+var loaded_data_fia_injection = new HL_LOAD_DATA("status_fia_injection");
 var fscv_data_fit = new HL_FSCV_DATA_CALIBRATION(parseFloat(_('frequency').value), _('current_units').value, _('concentration_units').value);
+var fscv_data_injection = new HL_FSCV_DATA([[0]], _('current_units').value, parseFloat(_('frequency').value),
+parseFloat(_("cycling_frequency").value), 'Blank', 'heatmap', 'Custom');
+var fscv_data_injection_transient = new HL_FSCV_1D_DATA_INJECTION(_('current_units').value, parseFloat(_('cycling_frequency').value), "i-t Curve");
 
 // Assign callback to read the data from the inputs.
 _("FSCVfiles_fit").addEventListener('change', loaded_data_fit.read_files);
 _("FSCVfiles_plsr").addEventListener('change', loaded_data_plsr.read_files);
+_("injection_file").addEventListener('change', loaded_data_fia_injection.read_files);
 //Initialise graphs.
 fscv_data_fit.initialise_graph('cv_graph');
 fscv_data_fit.initialise_graph('fit_graph');
+
+// Initialize the graph and hide them again.
+_("fia_modelling_modal_window").style.display="block";
+fscv_data_injection.initialise_graph('injection_colorplot');
+fscv_data_injection_transient.initialise_graph('injection_graph');
+_("fia_modelling_modal_window").style.display="none";
+
 // Hide fit_graph
 _('fit_graph').style.display="none";
 

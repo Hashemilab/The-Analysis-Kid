@@ -46,10 +46,6 @@ for(let i=0;i<Rt.length-1;++i){s[i+1] = s[i] + (1/this.frequency)*(Rt[i] - (vmax
 return s;
 };
 
-get_release_array(){
-
-}
-
 optimisation_parameters(epochs, learning_rate, train_array, parameters_id, min_limits_array, max_limits_array){
 var opt_params = this.get_optimised_parameters(epochs, learning_rate, train_array, min_limits_array, max_limits_array);
 this.update_parameters(opt_params, parameters_id);

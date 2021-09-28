@@ -3,7 +3,6 @@ this.status_id= status_id;
 this.data_array = [];
 this.number_of_files = 0;
 this.names_of_files = [];
-this.data_array2=[];
 // Assign the handle self to save the variables inside the callback.
 var self = this;
 // Callback to read the content of uploaded files. 'this' refers to the callback event.

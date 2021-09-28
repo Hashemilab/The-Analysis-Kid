@@ -109,8 +109,6 @@ _(div_min).value = this.color_limits[0].toFixed(2);
 _(div_max).value = this.color_limits[1].toFixed(2);
 };
 
-
-
 invert_current_values(div){
 for(var i = 0;i<this.current.array.length;++i){for(var j = 0;j<this.current.array[i].length;++j){this.current.array[i][j] = - this.current.array[i][j]}};
 this.graph_color_plot(div);
@@ -226,8 +224,151 @@ Plotly.deleteTraces(div, -1);
 initialise_graph(div){
 Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
 };
-
 };
+
+
+
+
+
+
+
+
+
+
+//Class for injection traces.
+class HL_FSCV_1D_DATA_INJECTION{
+constructor(units, frequency, type){
+//Data properties.
+this.current = new HL_FSCV_ARRAY([], units, 'Current');
+this.time = new HL_FSCV_ARRAY([], 's', 'Time');
+this.type = type;
+this.limits = [75, 200];
+this.fit_parameters = [10, 1];
+this.modelled_current = new HL_FSCV_ARRAY([], units, 'Current');
+this.modelled_concentration = new HL_FSCV_ARRAY([], '', 'Concentration');
+//Plotting properties.
+this.plot_settings = new HL_PLOT_SETTINGS();
+this.palettes = new HL_FSCV_COLORPALETTE();
+}
+//Methods.
+add_trace(array, frequency, concentration, limits, div){
+this.current.array = array;
+this.time.array = makeArr(0,(array.length-1)/frequency, array.length);
+this.limits = limits;
+this.fit_model_to_extract(concentration);
+this.plot_trace(this.type, div);
+};
+
+plot_trace(type, div){
+var layout = this.plot_settings.plot_layout;
+layout.xaxis.title = this.time.name +" ("+this.time.units+")";
+layout.yaxis.title = this.current.name +" ("+this.current.units+")";
+layout.title.text = "<b>"+this.type+"</b>";
+layout.annotations = [{
+xref: 'paper',
+yref: 'paper',
+x: 0.98,
+xanchor: 'right',
+y: 0.9,
+yanchor: 'bottom',
+text:'<b> RMSE : '+Math.sqrt(mse(this.current.array, this.modelled_current.array)).toFixed(2)+' '+this.current.units+'</b>',
+showarrow: false
+}];
+
+
+var trace = {y: this.current.array, x:this.time.array, showlegend: false, text:'Injection'};
+
+var max_point = {
+y:[this.current.array[this.limits[0]]],
+x:[this.time.array[this.limits[0]]],
+type: 'scatter',
+showlegend: false,
+mode: 'markers',
+marker: {color: 'black'},
+text:'Max'
+};
+
+var min_point = {
+y:[this.current.array[this.limits[1]]],
+x:[this.time.array[this.limits[1]]],
+type: 'scatter',
+showlegend: false,
+mode: 'markers',
+marker: {color: 'black'},
+text:'Min'
+};
+
+
+var extract = {
+y:this.current.array.slice(this.limits[0],this.limits[1]),
+x:this.time.array.slice(this.limits[0],this.limits[1]),
+showlegend: false,
+line: {color: 'black', width:2},
+text:'Extract'
+};
+
+var fit = {
+y:this.modelled_current.array,
+x:this.time.array,
+showlegend: false,
+line: {color: 'red', width:1},
+text:'Fit'
+};
+
+Plotly.newPlot(div, [trace], layout);
+Plotly.addTraces(div, [max_point, min_point, extract, fit]);
+};
+
+change_extract_limits(first, last, concentration, div){
+this.limits = [first, last];
+this.fit_model_to_extract(concentration);
+this.plot_trace(this.type, div);
+};
+
+
+fit_model_to_extract(concentration){
+var self = this;
+//First stimation of fit params.
+this.fit_parameters[0] = index_of_max(this.current.array)[0];
+var func = function([],P){return self.model_injection_current(self.limits, P)};
+this.fit_parameters = fminsearch(func, this.fit_parameters, [], this.current.array, {maxIter:5000, step: [0.1, 0.1]});
+this.modelled_current.array = this.model_injection_current(this.limits, this.fit_parameters);
+this.modelled_concentration.array = this.modelled_current.array.map(z => concentration*z/this.fit_parameters[0]);
+};
+
+model_injection_current([start, end], [max_rect, A]){
+let u = 0, c = uniform_array(this.current.array.length, 0);
+for (let i=1; i<this.current.array.length; ++i){
+if (i<start || i>end) {u = 0} else{u = max_rect};
+c[i] = A*(u-c[i-1])+c[i-1];
+};
+return c
+};
+
+
+optimise_fitting(concentration, type, div){
+this.fit_model_to_extract(concentration);
+this.plot_trace(type, div);
+};
+
+
+initialise_graph(div){
+Plotly.newPlot(div, [], this.plot_settings.plot_layout, this.plot_settings.plot_configuration);
+};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Class for concentration traces.
 class HL_FSCV_CONCENTRATION {
@@ -532,12 +673,12 @@ this.plsr_x = null;
 this.plsr_y = null;
 };
 
-read_data_from_loaded_files(data, names_of_files, concentration_label){
+read_data_from_loaded_files(data, names_of_files, concentration_array){
 this.current.array.push(data.map(x => arrayColumn(x, 2)));
 this.time.array.push(data.map(x => makeArr(0,(x.length-1)/this.frequency, x.length)));
 this.origin_file_array.push(names_of_files);
 this.number_of_files+=data.length;
-this.concentration.array.push(uniform_array(data.length, concentration_label));
+this.concentration.array.push(concentration_array);
 };
 
 read_data_from_plsr_file(data, name_of_files, peak_width){
@@ -549,6 +690,23 @@ this.concentration.array = data[0][1];
 this.detect_max_peak(peak_width);
 };
 
+read_data_from_fia_modelling(data, lims, name_of_file, concentration_array){
+let cvs = transpose(data).slice(lims[0], lims[1]);
+this.current.array.push(cvs);
+this.time.array.push(cvs.map(x => makeArr(0,(x.length-1)/this.frequency, x.length)));
+this.origin_file_array.push(uniform_array(cvs.length, name_of_file));
+this.number_of_files+=cvs.length;
+this.concentration.array.push(concentration_array.slice(lims[0], lims[1]));
+};
+
+read_data_from_fia_modelling_plsr(data, lims, name_of_file, concentration_array){
+let cvs = transpose(data).slice(lims[0], lims[1]);
+this.current.array = cvs;
+this.time.array = cvs.map(x => makeArr(0,(x.length-1)/this.frequency, x.length));
+this.origin_file_array = uniform_array(cvs.length, name_of_file);
+this.number_of_files+=cvs.length;
+this.concentration.array = concentration_array.slice(lims[0], lims[1]).map(x =>[x]);
+};
 
 linearise_data_arrays(){
 this.current.array = linearise(this.current.array, 1);
