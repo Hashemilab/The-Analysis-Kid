@@ -143,7 +143,7 @@ get_linear_fit_metrics(div, type){
 if(type =='regression_plot_type'){
 let x_line_fit = makeArr(index_of_min(this.auc)[0], index_of_max(this.auc)[0], 100);
 this.plot_scatter_and_line(div, this.concentration.array, this.auc, 'Experimental', 'Experimental', x_line_fit.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), x_line_fit,
-'Fit', "Charge ("+this.current.units+"·s)",  this.concentration.name +" ("+this.concentration.units+")", '<b>Linear Fit</b>', '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+
+'Fit',  this.concentration.name +" ("+this.concentration.units+")", "Charge ("+this.current.units+"·s)", '<b>Linear Fit</b>', '<b>S(Q) = '+this.linear_fit_parameters[0][0].toFixed(2)+
 ' + '+this.linear_fit_parameters[0][1].toFixed(2)+' · Q<br>'+'R<sup>2</sup> = '+this.linear_fit_parameters[0][2].toFixed(2)+'</b>');
 } else{
 this.plot_scatter_and_line(div, this.concentration.array, this.auc.map(x => this.linear_fit_parameters[0][0]+this.linear_fit_parameters[0][1]*x), 'Experimental', this.origin_file_array,
