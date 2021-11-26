@@ -546,7 +546,7 @@ fscv_filtering = new HL_FILTERING(_('current_units').value);
 
 function include_pushed(){
 // Determine number of files.
-loaded_data.order_files_by_name();
+loaded_data.order_files_by_name(); // Ordering files.
 _('file_slider').max = loaded_data.number_of_files;
 slider_changed();
 };
