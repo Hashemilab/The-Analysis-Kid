@@ -170,7 +170,7 @@ text+=this.current.array[i][j].toFixed(precision)+'\t';
 };
 text+='\n';
 };
-download_text(text, this.name_of_file+'.txt');
+download_text(text, this.name_of_file);
 };
 
 };
