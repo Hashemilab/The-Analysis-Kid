@@ -343,6 +343,15 @@ Filtering Panel
 </div>
 </div>
 <div class = "row">
+<div class="col">
+<label for="2dfft_width_padding" style="width:30%">Filter type: </label>
+<select id="2dfft_filter_type_selection" style="float: right;" data-toggle="tooltip" title="Select the filter type.">
+<option value="LPF">Lowpass filter (LPF)</option>
+<option value="HPF">Highpass filter (HPF)</option>
+</select>
+</div>
+<div class="col">
+</div>
 </div>
 <br>
 <p style="text-align:center">

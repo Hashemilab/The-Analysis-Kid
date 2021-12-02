@@ -152,5 +152,8 @@ b_2d[i*w+j] = 1/(1 + pow(d, order));
 };
 
 void had_product(float *real, float *imag, float *filter, int size){
-for(int i=0;i<size;++i){real[i] = real[i]*filter[i]; imag[i] = imag[i]*filter[i];};
+for(int i=0;i<size;++i){real[i] = real[i]*filter[i]; imag[i] = imag[i]*filter[i];}; //LPF
+};
+void had_product_inv(float *real, float *imag, float *filter, int size){
+for(int i=0;i<size;++i){real[i] = real[i]*(1.0-filter[i]); imag[i] = imag[i]*(1.0-filter[i]);}; // HPF
 };
