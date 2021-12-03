@@ -36,14 +36,14 @@ this.graph_spectrum(div);
 this.restore_data(fscv_data);
 };
 
-apply_2dfft_filtration(fscv_data, div, frequency, cycling_frequency, cutoffx, cutoffy, order, height_padding, width_padding){
+apply_2dfft_filtration(fscv_data, div, frequency, cycling_frequency, cutoffx, cutoffy, order, height_padding, width_padding, type){
 this.width = fscv_data.current.array[0].length; this.height = fscv_data.current.array.length; this.get_data_even(fscv_data);
 if (this.spectrum_output.array.length == 0){this.get_spectrum_arrays(fscv_data, frequency, cycling_frequency, height_padding, width_padding)};
 cutoffx = this.get_absolute_frequency(cutoffx, this.frequency_x.array);
 cutoffy = this.get_absolute_frequency(cutoffy, this.frequency_y.array);
 [this.spectrum_real_linear.array,  this.spectrum_imaginary_linear.array, this.spectrum_output.array] = this.butter_2d_filter(this.wrapped_width,
 this.wrapped_height, this.frequency_y.array, this.frequency_x.array, this.spectrum_real_linear.array,  this.spectrum_imaginary_linear.array,
-frequency, cycling_frequency, cutoffx, cutoffy, order);
+frequency, cycling_frequency, cutoffx, cutoffy, order, type);
 var linear_array = this.irfft2d(this.spectrum_output.array, this.wrapped_width, this.wrapped_height, (this.wrapped_width-this.width)/2, (this.wrapped_height-this.height)/2);
 fscv_data.current.array = array_to_2d(linear_array, this.height, this.width);
 this.restore_data(fscv_data);
@@ -146,11 +146,12 @@ free(real_heap); free(imag_heap); free(magnitude_heap); free(shifted_heap);
 return [magnitude, shifted];
 };
 
-butter_2d_filter(m, n, fy_array, fx_array, real_array, imag_array, frequency, cycling_frequency, cutoffx, cutoffy, order){
+butter_2d_filter(m, n, fy_array, fx_array, real_array, imag_array, frequency, cycling_frequency, cutoffx, cutoffy, order, type){
 let fy_heap = allocFromArray(fy_array), fx_heap = allocFromArray(fx_array), b_2d_heap = alloc(4*n*(m/2 + 1)), real_heap = allocFromArray(real_array),
 imag_heap = allocFromArray(imag_array), spectrum_heap = alloc(2*m*n*4);
 _butter_2d(fy_heap.byteOffset, fx_heap.byteOffset, b_2d_heap.byteOffset, m, n, cutoffx, cutoffy, order);
-_had_product(real_heap.byteOffset, imag_heap.byteOffset, b_2d_heap.byteOffset, n*(m/2 + 1));
+if (type == 'LPF'){_had_product(real_heap.byteOffset, imag_heap.byteOffset, b_2d_heap.byteOffset, n*(m/2 + 1));}
+else {_had_product_inv(real_heap.byteOffset, imag_heap.byteOffset, b_2d_heap.byteOffset, n*(m/2 + 1));};
 _zip_fft(spectrum_heap.byteOffset, real_heap.byteOffset, imag_heap.byteOffset, m*n);
 let real_spectrum = get_data_from_heap(real_heap, m*n);
 let imag_spectrum = get_data_from_heap(imag_heap, m*n);

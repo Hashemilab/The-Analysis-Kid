@@ -595,7 +595,7 @@ fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').va
 } else {
 fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
 parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value),
-parseFloat(_('2dfft_height_padding').value), parseFloat(_('2dfft_width_padding').value));
+parseFloat(_('2dfft_height_padding').value), parseFloat(_('2dfft_width_padding').value), _('2dfft_filter_type_selection').value);
 _("show_filter_button").disabled = true;
 };
 fscv_data.graph_color_plot("main_graph");
