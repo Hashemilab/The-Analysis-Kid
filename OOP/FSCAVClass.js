@@ -171,7 +171,7 @@ this.plot_scatter_and_line(div, makeArr(0,this.auc.length-1, this.auc.length-1),
 
 get_snn_fit(div, epochs, learning_rate, layer_size, patience, min_delta, dropout_rate, std_noise, status_id, snn_type){if(this.state = 'fit'){
 var self = this;
-this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0)], this.concentration.array);
+this.get_normalised_training_set([this.auc, this.line_auc, arrayColumn(this.min_values, 1), this.max_values], this.concentration.array);
 if(snn_type === 'single_electrode'){this.define_new_snn_model(std_noise, layer_size, dropout_rate); this.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id);}
 else if(snn_type == 'multiple_electrodes'){tf.loadLayersModel("TensorFlowModels/dnn_fscav.json").then(model => self.get_loaded_model(model, std_noise, dropout_rate)).then(() => self.compile_and_fit(self, div, learning_rate, epochs, patience, min_delta, status_id))};
 }};
@@ -375,7 +375,7 @@ export_to_xlsx(fscav_data_predict){if(this.state = 'fit'){
 var wb = XLSX.utils.book_new(), aoa;
 // Export fitting parameters.
 if(this.current.array?.length){
-aoa = transpose([this.auc, this.line_auc, arrayColumn(this.min_values, 0), arrayColumn(this.min_values, 1), arrayColumn(this.max_values, 0), this.origin_file_array, this.concentration.array]);
+aoa = transpose([this.auc, this.line_auc, arrayColumn(this.min_values, 0), arrayColumn(this.min_values, 1), this.max_values, this.origin_file_array, this.concentration.array]);
 aoa.unshift(['Charge above line ('+this.current.units+'· s)', 'Charge below line ('+this.current.units+'· s)', 'Interval start (sample)',  'Interval end (sample)', 'Max point (sample)',
 'File', this.concentration.name +' ('+this.concentration.units+')']); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "FSCAV Parameters")};
 // Export prediction parameters.
