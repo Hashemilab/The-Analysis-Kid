@@ -24,6 +24,8 @@
 </li>
 </ul>
 </form>
+
+
 <p style="text-align: center;">
 <a href = "mailto:sergio.mena19@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
 <a href="https://twitter.com/sermeor"><i class="fab fa-twitter"></i></a>
