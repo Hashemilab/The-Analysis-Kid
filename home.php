@@ -213,8 +213,12 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <img src="Images/fscav_color.png" alt="FSCAV colorplot" style="width:50%">
 <div class="w3-container">
 <h3><b>FSCAV Analysis</b></h3>
+
 <p>
-<i>Coming soon</i>
+<button class="w3-button w3-indigo w3-hover-black" name="Video tutorial for FSCAV Analysis" value = "https://www.youtube.com/embed/knphV1Wfi_0" onclick="video_modal_window(this)">Watch Video</button>
+</p>
+<p>
+<a href="https://pubs.acs.org/doi/10.1021/acsmeasuresciau.1c00060"><button class="w3-button w3-indigo w3-hover-black" >See Publication</button></a>
 </p>
 
 </div>
