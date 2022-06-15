@@ -510,7 +510,6 @@ return P0;
 };
 
 // Sort out two arrays based on one.
-
 function sort_arrays(arrays, comparator = (a, b) => (a < b) ? -1 : (a > b) ? 1 : 0) {
 let arrayKeys = Object.keys(arrays);
 let sortableArray = Object.values(arrays)[0];

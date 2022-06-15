@@ -90,7 +90,8 @@ return result;
 };
 
 this.order_files_by_name = function(){
-[this.names_of_files, this.data_array] = sort_arrays([this.names_of_files, this.data_array]);
+[this.names_of_files, this.data_array] = sort_arrays([this.names_of_files, this.data_array],
+   (a, b) => (parseInt(a) < parseInt(b)) ? -1 : (parseInt(a) > parseInt(b)) ? 1 : 0 );
 };
 
 
