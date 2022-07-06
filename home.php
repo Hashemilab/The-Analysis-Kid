@@ -154,6 +154,13 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <a href="ExampleFiles/fscv_da_example.csv" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_csv_file_example" data-toggle="tooltip" title="Download FSCV csv file example of dopamine."><i class="fas fa-file-csv"></i></button></a>
 <a href="ExampleFiles/fscv_da_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_xlsx_file_example" data-toggle="tooltip" title="Download FSCV xlsx file example of dopamine."><i class="fas fa-file-excel"></i></button></a>
 </p>
+
+<p><b>Reuptake analysis: </b></p>
+<p>
+<a href="ExampleFiles/fscv_da_reuptake_example.xlsx" download><button class="w3-button w3-indigo w3-hover-black" name="fscv_txt_file_example" data-toggle="tooltip" title="Download concentration vs time xlsx file example of dopamine for reuptake analysis."><i class="fas fa-file-excel"></i></button></a>
+</p>
+
+
 </div>
 </div>
 <div class="w3-col m4 w3-margin-bottom">
