@@ -34,18 +34,31 @@ return self.number_of_files;
 };
 
 // Method to read Excel file.
+//this.excel_reader = function(arrbuf){
+//var roa;
+//var workbook = XLSX.read(arrbuf, {type: 'array'});
+//var result = [];
+//var i=0;
+//workbook.SheetNames.forEach(function (sheetName) {
+//roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {header: 1});
+//if (roa.length) {result[i] = roa; i=i+1;}
+//});
+//if(result.length>1){return result}
+//else{return result[0];};
+//};
+
+
+//------------ TEST
 this.excel_reader = function(arrbuf){
 var roa;
 var workbook = XLSX.read(arrbuf, {type: 'array'});
 var result = [];
-var i=0;
-workbook.SheetNames.forEach(function (sheetName) {
-roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {header: 1});
-if (roa.length) {result[i] = roa; i=i+1;}
-});
-if(result.length>1){return result}
-else{return result[0];};
+roa = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
+if (roa.length) {result = roa}
+return result;
 };
+// ----------------- TEST
+
 
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
