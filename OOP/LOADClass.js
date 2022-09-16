@@ -47,8 +47,6 @@ return self.number_of_files;
 //else{return result[0];};
 //};
 
-
-//------------ TEST
 this.excel_reader = function(arrbuf){
 var roa;
 var workbook = XLSX.read(arrbuf, {type: 'array'});
@@ -57,8 +55,6 @@ roa = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header:
 if (roa.length) {result = roa}
 return result;
 };
-// ----------------- TEST
-
 
 // Method to read plain text file.
 this.txt_reader = function(arrbuf){
