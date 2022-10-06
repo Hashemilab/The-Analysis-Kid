@@ -237,9 +237,8 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 <footer class="w3-content w3-padding-64 w3-text-black w3-center">
 <p> <a href="#top" class="w3-button w3-black"><i class="fa fa-arrow-up "></i>To the top</a></p>
 <p class="w3-large">
-<a href = "mailto:sergio.mena19@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
+<a href = "mailto:phashemi@imperial.ac.uk?subject = Feedback&body = Message"><i class="fa fa-envelope"></i></a>
 <a href="https://twitter.com/HashemiLab"><i class="fab fa-twitter"></i></a>
-<a href="https://www.linkedin.com/in/sergio-mena-ortega-a418ab120/"><i class="fab fa-linkedin-in"></i></a>
 </p>
 <p class="w3-small"><a href="https://www.hashemilab.com/">The Hashemi Lab</a></p>
 <p class="w3-small">Imperial College London & University of South Carolina</p>
