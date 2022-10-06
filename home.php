@@ -233,7 +233,6 @@ The application allows a fast and user-friendly calibration of 5-HT basal measur
 </div>
 </div>
 
-
 <footer class="w3-content w3-padding-64 w3-text-black w3-center">
 <p> <a href="#top" class="w3-button w3-black"><i class="fa fa-arrow-up "></i>To the top</a></p>
 <p class="w3-large">
