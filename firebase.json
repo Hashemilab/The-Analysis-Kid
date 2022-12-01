@@ -1,0 +1,36 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "FSCVCalibration.html",
+        "destination": "/FSCVCalibration.html"
+      },
+      {
+        "source": "FSCAVCalibration.html",
+        "destination": "/FSCAVCalibration.html"
+      },
+      {
+        "source": "FSCVMichaelisMenten1.html",
+        "destination": "/FSCVMichaelisMenten1.html"
+      },
+      {
+        "source": "FSCVMichaelisMenten2.html",
+        "destination": "/FSCVMichaelisMenten2.html"
+      },
+      {
+        "source": "FSCVStandardCalibration.html",
+        "destination": "/FSCVStandardCalibration.html"
+      }
+    ]
+  }
+}
