@@ -170,11 +170,11 @@ Filtering Panel
 </div>
 <div id="2dfft_panel" style="display: none; margin-top:5px;">
 <label for="horizontal_fft_slider" style="width:35%"> X cutoff (%):</label>
-<input type="range" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Horizontal cutoff frequency defined as a percentage of the maximum frequency."/>
+<input type="number" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=0 max=100 data-toggle="tooltip" title="Horizontal cutoff frequency defined as a percentage of the maximum frequency."/>
 <span id="horizontal_fft_slider_number" style="width:40%">50</span>
 <button onclick="config_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Open configuration of the 2D-FFT low-pass filtering.">Config.</button>
 <label for="vertical_fft_slider" style="width:35%"> Y cutoff (%):</label>
-<input type="range" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=1 max=100 data-toggle="tooltip" title="Vertical cutoff frequency defined as a percentage of the maximum frequency." />
+<input type="number" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=0 max=100 data-toggle="tooltip" title="Vertical cutoff frequency defined as a percentage of the maximum frequency."/>
 <span id="vertical_fft_slider_number" style="width:40%">50</span>
 <button onclick="graph_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Graph the magnitude of the 2D FFT spectrum">Show</button>
 <label for="butter_order" style="width:35%"> Order:</label>
