@@ -171,11 +171,9 @@ Filtering Panel
 <div id="2dfft_panel" style="display: none; margin-top:5px;">
 <label for="horizontal_fft_slider" style="width:35%"> X cutoff (%):</label>
 <input type="number" step="1" id="horizontal_fft_slider" style="width:25%" value=50 min=0 max=100 data-toggle="tooltip" title="Horizontal cutoff frequency defined as a percentage of the maximum frequency."/>
-<span id="horizontal_fft_slider_number" style="width:40%">50</span>
 <button onclick="config_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Open configuration of the 2D-FFT low-pass filtering.">Config.</button>
 <label for="vertical_fft_slider" style="width:35%"> Y cutoff (%):</label>
 <input type="number" step="1" id="vertical_fft_slider" style="width:25%" value=50 min=0 max=100 data-toggle="tooltip" title="Vertical cutoff frequency defined as a percentage of the maximum frequency."/>
-<span id="vertical_fft_slider_number" style="width:40%">50</span>
 <button onclick="graph_2dfft_pushed()" style="float: right;" data-toggle="tooltip" title="Graph the magnitude of the 2D FFT spectrum">Show</button>
 <label for="butter_order" style="width:35%"> Order:</label>
 <input type="number" step="1" id="butter_order" style="width:25%" value=2 min=1 max=20 data-toggle="tooltip" title="Order of the 2D Butterworth filter"/>
@@ -519,8 +517,6 @@ else{$('#transient_graph').hide(); $('#iv_graph').show()};
 });
 
 
-$('#vertical_fft_slider').on('input', function(){_("vertical_fft_slider_number").innerHTML = this.value});
-$('#horizontal_fft_slider').on('input', function(){_("horizontal_fft_slider_number").innerHTML = this.value});
 
 $(document).on("click", '.download_type_button', function(){
 $('.download_type_button').css('background-color','');
@@ -594,7 +590,7 @@ if (getComputedStyle(_("convolution_button"))['background-color'] == 'rgb(63, 81
 fscv_filtering.apply_convolution(fscv_data, parseFloat(_('convolution_sigma').value), parseInt(_('convolution_repetitions').value));
 } else {
 fscv_filtering.apply_2dfft_filtration(fscv_data, "main_graph",  parseFloat(_('frequency').value), parseFloat(_('cycling_frequency').value),
-parseInt(_('horizontal_fft_slider').value), parseInt(_('vertical_fft_slider').value), parseInt(_('butter_order').value),
+parseFloat(_('horizontal_fft_slider').value), parseFloat(_('vertical_fft_slider').value), parseInt(_('butter_order').value),
 parseFloat(_('2dfft_height_padding').value), parseFloat(_('2dfft_width_padding').value), _('2dfft_filter_type_selection').value);
 _("show_filter_button").disabled = true;
 };
